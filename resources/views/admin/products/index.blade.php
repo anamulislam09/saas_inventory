@@ -24,21 +24,13 @@
                         <div class="card">
                             <div class="card-header bg-primary p-1">
                                 <h3 class="card-title">
-                                    <a href="{{ route('items.create') }}"class="btn btn-light shadow rounded m-0">
+                                    <a href="{{ route('products.create') }}"class="btn btn-light shadow rounded m-0">
                                         <i class="fas fa-plus"></i>
                                         <span>Add New</span></i></a>
                                 </h3>
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="form-group col-sm-12 col-md-4 col-lg-4">
-                                        <label>Category Type</label>
-                                        <select name="cat_type_id" id="cat_type_id" class="form-control" required>
-                                            @foreach($data['category_types'] as $key => $category_type)
-                                                <option value="{{ $category_type->id }}">{{ $category_type->title }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
                                     <div class="form-group col-sm-12 col-md-4 col-lg-4">
                                         <label>Category</label>
                                         <select name="cat_id" id="cat_id" class="form-control" required>
@@ -114,7 +106,7 @@
             $('#cat_type_id').val(data.cat_type_id);
         }
         async function getData(data){
-            res = await nsAjaxPost("{{ route('items.index') }}", data);
+            res = await nsAjaxPost("{{ route('products.index') }}", data);
             let editRoute;
             let destroyRoute;
             let isRawMaterial = (data.cat_type_id == 3);
@@ -146,8 +138,8 @@
 
             res.items.forEach((item, index) => {
 
-                        editRoute = `{{ route("items.edit", ":id") }}`.replace(":id", item.id);
-                        destroyRoute = `{{ route("items.destroy", ":id") }}`.replace(":id", item.id);
+                        editRoute = `{{ route("products.edit", ":id") }}`.replace(":id", item.id);
+                        destroyRoute = `{{ route("products.destroy", ":id") }}`.replace(":id", item.id);
 
                         tbody += `<tr>`;
                         tbody +=     `<td>${index+1}</td>`;
@@ -157,7 +149,7 @@
                         tbody +=     `<td>${item.sub_category? item.sub_category.title : ''}</td>`;
                         tbody +=     `<td>`;
                         if(item.image){
-                            let src = `{{  asset("public/uploads/items") }}/` + item.image;
+                            let src = `{{  asset("public/uploads/products") }}/` + item.image;
                             tbody +=     `<img src="${src}" height="50px" width="50px">`;
                         }
                         tbody +=     `</td>`;
@@ -188,7 +180,7 @@
 
 
         async function loadCategories(cat_type_id, selectd_id = null) {
-            res = await nsAjaxGet('{{ route("items.categories", ":id") }}'.replace(':id', cat_type_id));
+            res = await nsAjaxGet('{{ route("products.categories", ":id") }}'.replace(':id', cat_type_id));
             nsSetOption({
                 selectElementId: 'cat_id',
                 data: res,
@@ -207,7 +199,7 @@
         }
 
         async function loadSubCategories(cat_id, selectd_id = null) {
-            res = await nsAjaxGet('{{ route("items.sub-categories", ":id") }}'.replace(':id', cat_id));
+            res = await nsAjaxGet('{{ route("products.sub-categories", ":id") }}'.replace(':id', cat_id));
             nsSetOption({
                 selectElementId: 'sub_cat_id',
                 data: res,

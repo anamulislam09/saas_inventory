@@ -36,15 +36,6 @@
                                             <input value="{{ isset($data['item']) ? $data['item']->title : null }}" type="text" class="form-control" name="title" placeholder="Category Name" required>
                                         </div>
                                         <div class="form-group col-sm-12 col-md-4 col-lg-4">
-                                            <label>Category Type *</label>
-                                            <select name="cat_type_id" id="cat_type_id" class="form-control" required>
-                                                <option value="">Select Category Type</option>
-                                                @foreach($data['category_types'] as $key => $category_type)
-                                                    <option  @isset($data['item']) @if( $data['item']->cat_type_id == $category_type->id ) selected @endif @endisset value="{{ $category_type->id }}">{{ $category_type->title }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-sm-12 col-md-4 col-lg-4">
                                             <label>Status *</label>
                                             <select name="status" id="status" class="form-control">
                                                 <option @selected(($data['item']->status ?? null) === 1) value="1">Active</option>

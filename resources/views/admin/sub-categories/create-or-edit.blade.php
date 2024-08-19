@@ -33,7 +33,7 @@
                                     <div class="row">
                                         <div class="form-group col-sm-12 col-md-4 col-lg-4">
                                             <label>Sub Category Name *</label>
-                                            <input value="{{ isset($data['item']) ? $data['item']->title : null }}" type="text" class="form-control" name="title" placeholder="Category Name" required>
+                                            <input value="{{ isset($data['item']) ? $data['item']->title : null }}" type="text" class="form-control" name="title" placeholder="Sub-Category Name" required>
                                         </div>
                                         <div class="form-group col-sm-12 col-md-4 col-lg-4">
                                             <label>Category *</label>

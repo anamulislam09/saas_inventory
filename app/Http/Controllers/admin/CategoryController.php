@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\admin;
 
 use App\Models\Category;
-use App\Models\CategoryType;
 use App\Models\Item;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -13,7 +12,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::with(['category_type'])->where('parent_cat_id',0)->orderBy('id', 'desc')->get();
+        $categories = Category::where('parent_cat_id',0)->orderBy('id', 'desc')->get();
         return view('admin.categories.index', compact('categories'));
     }
 
@@ -25,7 +24,6 @@ class CategoryController extends Controller
         }else{
             $data['title'] = 'Create';
         }
-        $data['category_types'] = CategoryType::get();
         return view('admin.categories.create-or-edit',compact('data'));
     }
 
@@ -60,11 +58,6 @@ class CategoryController extends Controller
     {
         try {
             $category = Category::findOrFail($id);
-            $itemsCount = Item::where('cat_id', $category->id)->count();
-
-            if ($itemsCount > 0) {
-                throw new \Exception('Cannot delete category with associated items!');
-            }
 
             if (!empty($category->image)) {
                 $imagePath = public_path('uploads/category/' . $category->image);

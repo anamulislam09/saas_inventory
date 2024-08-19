@@ -37,7 +37,6 @@
                                                 <tr>
                                                     <th>SN</th>
                                                     <th>Category Name</th>
-                                                    <th>Category Type</th>
                                                     <th>Image</th>
                                                     <th>Status</th>
                                                     <th>Action</th>
@@ -48,7 +47,6 @@
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
                                                         <td>{{ $category->title }}</td>
-                                                        <td>{{ $category->category_type->title }}</td>
                                                         <td>
                                                             @if($category->image)
                                                                 <img src="{{ asset('public/uploads/category/' . $category->image) }}" height="50px" width="50px">
@@ -73,16 +71,6 @@
                                                     </tr>
                                                 @endforeach
                                             </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <th>SN</th>
-                                                    <th>Category Name</th>
-                                                    <th>Category Type</th>
-                                                    <th>Image</th>
-                                                    <th>Status</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>

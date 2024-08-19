@@ -12,7 +12,6 @@ class Category extends Model
     protected $fillable = 
     [
         'parent_cat_id',
-        'cat_type_id',
         'title',
         'image',
         'status',
@@ -20,9 +19,5 @@ class Category extends Model
     public function category()
     {
         return $this->belongsTo(Category::class, 'parent_cat_id')->select('id', 'title');
-    }
-    public function category_type()
-    {
-        return $this->belongsTo(CategoryType::class, 'cat_type_id')->select('id', 'title');
     }
 }

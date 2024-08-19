@@ -38,7 +38,6 @@
                                                     <th>SN</th>
                                                     <th>Sub Category Name</th>
                                                     <th>Category Name</th>
-                                                    <th>Category Type</th>
                                                     <th>Image</th>
                                                     <th>Status</th>
                                                     <th>Action</th>
@@ -50,7 +49,6 @@
                                                         <td>{{ $loop->iteration }}</td>
                                                         <td>{{ $sub_category->title }}</td>
                                                         <td>{{ $sub_category->category->title }}</td>
-                                                        <td>{{ $sub_category->category_type->title }}</td>
                                                         <td>
                                                             @if($sub_category->image)
                                                                 <img src="{{ asset('public/uploads/category/' . $sub_category->image) }}" height="50px" width="50px">
@@ -75,17 +73,6 @@
                                                     </tr>
                                                 @endforeach
                                             </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <th>SN</th>
-                                                    <th>Sub Category Name</th>
-                                                    <th>Category Name</th>
-                                                    <th>Category Type</th>
-                                                    <th>Image</th>
-                                                    <th>Status</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>

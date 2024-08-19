@@ -13,7 +13,7 @@ class SubCategoryController extends Controller
 {
     public function index()
     {
-        $sub_categories = Category::with(['category_type'])->where('parent_cat_id','!=',0)->orderBy('id', 'desc')->get();
+        $sub_categories = Category::where('parent_cat_id','!=',0)->orderBy('id', 'desc')->get();
         return view('admin.sub-categories.index', compact('sub_categories'));
     }
 
@@ -37,7 +37,6 @@ class SubCategoryController extends Controller
             $data['image']->move(public_path('uploads/category'), $fileName);
             $data['image'] = $fileName;
         }
-        $data['cat_type_id'] = Category::find($data['parent_cat_id'])->cat_type_id;
         $category = Category::create($data);
         return redirect()->route('sub-categories.index')->with('alert',['messageType'=>'success','message'=>'Data Inserted Successfully!']);
     }
@@ -59,8 +58,6 @@ class SubCategoryController extends Controller
     public function destroy($id)
     {
         $category = Category::find($id);
-        $data = Item::where('cat_id',$category->id)->get();
-        if(count($data)) return redirect()->back()->with('alert',['messageType'=>'warning','message'=>'Data Deletion Failed!']);
         $imagePath = public_path('uploads/category/'.$category->image);
         if($category->image) unlink($imagePath);
         $category->delete();
