@@ -36,6 +36,7 @@ use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\SupplierController;
 use App\Http\Controllers\admin\UnitController;
+use App\Http\Controllers\admin\VendorController;
 use App\Http\Controllers\SuperAdmin\ClientController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -159,16 +160,26 @@ Route::prefix('admin')->group(function () {
 
             /*-------------------------- products route start here----------------------*/
             Route::prefix('products')->controller(ProductController::class)->group(function () {
-                Route::match(['get', 'post'], '', 'index')->name('products.index');
+                Route::get('get', 'index')->name('products.index');
                 Route::get('create', 'create')->name('products.create');
-                Route::get('edit/{id?}', 'edit')->name('products.edit');
+                Route::get('edit/{id}', 'edit')->name('products.edit');
                 Route::post('store', 'store')->name('products.store');
-                Route::put('update/{id}', 'update')->name('products.update');
+                Route::post('update', 'update')->name('products.update');
                 Route::delete('delete/{id}', 'destroy')->name('products.destroy');
-                Route::get('sub-category/{catId}', 'subCategory');
+                Route::get('sub_category/{catId}', 'subCategory')->name("products.sub-category");
             });
-
             /*-------------------------- products route ends here----------------------*/
+
+            /*-------------------------- vendor route start here----------------------*/
+            Route::prefix('vendors')->controller(VendorController::class)->group(function () {
+                Route::get('', 'index')->name('vendors.index');
+                Route::post('store', 'store')->name('vendors.store');
+                Route::put('update/{id}', 'update')->name('vendors.update');
+                Route::get('create', 'createOrEdit')->name('vendors.create');
+                Route::get('edit/{id?}', 'createOrEdit')->name('vendors.edit');
+                Route::delete('delete/{id}', 'destroy')->name('vendors.destroy');
+            });
+            /*-------------------------- vendor route ends here----------------------*/
 
             Route::prefix('reports')->controller(ReportController::class)->group(function () {
                 Route::match(['get', 'post'], 'supplier-ledgers', 'supplierLedgers')->name('reports.supplier-ledgers');

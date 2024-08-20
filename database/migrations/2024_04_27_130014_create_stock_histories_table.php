@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('stock_histories', function (Blueprint $table) {
             $table->id();
-            $table->integer('item_id');
+            $table->integer('product_id');
             $table->date('date');
             $table->string('particular')->nullable();
             $table->double('stock_in_qty',20,2)->default(0.00);

@@ -13,20 +13,15 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->tinyInteger('cat_type_id');
+            $table->integer('client_id');
             $table->integer('cat_id');
             $table->integer('sub_cat_id')->nullable();
             $table->integer('unit_id');
-            $table->string('title');
+            $table->string('product_name');
             $table->longText('description')->nullable();
-            $table->string('image');
-            $table->double('cost',20,2)->default(0);
-			$table->double('price',20,2)->default(0);
-			$table->float('vat',5,2)->default(0);
-            $table->double('sold_qty',20,2)->default(0);
-            $table->double('opening_stock',20,2)->default(0);
-            $table->double('current_stock',20,2)->default(0);
+            $table->string('image')->nullable();
             $table->tinyInteger('status')->default(1);
+            $table->tinyInteger('created_by');
             $table->timestamps();
         });
     }

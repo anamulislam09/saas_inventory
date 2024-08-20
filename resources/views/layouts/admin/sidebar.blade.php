@@ -29,8 +29,10 @@
                             <span class="badge badge-danger pending_orders_in_kit"></span>
                         </a>
                     </li>
-                    <li class="nav-item {{ Request::routeIs('clients.index') || Request::routeIs('client.create') || Request::routeIs('client.store') || Request::routeIs('clients.edit') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ Request::routeIs('clients.index') || Request::routeIs('client.create') || Request::routeIs('client.store') || Request::routeIs('clients.edit') ? 'active' : '' }}">
+                    <li
+                        class="nav-item {{ Request::routeIs('clients.index') || Request::routeIs('client.create') || Request::routeIs('client.store') || Request::routeIs('clients.edit') ? 'menu-open' : '' }}">
+                        <a href="#"
+                            class="nav-link {{ Request::routeIs('clients.index') || Request::routeIs('client.create') || Request::routeIs('client.store') || Request::routeIs('clients.edit') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-circle"></i>
                             <p>
                                 Client Manage
@@ -39,13 +41,15 @@
                         </a>
                         <ul class="nav nav-treeview ml-3">
                             <li class="nav-item">
-                                <a href="{{route('clients.index')}}" class="nav-link {{ Request::routeIs('clients.index') || Request::routeIs('clients.edit') ? 'active' : '' }}">
+                                <a href="{{ route('clients.index') }}"
+                                    class="nav-link {{ Request::routeIs('clients.index') || Request::routeIs('clients.edit') ? 'active' : '' }}">
                                     <i class="far fa-dot-circle nav-icon"></i>
                                     <p>Clients</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href=" {{route('client.create')}}" class="nav-link {{Request::routeIs('client.create')? 'active' : '' }}">
+                                <a href=" {{ route('client.create') }}"
+                                    class="nav-link {{ Request::routeIs('client.create') ? 'active' : '' }}">
                                     <i class="far fa-dot-circle nav-icon"></i>
                                     <p>Add New</p>
                                 </a>
@@ -53,23 +57,30 @@
                         </ul>
                     </li>
                 @endif
-                @if ($authorization->hasMenuAccess(159) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                @if (
+                    $authorization->hasMenuAccess(159) ||
+                        (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                     <li class="nav-item {{ request()->is('admin/dashboard*') ? 'menu-open' : '' }}">
-                        <a href="{{ route('dashboard.index') }}" class="nav-link {{ request()->is('admin/dashboard*') ? 'active' : '' }}">
+                        <a href="{{ route('dashboard.index') }}"
+                            class="nav-link {{ request()->is('admin/dashboard*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>Dashboard</p>
                             <span class="badge badge-danger pending_orders_in_kit"></span>
                         </a>
                     </li>
                 @endif
-                @if ($authorization->hasMenuAccess(160) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                @if (
+                    $authorization->hasMenuAccess(160) ||
+                        (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                     <li class="nav-item {{ request()->is('admin/basic-setup*') ? 'menu-open' : '' }}">
                         <a href="#" class="nav-link {{ request()->is('admin/basic-setup*') ? 'active' : '' }}">
                             <i class="nav-icon fa-solid fa-circle-info"></i>
                             <p>Basic Setup<i class="fas fa-angle-left right"></i></p>
                         </a>
                         <ul class="nav nav-treeview">
-                            @if ($authorization->hasMenuAccess(11) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(11) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('basic-infos.index') }}"
                                         class="nav-link {{ request()->is('admin/basic-setup/basic-infos*') ? 'active' : '' }}">
@@ -78,17 +89,21 @@
                                     </a>
                                 </li>
                             @endif
-                            @if ($authorization->hasMenuAccess(37) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
-                            <li class="nav-item">
-                                <a href="{{ route('units.index') }}"
-                                    class="nav-link {{ request()->is('admin/basic-setup/units*') ? 'active' : '' }}">
-                                    <i class="far fa-dot-circle nav-icon"></i>
-                                    <p>Units <i class="fas right fa-solid fa-plus add-new p-1"
-                                            add-new="{{ route('units.create') }}"></i></p>
-                                </a>
-                            </li>
-                        @endif
-                            @if ($authorization->hasMenuAccess(14) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(37) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                <li class="nav-item">
+                                    <a href="{{ route('units.index') }}"
+                                        class="nav-link {{ request()->is('admin/basic-setup/units*') ? 'active' : '' }}">
+                                        <i class="far fa-dot-circle nav-icon"></i>
+                                        <p>Units <i class="fas right fa-solid fa-plus add-new p-1"
+                                                add-new="{{ route('units.create') }}"></i></p>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (
+                                $authorization->hasMenuAccess(14) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('roles.index') }}"
                                         class="nav-link {{ request()->is('admin/basic-setup/roles*') ? 'active' : '' }}">
@@ -99,7 +114,9 @@
                                     </a>
                                 </li>
                             @endif
-                            @if ($authorization->hasMenuAccess(15) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(15) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('admins.index') }}"
                                         class="nav-link {{ request()->is('admin/basic-setup/admins*') ? 'active' : '' }}">
@@ -109,7 +126,9 @@
                                     </a>
                                 </li>
                             @endif
-                            @if ($authorization->hasMenuAccess(22) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(22) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('profile.update-details') }}"
                                         class="nav-link {{ request()->is('admin/basic-setup/profile*') ? 'active' : '' }}">
@@ -118,7 +137,9 @@
                                     </a>
                                 </li>
                             @endif
-                            @if ($authorization->hasMenuAccess(23) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(23) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('admin.password.update') }}"
                                         class="nav-link {{ request()->is('admin/basic-setup/password*') ? 'active' : '' }}">
@@ -227,7 +248,7 @@
                                 </li>
                             </ul>
                         @endif
-                        @if ($authorization->hasMenuAccess(114)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        @if ($authorization->hasMenuAccess(114) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                             <ul class="nav nav-treeview">
                                 <li class="nav-item {{ request()->is('admin/hrm/attendances*') ? 'menu-open' : '' }}">
                                     <a href="#"
@@ -236,7 +257,7 @@
                                         <p>Attendance<i class="right fas fa-angle-left"></i></p>
                                     </a>
                                     <ul class="nav nav-treeview">
-                                        @if ($authorization->hasMenuAccess(138)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        @if ($authorization->hasMenuAccess(138) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                             <li class="nav-item">
                                                 <a href="{{ route('attendances.index') }}"
                                                     class="nav-link {{ request()->is('admin/hrm/attendances/attendances*') ? 'active' : '' }}">
@@ -250,7 +271,7 @@
                                                 </a>
                                             </li>
                                         @endif
-                                        @if ($authorization->hasMenuAccess(139)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        @if ($authorization->hasMenuAccess(139) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                             <li class="nav-item">
                                                 <a href="{{ route('attendance-processes.index') }}"
                                                     class="nav-link {{ request()->is('admin/hrm/attendances/attendance-processes*') ? 'active' : '' }}">
@@ -259,7 +280,7 @@
                                                 </a>
                                             </li>
                                         @endif
-                                        @if ($authorization->hasMenuAccess(140)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        @if ($authorization->hasMenuAccess(140) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                             <li class="nav-item">
                                                 <a href="{{ route('attendances-reports.index') }}"
                                                     class="nav-link {{ request()->is('admin/hrm/attendances/reports*') ? 'active' : '' }}">
@@ -272,7 +293,7 @@
                                 </li>
                             </ul>
                         @endif
-                        @if ($authorization->hasMenuAccess(115)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        @if ($authorization->hasMenuAccess(115) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                             <ul class="nav nav-treeview">
                                 <li class="nav-item {{ request()->is('admin/hrm/leaves*') ? 'menu-open' : '' }}">
                                     <a href="#"
@@ -281,7 +302,7 @@
                                         <p>Leave<i class="right fas fa-angle-left"></i></p>
                                     </a>
                                     <ul class="nav nav-treeview">
-                                        @if ($authorization->hasMenuAccess(132)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        @if ($authorization->hasMenuAccess(132) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                             <li class="nav-item">
                                                 <a href="{{ route('leaves.index') }}"
                                                     class="nav-link {{ request()->is('admin/hrm/leaves/leaves*') ? 'active' : '' }}">
@@ -291,7 +312,7 @@
                                                 </a>
                                             </li>
                                         @endif
-                                        @if ($authorization->hasMenuAccess(128)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        @if ($authorization->hasMenuAccess(128) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                             <li class="nav-item">
                                                 <a href="{{ route('leave-reports.index') }}"
                                                     class="nav-link {{ request()->is('admin/hrm/leaves/reports*') ? 'active' : '' }}">
@@ -304,7 +325,7 @@
                                 </li>
                             </ul>
                         @endif
-                        @if ($authorization->hasMenuAccess(116)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        @if ($authorization->hasMenuAccess(116) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                             <ul class="nav nav-treeview">
                                 <li class="nav-item {{ request()->is('admin/hrm/loans*') ? 'menu-open' : '' }}">
                                     <a href="#"
@@ -313,7 +334,7 @@
                                         <p>Loan<i class="right fas fa-angle-left"></i></p>
                                     </a>
                                     <ul class="nav nav-treeview">
-                                        @if ($authorization->hasMenuAccess(121)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        @if ($authorization->hasMenuAccess(121) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                             <li class="nav-item">
                                                 <a href="{{ route('loans.index') }}"
                                                     class="nav-link {{ request()->is('admin/hrm/loans/loans*') ? 'active' : '' }}">
@@ -323,7 +344,7 @@
                                                 </a>
                                             </li>
                                         @endif
-                                        @if ($authorization->hasMenuAccess(120)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        @if ($authorization->hasMenuAccess(120) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                             <li class="nav-item">
                                                 <a href="{{ route('loan-processes.index') }}"
                                                     class="nav-link {{ request()->is('admin/hrm/loans/loan-processes*') ? 'active' : '' }}">
@@ -336,7 +357,7 @@
                                 </li>
                             </ul>
                         @endif
-                        @if ($authorization->hasMenuAccess(117)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        @if ($authorization->hasMenuAccess(117) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                             <ul class="nav nav-treeview">
                                 <li class="nav-item {{ request()->is('admin/hrm/payrolls*') ? 'menu-open' : '' }}">
                                     <a href="#"
@@ -345,7 +366,7 @@
                                         <p>Payrolls<i class="right fas fa-angle-left"></i></p>
                                     </a>
                                     <ul class="nav nav-treeview">
-                                        @if ($authorization->hasMenuAccess(119)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        @if ($authorization->hasMenuAccess(119) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                             <li class="nav-item">
                                                 <a href="{{ route('salary-processes.index') }}"
                                                     class="nav-link {{ request()->is('admin/hrm/payrolls/salary-processes*') ? 'active' : '' }}">
@@ -354,7 +375,7 @@
                                                 </a>
                                             </li>
                                         @endif
-                                        @if ($authorization->hasMenuAccess(118)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        @if ($authorization->hasMenuAccess(118) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                             <li class="nav-item">
                                                 <a href="{{ route('salaries.index') }}"
                                                     class="nav-link {{ request()->is('admin/hrm/payrolls/salaries*') ? 'active' : '' }}">
@@ -369,8 +390,10 @@
                         @endif
                     </li>
                 @endif --}}
-                @if ($authorization->hasMenuAccess(24) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
-                    <li class="nav-item {{ Request::routeIs('categories*') ||  Request::routeIs('sub-categories*') ||  Request::routeIs('products*') ? 'menu-open' : '' }}">
+                @if (
+                    $authorization->hasMenuAccess(24) ||
+                        (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                    {{-- <li class="nav-item {{ Request::routeIs('categories*') ||  Request::routeIs('sub-categories*') ||  Request::routeIs('products*') ? 'menu-open' : '' }}">
                         <a href="#" class="nav-link {{Request::routeIs('categories*') ||  Request::routeIs('sub-categories*') ||  Request::routeIs('products*') ? 'active' : '' }}">
                             <i class="nav-icon fa-solid fa-pizza-slice"></i>
                             <p>Category Manage <i class="fas fa-angle-left right"></i></p>
@@ -408,26 +431,82 @@
                                 </li>
                             @endif
                         </ul>
-                    </li>
+                    </li> --}}
+
+                    @if (
+                        $authorization->hasMenuAccess(25) ||
+                            (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        <li class="nav-item">
+                            <a href="{{ route('categories.index') }}"
+                                class="nav-link {{ request()->is('admin/categories*') ? 'active' : '' }}">
+                                <i class="far fa-dot-circle nav-icon"></i>
+                                <p>Category <i class="fas right fa-solid fa-plus add-new p-1"
+                                        add-new="{{ route('categories.create') }}"></i>
+                                </p>
+                            </a>
+                        </li>
+                    @endif
+                    @if (
+                        $authorization->hasMenuAccess(29) ||
+                            (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        <li class="nav-item">
+                            <a href="{{ route('sub-categories.index') }}"
+                                class="nav-link {{ request()->is('admin/sub-categories*') ? 'active' : '' }}">
+                                <i class="far fa-dot-circle nav-icon"></i>
+                                <p>Sub Category <i class="fas right fa-solid fa-plus add-new p-1"
+                                        add-new="{{ route('sub-categories.create') }}"></i>
+                                </p>
+                            </a>
+                        </li>
+                    @endif
+                    @if (
+                        $authorization->hasMenuAccess(33) ||
+                            (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        <li class="nav-item">
+                            <a href="{{ route('products.index') }}"
+                                class="nav-link {{ request()->is('admin/products*') ? 'active' : '' }}">
+                                <i class="far fa-dot-circle nav-icon"></i>
+                                <p>Products <i class="fas right fa-solid fa-plus add-new p-1"
+                                        add-new="{{ route('products.index') }}"></i></p>
+                            </a>
+                        </li>
+                    @endif
+                    @if (
+                        $authorization->hasMenuAccess(33) ||
+                            (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        <li class="nav-item">
+                            <a href="{{ route('products.index') }}"
+                                class="nav-link {{ request()->is('admin/products*') ? 'active' : '' }}">
+                                <i class="far fa-dot-circle nav-icon"></i>
+                                <p>Vendore <i class="fas right fa-solid fa-plus add-new p-1"
+                                        add-new="{{ route('products.index') }}"></i></p>
+                            </a>
+                        </li>
+                    @endif
                 @endif
-               
-                @if ($authorization->hasMenuAccess(161) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+
+                @if (
+                    $authorization->hasMenuAccess(161) ||
+                        (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                     <li class="nav-item {{ request()->is('admin/inventory*') ? 'menu-open' : '' }}">
                         <a href="#" class="nav-link {{ request()->is('admin/inventory*') ? 'active' : '' }}">
                             <i class="nav-icon fa-solid fa-warehouse"></i>
                             <p>Inventory<i class="fas fa-angle-left right"></i></p>
                         </a>
                         <ul class="nav nav-treeview">
-                            @if ($authorization->hasMenuAccess(162) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
-                                <li
-                                    class="nav-item {{ request()->is('admin/inventory/setup*') ? 'menu-open' : '' }}">
+                            @if (
+                                $authorization->hasMenuAccess(162) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                <li class="nav-item {{ request()->is('admin/inventory/setup*') ? 'menu-open' : '' }}">
                                     <a href="#"
                                         class="nav-link {{ request()->is('admin/inventory/setup*') ? 'active' : '' }}">
                                         <i class="fa-solid fa-users-gear nav-icon"></i>
                                         <p>Setup<i class="right fas fa-angle-left"></i></p>
                                     </a>
                                     <ul class="nav nav-treeview">
-                                        @if ($authorization->hasMenuAccess(163) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        @if (
+                                            $authorization->hasMenuAccess(163) ||
+                                                (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                             <li class="nav-item">
                                                 <a href="{{ route('recipes.index') }}"
                                                     class="nav-link {{ request()->is('admin/inventory/setup/recipes*') ? 'active' : '' }}">
@@ -437,7 +516,9 @@
                                                 </a>
                                             </li>
                                         @endif
-                                        @if ($authorization->hasMenuAccess(99) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        @if (
+                                            $authorization->hasMenuAccess(99) ||
+                                                (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                             <li class="nav-item">
                                                 <a href="{{ route('payment-methods.index') }}"
                                                     class="nav-link {{ request()->is('admin/inventory/setup/payment-methods*') ? 'active' : '' }}">
@@ -448,7 +529,9 @@
                                                 </a>
                                             </li>
                                         @endif
-                                        @if ($authorization->hasMenuAccess(103) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        @if (
+                                            $authorization->hasMenuAccess(103) ||
+                                                (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                             <li class="nav-item">
                                                 <a href="{{ route('suppliers.index') }}"
                                                     class="nav-link {{ request()->is('admin/inventory/setup/suppliers*') ? 'active' : '' }}">
@@ -461,7 +544,9 @@
                                     </ul>
                                 </li>
                             @endif
-                            @if ($authorization->hasMenuAccess(168) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(168) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('production-plans.index') }}"
                                         class="nav-link {{ request()->is('admin/inventory/production-plans*') ? 'active' : '' }}">
@@ -471,7 +556,9 @@
                                     </a>
                                 </li>
                             @endif
-                            @if ($authorization->hasMenuAccess(172) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(172) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('purchase-requisitions.index') }}"
                                         class="nav-link {{ request()->is('admin/inventory/purchase-requisitions*') ? 'active' : '' }}">
@@ -481,7 +568,9 @@
                                     </a>
                                 </li>
                             @endif
-                            @if ($authorization->hasMenuAccess(41) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(41) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('purchases.index') }}"
                                         class="nav-link {{ request()->is('admin/inventory/purchases*') ? 'active' : '' }}">
@@ -491,7 +580,9 @@
                                     </a>
                                 </li>
                             @endif
-                            @if ($authorization->hasMenuAccess(49) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(49) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('issue-items.index') }}"
                                         class="nav-link {{ request()->is('admin/inventory/issue-items*') ? 'active' : '' }}">
@@ -501,7 +592,9 @@
                                     </a>
                                 </li>
                             @endif
-                            @if ($authorization->hasMenuAccess(68) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(68) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('payments.index') }}"
                                         class="nav-link {{ request()->is('admin/inventory/payments*') ? 'active' : '' }}">
@@ -514,14 +607,18 @@
                         </ul>
                     </li>
                 @endif
-                @if ($authorization->hasMenuAccess(77) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                @if (
+                    $authorization->hasMenuAccess(77) ||
+                        (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                     <li class="nav-item {{ request()->is('admin/expense*') ? 'menu-open' : '' }}">
                         <a href="#" class="nav-link {{ request()->is('admin/expense*') ? 'active' : '' }}">
                             <i class="nav-icon fa-regular fa-credit-card"></i>
                             <p>Expense <i class="fas fa-angle-left right"></i></p>
                         </a>
                         <ul class="nav nav-treeview">
-                            @if ($authorization->hasMenuAccess(78) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(78) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('expense-categories.index') }}"
                                         class="nav-link {{ request()->is('admin/expense/expense-categories*') ? 'active' : '' }}">
@@ -531,7 +628,9 @@
                                     </a>
                                 </li>
                             @endif
-                            @if ($authorization->hasMenuAccess(79) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(79) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('expense-heads.index') }}"
                                         class="nav-link {{ request()->is('admin/expense/expense-heads*') ? 'active' : '' }}">
@@ -541,7 +640,9 @@
                                     </a>
                                 </li>
                             @endif
-                            @if ($authorization->hasMenuAccess(80) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(80) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('expenses.index') }}"
                                         class="nav-link {{ request()->is('admin/expense/expenses*') ? 'active' : '' }}">
@@ -551,7 +652,9 @@
                                     </a>
                                 </li>
                             @endif
-                            @if ($authorization->hasMenuAccess(81) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(81) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('expenses.reports') }}"
                                         class="nav-link {{ request()->is('admin/expense/reports*') ? 'active' : '' }}">
@@ -564,14 +667,18 @@
                     </li>
                 @endif
 
-                @if ($authorization->hasMenuAccess(81)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                @if (
+                    $authorization->hasMenuAccess(81) ||
+                        (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                     <li class="nav-item {{ request()->is('admin/reports*') ? 'menu-open' : '' }}">
                         <a href="#" class="nav-link {{ request()->is('admin/reports*') ? 'active' : '' }}">
                             <i class="nav-icon fa-solid fa-file-invoice"></i>
                             <p>Reports <i class="fas fa-angle-left right"></i></p>
                         </a>
                         <ul class="nav nav-treeview">
-                            @if ($authorization->hasMenuAccess(108)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(108) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('reports.supplier-ledgers') }}"
                                         class="nav-link {{ request()->is('admin/reports/supplier-ledgers*') ? 'active' : '' }}">
@@ -580,7 +687,9 @@
                                     </a>
                                 </li>
                             @endif
-                            @if ($authorization->hasMenuAccess(176)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(176) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('reports.purchase') }}"
                                         class="nav-link {{ request()->is('admin/reports/purchase*') ? 'active' : '' }}">
@@ -589,7 +698,9 @@
                                     </a>
                                 </li>
                             @endif
-                            @if ($authorization->hasMenuAccess(177)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(177) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('reports.sales') }}"
                                         class="nav-link {{ request()->is('admin/reports/sales*') ? 'active' : '' }}">
@@ -598,7 +709,9 @@
                                     </a>
                                 </li>
                             @endif
-                            @if ($authorization->hasMenuAccess(109)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(109) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('reports.stocks') }}"
                                         class="nav-link {{ request()->is('admin/reports/stocks*') ? 'active' : '' }}">
@@ -607,7 +720,9 @@
                                     </a>
                                 </li>
                             @endif
-                            @if ($authorization->hasMenuAccess(110)|| (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if (
+                                $authorization->hasMenuAccess(110) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('reports.collections') }}"
                                         class="nav-link {{ request()->is('admin/reports/collections*') ? 'active' : '' }}">

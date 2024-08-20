@@ -11,7 +11,7 @@ class StockHistory extends Model
 
     protected $fillable = 
     [
-        'item_id',
+        'product_id',
         'date',
         'particular',
         'stock_in_qty',
