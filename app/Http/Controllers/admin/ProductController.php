@@ -7,6 +7,7 @@ use App\Models\Admin;
 use App\Models\BasicInfo;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Stock;
 use App\Models\StockHistory;
 use App\Models\Unit;
 use Illuminate\Http\Request;
@@ -28,13 +29,20 @@ class ProductController extends Controller
 
     public function create()
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        if (Auth::guard('admin')->user()->client_id == 0) {
+            $data['categories'] = Category::where('client_id', Auth::guard('admin')->user()->id)->where('parent_cat_id', 0)->where('status', 1)->get();
+        } else {
+            $data['categories'] = Category::where('client_id', $client->id)->where('parent_cat_id', 0)->where('status', 1)->get();
+        }
+
         $data['units'] = Unit::where('status', 1)->get();
-        $data['categories'] = Category::where('parent_cat_id', 0)->where('status', 1)->get();
         return view('admin.products.create', compact('data'));
     }
 
     public function subCategory($catId)
     {
+
         $sub_category = Category::where('parent_cat_id', $catId)->where('status', 1)->get();
         return response()->json($sub_category, 200);
     }
@@ -55,7 +63,15 @@ class ProductController extends Controller
             $data['image']->move(public_path('uploads/product'), $fileName);
             $data['image'] = $fileName;
         }
-        Product::create($data);
+        $product = Product::create($data);
+        if ($product) {
+            $data['client_id'] = $product->client_id;
+            $data['product_id'] = $product->id;
+            $data['date'] = date('Y-m-d');
+            $data['created_by_id'] = Auth::guard('admin')->user()->id;
+            Stock::create($data);
+        }
+
         return redirect()->route('products.index')->with('alert', ['messageType' => 'success', 'message' => 'Product Inserted Successfully!']);
     }
 
@@ -63,7 +79,13 @@ class ProductController extends Controller
     {
         $product = Product::where('id', $id)->first();
         $units = Unit::where('status', 1)->get();
-        $categories = Category::where('parent_cat_id', 0)->where('status', 1)->get();
+
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        if (Auth::guard('admin')->user()->client_id == 0) {
+            $categories = Category::where('client_id', Auth::guard('admin')->user()->id)->where('parent_cat_id', 0)->where('status', 1)->get();
+        } else {
+            $categories = Category::where('client_id', $client->id)->where('parent_cat_id', 0)->where('status', 1)->get();
+        }
         return view('admin.products.edit', compact('product', 'units', 'categories'));
     }
 

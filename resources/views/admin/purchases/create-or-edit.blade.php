@@ -48,10 +48,10 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group col-sm-3 col-md-3 col-lg-3">
-                                            <label>Supplier *</label>
+                                            <label>Vendor *</label>
                                             <select name="supplier_id" id="supplier_id" class="form-control" required
                                                 @isset($data['purchase']) @disabled(true) @endisset>
-                                                <option value="" selected>Select Supplier</option>
+                                                <option value="" selected>Select Vendor</option>
                                                 @foreach ($data['suppliers'] as $supplier)
                                                     <option
                                                         @isset($data['purchase']) @selected($supplier->id == $data['purchase']->supplier_id) @endisset
@@ -68,9 +68,9 @@
                                                 class="form-control" required>
                                         </div>
                                         <div class="form-group col-sm-3 col-md-3 col-lg-3">
-                                            <label>Item</label>
+                                            <label>Product</label>
                                             <select class="form-control normalize" id="item_id_temp">
-                                                <option value="" selected>Select Item</option>
+                                                <option value="" selected>Select Product</option>
                                                 @foreach ($data['items'] as $key => $item)
                                                     <option value="{{ $item->id }}" item-title="{{ $item->title }}"
                                                         item-price="{{ $item->cost }}"

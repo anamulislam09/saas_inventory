@@ -56,6 +56,19 @@
                             </li>
                         </ul>
                     </li>
+
+                    @if ( $authorization->hasMenuAccess(37) ||
+                            (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 0))
+                        <li class="nav-item">
+                            <a href="{{ route('units.index') }}"
+                                class="nav-link {{ request()->is('admin/basic-setup/units*') ? 'active' : '' }}">
+                                <i class="far fa-dot-circle nav-icon"></i>
+                                <p>Units <i class="fas right fa-solid fa-plus add-new p-1"
+                                        add-new="{{ route('units.create') }}"></i></p>
+                            </a>
+                        </li>
+                    @endif
+
                 @endif
                 @if (
                     $authorization->hasMenuAccess(159) ||
@@ -86,18 +99,6 @@
                                         class="nav-link {{ request()->is('admin/basic-setup/basic-infos*') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
                                         <p>Basic Info</p>
-                                    </a>
-                                </li>
-                            @endif
-                            @if (
-                                $authorization->hasMenuAccess(37) ||
-                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
-                                <li class="nav-item">
-                                    <a href="{{ route('units.index') }}"
-                                        class="nav-link {{ request()->is('admin/basic-setup/units*') ? 'active' : '' }}">
-                                        <i class="far fa-dot-circle nav-icon"></i>
-                                        <p>Units <i class="fas right fa-solid fa-plus add-new p-1"
-                                                add-new="{{ route('units.create') }}"></i></p>
                                     </a>
                                 </li>
                             @endif
@@ -475,11 +476,11 @@
                         $authorization->hasMenuAccess(33) ||
                             (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <li class="nav-item">
-                            <a href="{{ route('products.index') }}"
-                                class="nav-link {{ request()->is('admin/products*') ? 'active' : '' }}">
+                            <a href="{{ route('vendors.index') }}"
+                                class="nav-link {{ request()->is('admin/vendors*') ? 'active' : '' }}">
                                 <i class="far fa-dot-circle nav-icon"></i>
-                                <p>Vendore <i class="fas right fa-solid fa-plus add-new p-1"
-                                        add-new="{{ route('products.index') }}"></i></p>
+                                <p>Vendors <i class="fas right fa-solid fa-plus add-new p-1"
+                                        add-new="{{ route('vendors.index') }}"></i></p>
                             </a>
                         </li>
                     @endif

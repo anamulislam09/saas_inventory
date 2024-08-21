@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('client_id')->nullable();
             $table->integer('parent_cat_id')->default(0);
             $table->string('title');
             $table->string('image',50)->nullable();

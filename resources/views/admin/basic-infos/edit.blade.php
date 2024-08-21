@@ -1,5 +1,10 @@
 @extends('layouts.admin.master')
 @section('content')
+<style>
+    label{
+        font-size: 15px;
+    }
+</style>
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">

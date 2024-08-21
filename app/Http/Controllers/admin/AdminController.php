@@ -130,8 +130,8 @@ class AdminController extends Controller
                 ]);
             }
         }
-        $admins = Admin::join('roles', 'roles.id', '=', 'admins.type')->where('status', 1)->select('admins.*', 'roles.role')->get();
-        return view('admin.auth.login', compact('admins'));
+        // $admins = Admin::join('roles', 'roles.id', '=', 'admins.type')->where('status', 1)->select('admins.*', 'roles.role')->get();
+        return view('admin.auth.login');
     }
     public function logout(Request $request)
     {

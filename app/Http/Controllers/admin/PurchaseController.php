@@ -13,6 +13,7 @@ use App\Models\PurchaseDetails;
 use App\Models\StockHistory;
 use App\Models\SupplierLedger;
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Auth;
 
@@ -37,7 +38,7 @@ class PurchaseController extends Controller
         $data['paymentMethods'] = PaymentMethod::orderBy('title','asc')->get();
         $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
         $data['suppliers'] = Supplier::where('status',1)->orderBy('name','asc')->get();
-        $data['items'] = Item::with('unit')->where('status',1)->whereIn('cat_type_id',[1,3])->orderBy('title','asc')->get();
+        $data['items'] = Product::with('unit')->where('status',1)->orderBy('title','asc')->get();
         return view('admin.purchases.create-or-edit',compact('data'));
     }
     public function vouchar($id,$print=null)
