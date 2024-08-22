@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Purchase extends Model
 {
     use HasFactory;
-    protected $fillable = 
+    protected $fillable =
     [
-        'supplier_id',
+        'client_id',
+        'vendor_id',
         'vouchar_no',
         'date',
         'total_price',

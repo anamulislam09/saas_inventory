@@ -126,6 +126,17 @@ Route::prefix('admin')->group(function () {
                     Route::delete('delete/{id}', 'destroy')->name('units.destroy');
                 });
 
+                /*-------------------------- payment-methods route start here----------------------*/
+                Route::prefix('payment-methods')->controller(PaymentMethodController::class)->group(function () {
+                    Route::get('', 'index')->name('payment-methods.index');
+                    Route::post('store', 'store')->name('payment-methods.store');
+                    Route::put('update/{id}', 'update')->name('payment-methods.update');
+                    Route::get('create', 'createOrEdit')->name('payment-methods.create');
+                    Route::get('edit/{id?}', 'createOrEdit')->name('payment-methods.edit');
+                    Route::delete('delete/{id}', 'destroy')->name('payment-methods.destroy');
+                });
+                /*-------------------------- payment-methods route ends here----------------------*/
+
                 Route::prefix('password')->controller(AdminController::class)->group(function () {
                     Route::match(['get', 'post'], 'update/{id?}', 'updatePassword')->name('admin.password.update');
                     Route::post('check-password', 'checkPassword')->name('admin.password.check');
@@ -180,6 +191,29 @@ Route::prefix('admin')->group(function () {
                 Route::delete('delete/{id}', 'destroy')->name('vendors.destroy');
             });
             /*-------------------------- vendor route ends here----------------------*/
+
+            /*-------------------------- purchases route start here----------------------*/
+            Route::prefix('purchases')->controller(PurchaseController::class)->group(function () {
+                Route::get('', 'index')->name('purchases.index');
+                Route::post('store', 'store')->name('purchases.store');
+                Route::get('create', 'createOrEdit')->name('purchases.create');
+                Route::get('vouchar/{id}', 'vouchar')->name('purchases.vouchar');
+                Route::get('vouchar/{id}/{print}', 'vouchar')->name('purchases.vouchar.print');
+                Route::post('payment/store', 'payment')->name('purchases.payment.store');
+                Route::delete('payment/destroy', 'destroy')->name('purchases.payment.destroy');
+                Route::get('purchase-requisition/{vouchar_no}', 'purchaseRequisition')->name('purchase-orders.purchase-requisition');
+            });
+            /*-------------------------- purchases route ends here----------------------*/
+
+            /*-------------------------- purchases return route start here----------------------*/
+            Route::prefix('purchase-return')->controller(PurchaseController::class)->group(function () {
+                Route::get('', 'index')->name('purchase-return.index');
+                Route::get('create', 'createOrEdit')->name('purchase-return.create');
+                Route::post('store', 'store')->name('purchase-return.store');
+              
+            });
+            /*-------------------------- purchases return route ends here----------------------*/
+
 
             Route::prefix('reports')->controller(ReportController::class)->group(function () {
                 Route::match(['get', 'post'], 'supplier-ledgers', 'supplierLedgers')->name('reports.supplier-ledgers');
@@ -334,14 +368,7 @@ Route::prefix('admin')->group(function () {
                     Route::get('vouchar/{id}/{print}', 'vouchar')->name('recipes.vouchar.print');
                     Route::delete('delete/{id}', 'destroy')->name('recipes.destroy');
                 });
-                Route::prefix('payment-methods')->controller(PaymentMethodController::class)->group(function () {
-                    Route::get('', 'index')->name('payment-methods.index');
-                    Route::post('store', 'store')->name('payment-methods.store');
-                    Route::put('update/{id}', 'update')->name('payment-methods.update');
-                    Route::get('create', 'createOrEdit')->name('payment-methods.create');
-                    Route::get('edit/{id?}', 'createOrEdit')->name('payment-methods.edit');
-                    Route::delete('delete/{id}', 'destroy')->name('payment-methods.destroy');
-                });
+
                 Route::prefix('suppliers')->controller(SupplierController::class)->group(function () {
                     Route::get('', 'index')->name('suppliers.index');
                     Route::post('store', 'store')->name('suppliers.store');
@@ -351,16 +378,16 @@ Route::prefix('admin')->group(function () {
                     Route::delete('delete/{id}', 'destroy')->name('suppliers.destroy');
                 });
             });
-            Route::prefix('purchases')->controller(PurchaseController::class)->group(function () {
-                Route::get('', 'index')->name('purchases.index');
-                Route::post('store', 'store')->name('purchases.store');
-                Route::get('create', 'createOrEdit')->name('purchases.create');
-                Route::get('vouchar/{id}', 'vouchar')->name('purchases.vouchar');
-                Route::get('vouchar/{id}/{print}', 'vouchar')->name('purchases.vouchar.print');
-                Route::post('payment/store', 'payment')->name('purchases.payment.store');
-                Route::delete('payment/destroy', 'destroy')->name('purchases.payment.destroy');
-                Route::get('purchase-requisition/{vouchar_no}', 'purchaseRequisition')->name('purchase-orders.purchase-requisition');
-            });
+            // Route::prefix('purchases')->controller(PurchaseController::class)->group(function () {
+            //     Route::get('', 'index')->name('purchases.index');
+            //     Route::post('store', 'store')->name('purchases.store');
+            //     Route::get('create', 'createOrEdit')->name('purchases.create');
+            //     Route::get('vouchar/{id}', 'vouchar')->name('purchases.vouchar');
+            //     Route::get('vouchar/{id}/{print}', 'vouchar')->name('purchases.vouchar.print');
+            //     Route::post('payment/store', 'payment')->name('purchases.payment.store');
+            //     Route::delete('payment/destroy', 'destroy')->name('purchases.payment.destroy');
+            //     Route::get('purchase-requisition/{vouchar_no}', 'purchaseRequisition')->name('purchase-orders.purchase-requisition');
+            // });
             Route::prefix('payments')->controller(PaymentController::class)->group(function () {
                 Route::get('', 'index')->name('payments.index');
                 Route::get('create', 'createOrEdit')->name('payments.create');

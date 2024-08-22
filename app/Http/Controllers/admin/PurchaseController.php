@@ -14,6 +14,7 @@ use App\Models\StockHistory;
 use App\Models\SupplierLedger;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Auth;
 
@@ -31,14 +32,14 @@ class PurchaseController extends Controller
     {
         if($id){
             $data['title'] = 'Edit';
-            $data['item'] = Purchase::find($id);
+            $data['products'] = Purchase::find($id);
         }else{
             $data['title'] = 'Create';
         }
         $data['paymentMethods'] = PaymentMethod::orderBy('title','asc')->get();
         $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
-        $data['suppliers'] = Supplier::where('status',1)->orderBy('name','asc')->get();
-        $data['items'] = Product::with('unit')->where('status',1)->orderBy('title','asc')->get();
+        $data['vendors'] = Vendor::where('status',1)->orderBy('name','asc')->get();
+        $data['products'] = Product::with('unit')->where('status',1)->orderBy('product_name','asc')->get();
         return view('admin.purchases.create-or-edit',compact('data'));
     }
     public function vouchar($id,$print=null)

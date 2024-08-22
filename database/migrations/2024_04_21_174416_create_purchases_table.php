@@ -10,7 +10,8 @@ return new class extends Migration
     {
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
-            $table->integer('supplier_id');
+            $table->tinyInteger('client_id');
+            $table->integer('vendor_id');
             $table->string('vouchar_no');
             $table->date('date');
             $table->double('total_price',20,2);
