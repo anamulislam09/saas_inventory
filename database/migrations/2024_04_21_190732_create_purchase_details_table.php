@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->integer('purchase_id');
             $table->integer('product_id');
-            $table->integer('product_type_id');
             $table->double('quantity',20,2);
             $table->double('unit_price',20,2);
             $table->double('total_amount',20,2);

@@ -13,8 +13,11 @@ use App\Models\PurchaseDetails;
 use App\Models\StockHistory;
 use App\Models\SupplierLedger;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\Product;
+use App\Models\Stock;
 use App\Models\Vendor;
+use App\Models\VendorLedger;
 use Illuminate\Http\Request;
 use Auth;
 
@@ -22,36 +25,67 @@ class PurchaseController extends Controller
 {
     public function index()
     {
-        $data['purchases'] = Purchase::with(['supplier','created_by'])->orderBy('id', 'desc')->get();
-        $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
-        $data['paymentMethods'] = PaymentMethod::orderBy('title','asc')->get();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        if (Auth::guard('admin')->user()->client_id == 0) {
+            $data['purchases'] = Purchase::where('client_id', Auth::guard('admin')->user()->id)->with(['vendor', 'created_by'])->orderBy('id', 'desc')->get();
+            $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
+            $data['paymentMethods'] = PaymentMethod::where('client_id', Auth::guard('admin')->user()->id)->orderBy('title', 'asc')->get();
+        } else {
+            $data['purchases'] = Purchase::where('client_id', $client->id)->with(['vendor', 'created_by'])->orderBy('id', 'desc')->get();
+            $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
+            $data['paymentMethods'] = PaymentMethod::where('client_id', $client->id)->orderBy('title', 'asc')->get();
+        }
+
         return view('admin.purchases.index', compact('data'));
     }
 
-    public function createOrEdit($id=null)
+    public function createOrEdit($id = null)
     {
-        if($id){
+        if ($id) {
             $data['title'] = 'Edit';
             $data['products'] = Purchase::find($id);
-        }else{
+        } else {
             $data['title'] = 'Create';
         }
-        $data['paymentMethods'] = PaymentMethod::orderBy('title','asc')->get();
+
         $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
-        $data['vendors'] = Vendor::where('status',1)->orderBy('name','asc')->get();
-        $data['products'] = Product::with('unit')->where('status',1)->orderBy('product_name','asc')->get();
-        return view('admin.purchases.create-or-edit',compact('data'));
+
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        if (Auth::guard('admin')->user()->client_id == 0) {
+            $data['paymentMethods'] = PaymentMethod::where('client_id', Auth::guard('admin')->user()->id)->orderBy('title', 'asc')->get();
+            $data['vendors'] = Vendor::where('client_id', Auth::guard('admin')->user()->id)->where('status', 1)->orderBy('name', 'asc')->get();
+            $data['products'] = Product::where('client_id', Auth::guard('admin')->user()->id)->with('unit')->where('status', 1)->orderBy('product_name', 'asc')->get();
+        } else {
+            $data['paymentMethods'] = PaymentMethod::where('client_id', $client->id)->orderBy('title', 'asc')->get();
+            $data['vendors'] = Vendor::where('client_id', $client->id)->where('status', 1)->orderBy('name', 'asc')->get();
+            $data['products'] = Product::where('client_id', $client->id)->with('unit')->where('status', 1)->orderBy('product_name', 'asc')->get();
+        }
+
+        return view('admin.purchases.create-or-edit', compact('data'));
     }
-    public function vouchar($id,$print=null)
+    public function vouchar($id, $print = null)
     {
-        $data['purchase'] = Purchase::with(['purchase_details','supplier','created_by','payments'])->find($id);
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        if (Auth::guard('admin')->user()->client_id == 0) {
+            $data['purchase'] = Purchase::where('client_id', Auth::guard('admin')->user()->id)->with(['purchase_details', 'vendor', 'created_by', 'payments'])->find($id);
+        } else {
+            $data['purchase'] = Purchase::where('client_id', $client->id)->with(['purchase_details', 'vendor', 'created_by', 'payments'])->find($id);
+        }
+
         $data['basicInfo'] = BasicInfo::first();
         $data['currency_symbol'] = $data['basicInfo']->currency_symbol;
         $data['print'] = $print;
-        return view('admin.purchases.view',compact('data'));
+        return view('admin.purchases.view', compact('data'));
     }
     public function payment(Request $request)
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+
+        if (Auth::guard('admin')->user()->client_id == 0) {
+            $client_id = Auth::guard('admin')->user()->id;
+        } else {
+            $client_id = $client->id;
+        }
 
         $purchase_id = $request->purchase_id;
         $date = $request->date;
@@ -60,11 +94,12 @@ class PurchaseController extends Controller
         $note = $request->note;
         $created_by_id = Auth::guard('admin')->user()->id;
         $purchase = Purchase::find($request->purchase_id);
-        $supplier_id = $purchase->supplier_id;
+        $vendor_id = $purchase->vendor_id;
 
         //Payment Create**********
         $payment = new Payment();
-        $payment->supplier_id = $supplier_id;
+        $payment->client_id = $client_id;
+        $payment->vendor_id = $vendor_id;
         $payment->payment_method_id = $payment_method_id;
         $payment->purchase_id = $purchase_id;
         $payment->date = $date;
@@ -76,36 +111,44 @@ class PurchaseController extends Controller
         //End*****
 
         //Supplier Ledger Payment Create**********
-         $supplierLedger = new SupplierLedger();
-         $supplierLedger->supplier_id = $supplier_id;
-         $supplierLedger->payment_id = $payment->id;
-         $supplierLedger->particular = 'Paid To Supplier';
-         $supplierLedger->date = $date;
-         $supplierLedger->debit_amount = $amount;
-         $supplierLedger->note = $note;
-         $supplierLedger->status = 1;
-         $supplierLedger->created_by_id = $created_by_id;
-         $supplierLedger->save();
+        $vendorledger = new VendorLedger();
+        $vendorledger->vendor_id = $vendor_id;
+        $vendorledger->payment_id = $payment->id;
+        $vendorledger->particular = 'Paid To Vendor';
+        $vendorledger->date = $date;
+        $vendorledger->debit_amount = $amount;
+        $vendorledger->note = $note;
+        $vendorledger->status = 1;
+        $vendorledger->created_by_id = $created_by_id;
+        $vendorledger->save();
         //End*****
 
         //Supplier Balance Update****
-        $supplier = Supplier::find($supplier_id);
-        $supplier->current_balance = $supplier->current_balance - $amount;
-        $supplier->save();
+        $vendor = Vendor::find($vendor_id);
+        $vendor->current_balance = $vendor->current_balance - $amount;
+        $vendor->save();
         //End*****
 
         //Vouchar Update****
         $purchase->paid_amount = $purchase->paid_amount + $amount;
-        $purchase->payment_status = ($purchase->total_payable <= $purchase->paid_amount)? 1 : 0;
+        $purchase->payment_status = ($purchase->total_payable <= $purchase->paid_amount) ? 1 : 0;
         $purchase->save();
         //End*****
 
-        return redirect()->back()->with('alert',['messageType'=>'success','message'=>'Data Inserted Successfully!']);
+        return redirect()->back()->with('alert', ['messageType' => 'success', 'message' => 'Data Inserted Successfully!']);
     }
 
     public function store(Request $request)
     {
-        $supplier_id = $request->supplier_id;
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+
+        if (Auth::guard('admin')->user()->client_id == 0) {
+            $client_id = Auth::guard('admin')->user()->id;
+        } else {
+            $client_id = $client->id;
+        }
+
+        $vendor_id = $request->vendor_id;
         $date = $request->date;
         $total = $request->total;
         $tax_amount = $request->tax_amount;
@@ -113,17 +156,19 @@ class PurchaseController extends Controller
         $total_payable = $request->total_payable;
         $paid_amount = $request->paid_amount;
         $note = $request->note;
+        $payment_id = $request->payment_method_id;
 
-        $item_id = $request->item_id;
+        $product_id = $request->product_id;
         $unit_price = $request->unit_price;
         $quantity = $request->quantity;
 
-        $vouchar_no = $this->formatSrl(Purchase::latest()->limit(1)->max('vouchar_no')+1);
+        $vouchar_no = $this->formatSrl(Purchase::latest()->limit(1)->max('vouchar_no') + 1);
         $created_by_id = Auth::guard('admin')->user()->id;
 
         //Purchase create*****
         $purchase = new Purchase();
-        $purchase->supplier_id = $supplier_id;
+        $purchase->client_id = $client_id;
+        $purchase->vendor_id = $vendor_id;
         $purchase->vouchar_no = $vouchar_no;
         $purchase->date = $date;
         $purchase->total_price = $total;
@@ -132,19 +177,17 @@ class PurchaseController extends Controller
         $purchase->total_payable = $total_payable;
         $purchase->paid_amount = $paid_amount;
         $purchase->note = $note;
-        $purchase->payment_status = ($total_payable==$paid_amount?1:0);
+        $purchase->payment_status = ($total_payable == $paid_amount ? 1 : 0);
         $purchase->status = 1;
         $purchase->created_by_id = $created_by_id;
         $purchase->save();
         //End*****
-        
-        for ($i=0; $i < count($item_id); $i++)
-        {
+
+        for ($i = 0; $i < count($product_id); $i++) {
             //Purchase Details create*****
             $purchaseDetails = new PurchaseDetails();
             $purchaseDetails->purchase_id = $purchase->id;
-            $purchaseDetails->product_id = $item_id[$i];
-            $purchaseDetails->product_type_id = Item::find($item_id[$i])->cat_type_id;
+            $purchaseDetails->product_id = $product_id[$i];
             $purchaseDetails->quantity = $quantity[$i];
             $purchaseDetails->unit_price = $unit_price[$i];
             $purchaseDetails->total_amount = $unit_price[$i] * $quantity[$i];
@@ -152,41 +195,33 @@ class PurchaseController extends Controller
             //End*****
 
             //Item Stock Update****
-            $item = Item::find($item_id[$i]);
-            $item->current_stock = $item->current_stock + $quantity[$i];
-            $item->cost = $unit_price[$i];
-            $item->save();
-            //End*****
-            //Stock History Update
-             $stockHistory = new StockHistory;
-             $stockHistory->item_id = $item_id[$i];
-             $stockHistory->date = $date;
-             $stockHistory->particular = 'Purchase';
-             $stockHistory->stock_in_qty = $quantity[$i];
-             $stockHistory->rate = $unit_price[$i];
-             $stockHistory->current_stock = $item->current_stock;
-             $stockHistory->created_by_id = $created_by_id;
-             $stockHistory->save();
+            $stock = Stock::find($product_id[$i]);
+            $stock->stock_quantity = $stock->stock_quantity + $quantity[$i];
+            $stock->updated_date = date('Y-m-d');
+            $stock->save();
             //End*****
         }
 
         //Supplier Ledger Purchase Create**********
-            $supplierLedger = new SupplierLedger();
-            $supplierLedger->supplier_id = $supplier_id;
-            $supplierLedger->purchase_id = $purchase->id;
-            $supplierLedger->particular = 'Purchase';
-            $supplierLedger->date = $date;
-            $supplierLedger->credit_amount = $total_payable;
-            $supplierLedger->note = $note;
-            $supplierLedger->status = 1;
-            $supplierLedger->created_by_id = $created_by_id;
-            $supplierLedger->save();
+        $vendorledger = new VendorLedger();
+        $vendorledger->client_id = $client_id;
+        $vendorledger->vendor_id = $vendor_id;
+        $vendorledger->purchase_id = $purchase->id;
+        $vendorledger->payment_id = $payment_id;
+        $vendorledger->particular = 'Purchase';
+        $vendorledger->date = $date;
+        $vendorledger->credit_amount = $total_payable;
+        $vendorledger->note = $note;
+        $vendorledger->status = 1;
+        $vendorledger->created_by_id = $created_by_id;
+        $vendorledger->save();
         //End*****
 
-        if($paid_amount){
+        if ($paid_amount) {
             //Payment Create**********
             $payment = new Payment();
-            $payment->supplier_id = $supplier_id;
+            $payment->client_id = $client_id;
+            $payment->vendor_id = $vendor_id;
             $payment->payment_method_id = $request->payment_method_id;
             $payment->purchase_id = $purchase->id;
             $payment->date = $date;
@@ -198,31 +233,31 @@ class PurchaseController extends Controller
             //End*****
 
             //Supplier Ledger Payment Create**********
-            $supplierLedger = new SupplierLedger();
-            $supplierLedger->supplier_id = $supplier_id;
-            $supplierLedger->payment_id = $payment->id;
-            $supplierLedger->particular = 'Paid To Supplier';
-            $supplierLedger->date = $date;
-            $supplierLedger->debit_amount = $paid_amount;
-            $supplierLedger->note = $note;
-            $supplierLedger->status = 1;
-            $supplierLedger->created_by_id = $created_by_id;
-            $supplierLedger->save();
+            $vendorledger = new VendorLedger();
+            $vendorledger->vendor_id = $vendor_id;
+            $vendorledger->payment_id = $payment->id;
+            $vendorledger->particular = 'Paid To Vendor';
+            $vendorledger->date = $date;
+            $vendorledger->debit_amount = $paid_amount;
+            $vendorledger->note = $note;
+            $vendorledger->status = 1;
+            $vendorledger->created_by_id = $created_by_id;
+            $vendorledger->save();
             //End*****
         }
-        
+
         //Supplier Balance Update****
-        $supplier = Supplier::find($supplier_id);
-        $supplier->current_balance = $supplier->current_balance + ( (float) $total_payable -  (float) $paid_amount);
-        $supplier->save();
+        $vendor = Vendor::find($vendor_id);
+        $vendor->current_balance = $vendor->current_balance + ((float) $total_payable -  (float) $paid_amount);
+        $vendor->save();
         //End*****
 
-        return redirect()->route('purchases.index')->with('alert',['messageType'=>'success','message'=>'Data Inserted Successfully!']);
+        return redirect()->route('purchases.index')->with('alert', ['messageType' => 'success', 'message' => 'Data Inserted Successfully!']);
     }
 
     public function formatSrl($srl)
     {
-        switch(strlen($srl)){
+        switch (strlen($srl)) {
             case 1:
                 $zeros = '000000';
                 break;
@@ -240,7 +275,7 @@ class PurchaseController extends Controller
                 break;
             default:
                 $zeros = '0';
-            break;
+                break;
         }
         return $zeros . $srl;
     }
@@ -249,41 +284,41 @@ class PurchaseController extends Controller
         $payment_id = $request->payment_id;
         $purchase_id = $request->purchase_id;
         $payment = Payment::find($payment_id);
-        $supplier_id = $payment->supplier_id;
-        
+        $vendor_id = $payment->vendor_id;
+
         //Vouchar Update****
         $purchase = Purchase::find($purchase_id);
         $purchase->paid_amount = $purchase->paid_amount - $payment->amount;
-        $purchase->payment_status = ($purchase->total_payable <= $purchase->paid_amount)? 1 : 0;
+        $purchase->payment_status = ($purchase->total_payable <= $purchase->paid_amount) ? 1 : 0;
         $purchase->save();
-       //End*****
+        //End*****
 
         //Supplier Balance Update****
-        $supplier = Supplier::find($supplier_id);
-        $supplier->current_balance = $supplier->current_balance + $payment->amount;
-        $supplier->save();
+        $vendor = Vendor::find($vendor_id);
+        $vendor->current_balance = $vendor->current_balance + $payment->amount;
+        $vendor->save();
         //End*****
 
         //Supplier Ledger Payment Destroy**********
-        SupplierLedger::where('payment_id', $payment_id)->delete();
+        VendorLedger::where('payment_id', $payment_id)->delete();
         //End*****
 
         //Payment Destroy**********
         $payment->delete();
         //End*****
 
-        return redirect()->back()->with('alert',['messageType'=>'success','message'=>'Data Deleted Successfully!']);
+        return redirect()->back()->with('alert', ['messageType' => 'success', 'message' => 'Data Deleted Successfully!']);
     }
-    public function purchaseRequisition($vouchar_no)
-    {
-        $data = PurchaseRequisition::with(['prdetails.item.unit'])->where('vouchar_no','=',$this->formatNumber($vouchar_no))->first();
-        if($data){
-            $data->toArray();
-        }
-        return response()->json($data, 200);
-    }
-    public function formatNumber($number)
-    {
-        return str_pad($number, 7, '0', STR_PAD_LEFT);
-    }
+    // public function purchaseRequisition($vouchar_no)
+    // {
+    //     $data = PurchaseRequisition::with(['prdetails.item.unit'])->where('vouchar_no', '=', $this->formatNumber($vouchar_no))->first();
+    //     if ($data) {
+    //         $data->toArray();
+    //     }
+    //     return response()->json($data, 200);
+    // }
+    // public function formatNumber($number)
+    // {
+    //     return str_pad($number, 7, '0', STR_PAD_LEFT);
+    // }
 }

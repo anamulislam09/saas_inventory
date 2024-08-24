@@ -5,12 +5,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Supplier Ledgers</h1>
+                        <h1 class="m-0">Vendor Ledgers</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Supplier Ledgers</li>
+                            <li class="breadcrumb-item active">Vendor Ledgers</li>
                         </ol>
                     </div>
                 </div>
@@ -22,17 +22,17 @@
                     <div class="col-12">
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Supplier Ledgers</h3>
+                                <h3 class="card-title">Vendor Ledgers</h3>
                             </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="form-group col-sm-3 col-md-3 col-lg-3">
-                                        <label>Supplier</label>
-                                        <select name="supplier_id" id="supplier_id" class="form-control" required
+                                        <label>Vendor</label>
+                                        <select name="vendor_id" id="vendor_id" class="form-control" required
                                             @isset($data['purchase']) @disabled(true) @endisset>
-                                            <option supplier-name="All Supplier" value="0" selected>All Supplier</option>
-                                            @foreach ($data['suppliers'] as $supplier)
-                                                <option supplier-name="{{ $supplier->name }}" value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                                            <option vendor-name="All Vendor" value="0" selected>All Vendor</option>
+                                            @foreach ($data['vendors'] as $vendor)
+                                                <option vendor-name="{{ $vendor->name }}" value="{{ $vendor->id }}">{{ $vendor->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -52,7 +52,7 @@
                                         <div id="print_header" hidden>
                                             <div class="row justify-content-center">
                                                 <div class="col-12 text-center">
-                                                    <h1>Supplier Ledger Report</h1>
+                                                    <h1>Vendor Ledger Report</h1>
                                                 </div>
                                                 <div class="col-12">
                                                     <h4>Description: <span id="description"></span></h4>
@@ -85,14 +85,14 @@
     <script>
         $(document).ready(function(){
             $('#print').click(function() {
-                let supplier_id = $('#supplier_id').val();
+                let vendor_id = $('#vendor_id').val();
                 let from_date = $('#from_date').val();
                 let to_date = $('#to_date').val();
-                let supplier_name = $('#supplier_id option:selected').attr('supplier-name');
-                if(supplier_id==0){
-                    $('#description').html(`${supplier_name} Ledeger.`);
+                let vendor_name = $('#vendor_id option:selected').attr('vendor-name');
+                if(vendor_id==0){
+                    $('#description').html(`${vendor_name} Ledeger.`);
                 }else{
-                    let description = `${supplier_name} Ledeger`;
+                    let description = `${vendor_name} Ledeger`;
                     if(from_date){
                         description += ` from ${from_date}`;
                         if(to_date){
@@ -127,38 +127,38 @@
 
         $(document).ready(function(){
             initialize();
-            $('#supplier_id, #from_date, #to_date').on('change', function (event) {
+            $('#vendor_id, #from_date, #to_date').on('change', function (event) {
                 const data = getFormData();
-                nsSetItem("supplierLedgerSearchKeys",data);
+                nsSetItem("vendorLedgerSearchKeys",data);
                 getData(data);
             });
         });
 
         function initialize() {
-            const defaultData = {supplier_id: 0,from_date: null,to_date: null};
-            const data = nsGetItem("supplierLedgerSearchKeys") || defaultData;
-            $('#supplier_id').val(data.supplier_id);
+            const defaultData = {vendor_id: 0,from_date: null,to_date: null};
+            const data = nsGetItem("vendorLedgerSearchKeys") || defaultData;
+            $('#vendor_id').val(data.vendor_id);
             $('#from_date').val(data.from_date);
             $('#to_date').val(data.to_date);
-            nsSetItem("supplierLedgerSearchKeys",data);
+            nsSetItem("vendorLedgerSearchKeys",data);
             getData(data);
         }
         async function getData(data){
-            res = await nsAjaxPost("{{ route('reports.supplier-ledgers') }}",data);
-            if(data.supplier_id==0){
-                allSupplier(res);
+            res = await nsAjaxPost("{{ route('reports.vendor-ledgers') }}",data);
+            if(data.vendor_id==0){
+                allVendor(res);
             }else{
-                singleSupplier(res);
+                singleVendor(res);
             }
         }
         function getFormData() {
             return {
-                supplier_id: $('#supplier_id').val(),
+                vendor_id: $('#vendor_id').val(),
                 from_date: $('#from_date').val(),
                 to_date: $('#to_date').val()
             }
         }
-        function singleSupplier(res) {
+        function singleVendor(res) {
             let tbody = ``;
             let balance = 0;
             let total_debit_amount = 0;
@@ -176,7 +176,7 @@
                 thead += `</tr>`;
                 $('#thead').html(thead);
 
-            res.supplierLedger.forEach((val,index) => {
+            res.vendorLedger.forEach((val,index) => {
                 val.debit_amount = parseFloat(val.debit_amount);
                 val.credit_amount = parseFloat(val.credit_amount);
                 balance += val.credit_amount - val.debit_amount;
@@ -213,12 +213,12 @@
                 tbody += `</tr>`;
                 $('#tbody').html(tbody);
         }
-        function allSupplier(res) {
+        function allVendor(res) {
             let thead = ``;
             let tbody = ``;
                 thead += `<tr>`;
                 thead +=    `<th>SN</th>`;
-                thead +=    `<th>Supplier Name</th>`;
+                thead +=    `<th>Vendor Name</th>`;
                 thead +=    `<th>Phone</th>`;
                 thead +=    `<th>Email</th>`;
                 thead +=    `<th>Address</th>`;
@@ -227,7 +227,7 @@
                 thead += `</tr>`;
                 $('#thead').html(thead);
                 let total_balance = 0;
-                res.supplierLedger.forEach((val,index) => {
+                res.vendorLedger.forEach((val,index) => {
                     total_balance += val.current_balance = parseFloat(val.current_balance);
                     tbody += `<tr>`;
                     tbody +=   `<td>${index + 1}</td>`;

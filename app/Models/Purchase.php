@@ -25,9 +25,9 @@ class Purchase extends Model
         'created_by_id',
         'updated_by_id',
     ];
-    public function supplier()
+    public function vendor()
     {
-        return $this->belongsTo(Supplier::class, 'supplier_id');
+        return $this->belongsTo(Vendor::class, 'vendor_id');
     }
     public function payments()
     {

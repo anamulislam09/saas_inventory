@@ -216,7 +216,7 @@ Route::prefix('admin')->group(function () {
 
 
             Route::prefix('reports')->controller(ReportController::class)->group(function () {
-                Route::match(['get', 'post'], 'supplier-ledgers', 'supplierLedgers')->name('reports.supplier-ledgers');
+                Route::match(['get', 'post'], 'vendor-ledgers', 'vendorLedgers')->name('reports.vendor-ledgers');
                 Route::match(['get', 'post'], 'purchase', 'purchase')->name('reports.purchase');
                 Route::match(['get', 'post'], 'sales', 'sales')->name('reports.sales');
                 Route::match(['get', 'post'], 'stocks', 'stocks')->name('reports.stocks');

@@ -29,13 +29,13 @@
                                 src="https://cdn3.iconfinder.com/data/icons/daily-sales/512/Sale-card-address-512.png"
                                 alt="Sup" /></div> --}}
                         <div class="clientinfo">
-                            <h2 class="h2" id="supplier">{{ $data['purchase']->supplier->name }},
-                                {{ $data['purchase']->supplier->organization }}</h2>
+                            <h2 class="h2" id="vendor">{{ $data['purchase']->vendor->name }},
+                                {{ $data['purchase']->vendor->organization }}</h2>
                             <p class="p"><span
-                                    id="address">{{ $data['purchase']->supplier->address }}</span><br><span
+                                    id="address">{{ $data['purchase']->vendor->address }}</span><br><span
                                     id="city"></span><span id="country"></span><span id="zip"></span><span
-                                    id="tax_num">{{ $data['purchase']->supplier->phone }},
-                                    {{ $data['purchase']->supplier->email }}</span><br></p>
+                                    id="tax_num">{{ $data['purchase']->vendor->phone }},
+                                    {{ $data['purchase']->vendor->email }}</span><br></p>
                         </div>
                     </div>
                     <div class="col-right">

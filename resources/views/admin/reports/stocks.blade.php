@@ -30,8 +30,8 @@
                                         <label>Items</label>
                                         <select name="item_id" id="item_id" class="form-control" required>
                                             <option item-name="All Item" value="0" selected>All Item</option>
-                                            @foreach ($data['items'] as $item)
-                                                <option item-name="{{ $item->title }}" value="{{ $item->id }}">{{ $item->title }}</option>
+                                            @foreach ($data['products'] as $item)
+                                                <option item-name="{{ $item->product_name }}" value="{{ $item->id }}">{{ $item->product_name }}</option>
                                             @endforeach
                                         </select>
                                     </div>

@@ -512,7 +512,7 @@
                                     (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('purchases.index') }}"
-                                        class="nav-link {{ Request::routeIs('purchase.index')|| Request::routeIs('purchase.edit') ? 'active' : '' }}">
+                                        class="nav-link {{ Request::routeIs('purchases.index')|| Request::routeIs('purchases.edit') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
                                         <p>Purchase <i class="fas right fa-solid fa-plus add-new p-1"
                                                 add-new="{{ route('expense-categories.create') }}"></i></p>
@@ -729,10 +729,10 @@
                                 $authorization->hasMenuAccess(108) ||
                                     (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
-                                    <a href="{{ route('reports.supplier-ledgers') }}"
-                                        class="nav-link {{ request()->is('admin/reports/supplier-ledgers*') ? 'active' : '' }}">
+                                    <a href="{{ route('reports.vendor-ledgers') }}"
+                                        class="nav-link {{ request()->is('admin/reports/vendor-ledgers*') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
-                                        <p>Supplier Ledgers</p>
+                                        <p>Vendor Ledgers</p>
                                     </a>
                                 </li>
                             @endif

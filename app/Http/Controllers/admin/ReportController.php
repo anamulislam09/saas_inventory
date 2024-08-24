@@ -15,7 +15,11 @@ use App\Models\Purchase;
 use App\Models\Order;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\Vendor;
+use App\Models\VendorLedger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use DB;
 
 class ReportController extends Controller
@@ -23,44 +27,43 @@ class ReportController extends Controller
     public function collections(Request $request)
     {
         $user_ids = Collection::groupBy('created_by_id')->pluck('created_by_id');
-        if($request->isMethod('post')){
+        if ($request->isMethod('post')) {
             $created_by_id = $request->created_by_id;
             $from_date = $request->from_date;
             $to_date = $request->to_date;
             $collections = Collection::query();
-            if($from_date && $to_date){
-                $collections = $collections->whereDate('collections.created_at','>=',$from_date)->whereDate('collections.created_at','<=',$to_date);
-            }else if ($from_date) {
+            if ($from_date && $to_date) {
+                $collections = $collections->whereDate('collections.created_at', '>=', $from_date)->whereDate('collections.created_at', '<=', $to_date);
+            } else if ($from_date) {
                 $collections = $collections->whereDate('collections.created_at', '=', $from_date);
             }
-            if($created_by_id!=0){
+            if ($created_by_id != 0) {
                 $collections = $collections->where('created_by_id', $created_by_id);
-                $data['collections'] = $collections->orderBy('order_no','asc')->get();
-            }else{
-                $data['collections'] = $collections->join('admins','admins.id','=', 'collections.created_by_id')->groupBy('created_by_id')
-                                   ->select('admins.id','admins.name', DB::raw('SUM(`paid_amount`) as total_collection_amount'))
-                                   ->get();
+                $data['collections'] = $collections->orderBy('order_no', 'asc')->get();
+            } else {
+                $data['collections'] = $collections->join('admins', 'admins.id', '=', 'collections.created_by_id')->groupBy('created_by_id')
+                    ->select('admins.id', 'admins.name', DB::raw('SUM(`paid_amount`) as total_collection_amount'))
+                    ->get();
             }
             $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
             return response()->json($data, 200);
-
-        }else{
-            $data['users'] = Admin::whereIn('id', $user_ids)->where('status',1)->orderBy('name','asc')->get();
+        } else {
+            $data['users'] = Admin::whereIn('id', $user_ids)->where('status', 1)->orderBy('name', 'asc')->get();
             return view('admin.reports.collections', compact('data'));
         }
     }
     public function purchase(Request $request)
     {
-        if($request->isMethod('post')){
+        if ($request->isMethod('post')) {
             $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
-            $supplier_id = $request->supplier_id;
+            $vendor_id = $request->vendor_id;
             $from_date = $request->from_date;
             $to_date = $request->to_date;
             $purchase = Purchase::query();
-            if($supplier_id){
-                $purchase = $purchase->where('supplier_id', $supplier_id);
-            }else{
-                $purchase = $purchase->with(['supplier']);
+            if ($vendor_id) {
+                $purchase = $purchase->where('vendor_id', $vendor_id);
+            } else {
+                $purchase = $purchase->with(['vendor']);
             }
             if ($from_date && $to_date) {
                 $purchase->whereBetween('date', [$from_date, $to_date]);
@@ -69,22 +72,22 @@ class ReportController extends Controller
             }
             $data['purchase'] = $purchase->get();
             return response()->json($data, 200);
-        }else{
-            $data['suppliers'] = Supplier::where('status',1)->orderBy('name','asc')->get();
+        } else {
+            $data['vendors'] = Vendor::where('status', 1)->orderBy('name', 'asc')->get();
             return view('admin.reports.purchase', compact('data'));
         }
     }
     public function sales(Request $request)
     {
-        if($request->isMethod('post')){
+        if ($request->isMethod('post')) {
             $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
             $created_by_id = $request->created_by_id;
             $from_date = $request->from_date;
             $to_date = $request->to_date;
-            $orders = Order::where('order_status',5);
-            if($created_by_id){
-                $orders = $orders->where(['created_by_id'=> $created_by_id]);
-            }else{
+            $orders = Order::where('order_status', 5);
+            if ($created_by_id) {
+                $orders = $orders->where(['created_by_id' => $created_by_id]);
+            } else {
                 $orders = $orders->with(['admin']);
             }
             if ($from_date && $to_date) {
@@ -94,9 +97,9 @@ class ReportController extends Controller
             }
             $data['orders'] = $orders->get();
             return response()->json($data, 200);
-        }else{
+        } else {
             $created_by_ids = Order::groupBy('created_by_id')->pluck('created_by_id')->toArray();
-            $data['admins'] = Admin::whereIn('id', $created_by_ids)->where('status',1)->orderBy('name','asc')->get();
+            $data['admins'] = Admin::whereIn('id', $created_by_ids)->where('status', 1)->orderBy('name', 'asc')->get();
             return view('admin.reports.sales', compact('data'));
         }
     }
@@ -105,13 +108,13 @@ class ReportController extends Controller
     public function stocks(Request $request)
     {
         if ($request->isMethod('post')) {
-            $item_id = $request->item_id;
+            $product_id = $request->product_id;
             $from_date = $request->from_date;
             $to_date = $request->to_date;
             $data = [];
 
-            if ($item_id != 0) {
-                $stockHistory = StockHistory::query()->where('item_id', $item_id);
+            if ($product_id != 0) {
+                $stockHistory = StockHistory::query()->where('product_id', $product_id);
 
                 if ($from_date && $to_date) {
                     $stockHistory->whereBetween('date', [$from_date, $to_date]);
@@ -120,55 +123,64 @@ class ReportController extends Controller
                 }
 
                 $data['stockHistory'] = $stockHistory->orderBy('id', 'asc')->get();
-                $data['unit'] = Item::find($item_id)->unit->title;
+                $data['unit'] = Product::find($product_id)->unit->title;
             } else {
-                $data['stockHistory'] = Item::with('unit')
+                $data['stockHistory'] = Product::with('unit')
                     ->where('status', 1)
-                    ->whereIn('cat_type_id', [1, 3])
-                    ->orderBy('title', 'asc')
+                    ->orderBy('product_name', 'asc')
                     ->get();
             }
             return response()->json($data, 200);
         } else {
             $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
-            $data['items'] = Item::where('status', 1)
-                ->whereIn('cat_type_id', [1, 3])
-                ->orderBy('title', 'asc')
+            $data['products'] = Product::where('status', 1)
+                ->orderBy('product_name', 'asc')
                 ->get();
             return view('admin.reports.stocks', compact('data'));
         }
     }
 
-    public function supplierLedgers(Request $request)
+    public function vendorLedgers(Request $request)
     {
-        if($request->isMethod('post')){
-            $supplier_id = $request->supplier_id;
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        if ($request->isMethod('post')) {
+            $vendor_id = $request->vendor_id;
             $from_date = $request->from_date;
             $to_date = $request->to_date;
-           if($supplier_id==0){
-                $data['supplierLedger'] = Supplier::where('status',1)->get();
-           }else{
+            if ($vendor_id == 0) {
+
+                if (Auth::guard('admin')->user()->client_id == 0) {
+                    $data['vendorLedger'] = Vendor::where('client_id', Auth::guard('admin')->user()->id)->where('status', 1)->get();
+                } else {
+                    $data['vendorLedger'] = Vendor::where('client_id', $client->id)->where('status', 1)->get();
+                }
+            } else {
                 $data['previous_balance'] = 0;
-                $supplierLedger = SupplierLedger::query()->where('supplier_id', $supplier_id);
-                if($from_date && $to_date){
-                    $supplierLedger = $supplierLedger->whereBetween('date',[$from_date,$to_date]);
-                }else{
-                    if($from_date){
-                        $supplierLedger = $supplierLedger->where('date','>=',$from_date);
+                $vendorLedger = VendorLedger::query()->where('vendor_id', $vendor_id);
+                if ($from_date && $to_date) {
+                    $vendorLedger = $vendorLedger->whereBetween('date', [$from_date, $to_date]);
+                } else {
+                    if ($from_date) {
+                        $vendorLedger = $vendorLedger->where('date', '>=', $from_date);
                     }
                 }
-                if($from_date){
-                    $supplierLedger_previous = SupplierLedger::where('supplier_id', $supplier_id)->where('date','<',$from_date)->get();
-                    $prev_debit = $supplierLedger_previous->sum('debit_amount');
-                    $prev_credit = $supplierLedger_previous->sum('credit_amount');
+                if ($from_date) {
+                    $vendorLedger_previous = vendorLedger::where('vendor_id', $vendor_id)->where('date', '<', $from_date)->get();
+                    $prev_debit = $vendorLedger_previous->sum('debit_amount');
+                    $prev_credit = $vendorLedger_previous->sum('credit_amount');
                     $data['previous_balance'] = $prev_credit - $prev_debit;
                 }
-                $data['supplierLedger'] = $supplierLedger->with('purchase')->orderBy('id','asc')->get();
-           }
-           $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
-           return response()->json($data, 200);
+                $data['vendorLedger'] = $vendorLedger->with('purchase')->orderBy('id', 'asc')->get();
+            }
+            $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
+            return response()->json($data, 200);
         }
-        $data['suppliers'] = Supplier::where('status',1)->orderBy('name','asc')->get();
+        if (Auth::guard('admin')->user()->client_id == 0) {
+            $data['vendors'] = Vendor::where('client_id', Auth::guard('admin')->user()->id)->where('status', 1)->orderBy('name', 'asc')->get();
+        } else {
+            $data['vendors'] = Vendor::where('client_id', $client->id)->where('status', 1)->orderBy('name', 'asc')->get();
+        }
+
         return view('admin.reports.supplier-ledgers', compact('data'));
     }
 }

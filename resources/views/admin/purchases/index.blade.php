@@ -37,7 +37,7 @@
                                                 <tr>
                                                     <th>SN</th>
                                                     <th>Vouchar No</th>
-                                                    <th>Supplier|Organization</th>
+                                                    <th>Vendor|Organization</th>
                                                     <th>Date</th>
                                                     <th>Vat/Tax</th>
                                                     <th>Discount</th>
@@ -54,8 +54,8 @@
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
                                                         <td><a target="_blank" href="{{ route('purchases.vouchar',[$purchase->id]) }}"><b>{{ $purchase->vouchar_no }}</b></a></td>
-                                                        <td>{{ $purchase->supplier->name }}<br>
-                                                            <strong>{{ $purchase->supplier->organization }}</strong>
+                                                        <td>{{ $purchase->vendor->name }}<br>
+                                                            <strong>{{ $purchase->vendor->organization }}</strong>
                                                         </td>
                                                         <td>{{ $purchase->date }}</td>
                                                         <td>{{ $data['currency_symbol'] }} {{ $purchase->vat_tax }}</td>
@@ -90,7 +90,7 @@
                                                     </tr>
                                                 @endforeach
                                             </tbody>
-                                            <tfoot>
+                                            {{-- <tfoot>
                                                 <tr>
                                                     <th>SN</th>
                                                     <th>Vouchar No</th>
@@ -105,7 +105,7 @@
                                                     <th>Created By</th>
                                                     <th>Action</th>
                                                 </tr>
-                                            </tfoot>
+                                            </tfoot> --}}
                                         </table>
                                     </div>
                                 </div>

@@ -12,7 +12,6 @@ class PurchaseDetails extends Model
     [
         'purchase_id',
         'product_id',
-        'product_type_id',
         'quantity',
         'unit_price',
         'total_amount',
@@ -20,6 +19,6 @@ class PurchaseDetails extends Model
     
     public function item()
     {
-        return $this->belongsTo(Item::class, 'product_id')->with('unit');
+        return $this->belongsTo(Product::class, 'product_id')->with('unit');
     }
 }

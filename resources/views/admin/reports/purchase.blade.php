@@ -27,14 +27,14 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="form-group col-sm-3 col-md-3 col-lg-3">
-                                        <label>Supplier</label>
-                                        <select name="supplier_id" id="supplier_id" class="form-control" required>
-                                            <option supplier-name="All Supplier" value="0" selected>All Supplier</option>
-                                            @foreach ($data['suppliers'] as $supplier)
+                                        <label>Vendor</label>
+                                        <select name="vendor_id" id="vendor_id" class="form-control" required>
+                                            <option vendor-name="All Vendor" value="0" selected>All Vendor</option>
+                                            @foreach ($data['vendors'] as $vendor)
                                                 <option
-                                                    supplier-name="{{ $supplier->name }}"
-                                                    value="{{ $supplier->id }}">
-                                                    {{ $supplier->name }}
+                                                vendor-name="{{ $vendor->name }}"
+                                                    value="{{ $vendor->id }}">
+                                                    {{ $vendor->name }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -87,11 +87,11 @@
 
     $(document).ready(function(){
         $('#print').click(function() {
-            let supplier_id = $('#supplier_id').val();
+            let vendor_id = $('#vendor_id').val();
             let from_date = $('#from_date').val();
             let to_date = $('#to_date').val();
-            let item_name = $('#supplier_id option:selected').attr('supplier-name');
-            if(supplier_id==0){
+            let item_name = $('#vendor_id option:selected').attr('vendor-name');
+            if(vendor_id==0){
                 $('#description').html(`${item_name} Purchase Report.`);
             }else{
                 let description = `${item_name} Purchase Report`;
@@ -129,7 +129,7 @@
 
     $(document).ready(function(){
         initialize();
-        $('#supplier_id, #from_date, #to_date').on('change', function (event) {
+        $('#vendor_id, #from_date, #to_date').on('change', function (event) {
             const data = getFormData();
             nsSetItem("purchaseReportSearchKeys",data);
             getData(data);
@@ -137,9 +137,9 @@
     });
 
     function initialize() {
-        const defaultData = {supplier_id: 0,from_date: null,to_date: null};
+        const defaultData = {vendor_id: 0,from_date: null,to_date: null};
         const data = nsGetItem("purchaseReportSearchKeys") || defaultData;
-        $('#supplier_id').val(data.supplier_id);
+        $('#vendor_id').val(data.vendor_id);
         $('#from_date').val(data.from_date);
         $('#to_date').val(data.to_date);
         nsSetItem("purchaseReportSearchKeys",data);
@@ -147,20 +147,20 @@
     }
     async function getData(data){
         res = await nsAjaxPost("{{ route('reports.purchase') }}",data);
-        if(data.supplier_id==0){
-            allSupplier(res);
+        if(data.vendor_id==0){
+            allVendor(res);
         }else{
-            singleSupplier(res);
+            singleVendor(res);
         }
     }
     function getFormData() {
         return {
-            supplier_id: $('#supplier_id').val(),
+            vendor_id: $('#vendor_id').val(),
             from_date: $('#from_date').val(),
             to_date: $('#to_date').val()
         }
     }
-    function singleSupplier(res) {
+    function singleVendor(res) {
         let tbody = ``;
         let thead = ``;
             thead += `<tr>`;
@@ -191,13 +191,13 @@
         });
         $('#tbody').html(tbody);
     }
-    function allSupplier(res) {
+    function allVendor(res) {
         let tbody = ``;
         let thead = ``;
             thead += `<tr>`;
             thead +=    `<th>SN</th>`;
             thead +=    `<th>Vouchar No</th>`;
-            thead +=    `<th>Supplier</th>`;
+            thead +=    `<th>Vendor</th>`;
             thead +=    `<th>Date</th>`;
             thead +=    `<th>Payment Status</th>`;
             thead +=    `<th>Note</th>`;    
@@ -212,7 +212,7 @@
             tbody += `<tr>`;
             tbody +=     `<td>${index+1}</td>`;
             tbody +=     `<td><a target="_blank" href="${url}"><b>${element.vouchar_no}</b></a></td>`;
-            tbody +=     `<td>${element.supplier.name}</td>`;
+            tbody +=     `<td>${element.vendor.name}</td>`;
             tbody +=     `<td>${element.date}</td>`;
             tbody +=     `<td><span class="badge badge-${element.payment_status==1?'success':'danger'}">${element.payment_status==1?'Paid':'Due'}</span></td>`;
             tbody +=     `<td>${element.note??''}</td>`;

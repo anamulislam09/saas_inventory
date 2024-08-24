@@ -72,8 +72,8 @@
                                             <select class="form-control normalize" id="product_id">
                                                 <option value="" selected>Select Product</option>
                                                 @foreach ($data['products'] as $key => $product)
-                                                    <option value="{{ $product->id }}" item-title="{{ $product->title }}"
-                                                        item-price="{{ $product->cost }}"
+                                                    <option value="{{ $product->id }}" product_name="{{ $product->product_name }}"
+                                                        product_price="{{ $product->cost }}"
                                                         unit_name="{{ $product->unit->title }}"
                                                         > {{ $product->product_name }}
                                                     </option>
@@ -87,7 +87,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th width="5%">SN</th>
-                                                            <th>Item</th>
+                                                            <th>Product</th>
                                                             <th>Unit</th>
                                                             <th>Unit Price</th>
                                                             <th>Quantity</th>
@@ -174,34 +174,35 @@
     <script>
         $(document).ready(function() {
 
-            $('#vouchar_no').on('input', async function(){
-                let vouchar_no = $(this).val();
-                let tbody = ``;
-                if(vouchar_no){
-                    let amount;
-                    res = await nsAjaxGet('{{ route("purchase-orders.purchase-requisition",":vouchar_no") }}'.replace(":vouchar_no",vouchar_no));
-                    if(Object.keys(res).length){
-                        res.prdetails.forEach((element, index) => {
-                            amount = parseFloat(element.cost) * parseFloat(element.quantity);
-                            tbody += `<tr>
-                                        <td class="serial">${index + 1}</td>
-                                        <td class="text-left"><input type="hidden" value="${element.product_id}" name="product_id[]">${element.product.title}</td>
-                                        <td>${element.product.unit.title}</td>
-                                        <td><input type="number" value="${element.unit_price}" class="form-control form-control-sm calculate" name="unit_price[]" placeholder="0.00" required></td>
-                                        <td><input type="number" value="${element.quantity}" class="form-control form-control-sm calculate" name="quantity[]" placeholder="0.00" required></td>
-                                        <td><input type="number" value="${element.amount}" class="form-control form-control-sm" name="sub_total[]" placeholder="0.00" disabled></td>
-                                        <td><button class="btn btn-sm btn-danger btn-del" type="button"><i class="fa-solid fa-trash btn-del"></i></button></td>
-                                    </tr>`;
-                        });
-                    }
-                }
-                $('#tbody').html(tbody);
-                calculate(true);
-            });
+            // $('#vouchar_no').on('input', async function(){
+            //     let vouchar_no = $(this).val();
+            //     let tbody = ``;
+            //     if(vouchar_no){
+            //         let amount;
+            //         res = await nsAjaxGet('{{ route("purchase-orders.purchase-requisition",":vouchar_no") }}'.replace(":vouchar_no",vouchar_no));
+            //         if(Object.keys(res).length){
+            //             res.prdetails.forEach((element, index) => {
+            //                 amount = parseFloat(element.cost) * parseFloat(element.quantity);
+            //                 tbody += `<tr>
+            //                             <td class="serial">${index + 1}</td>
+            //                             <td class="text-left"><input type="hidden" value="${element.product_id}" name="product_id[]">${element.product.product_name}</td>
+            //                             <td>${element.product.unit.title}</td>
+            //                             <td><input type="number" value="${element.unit_price}" class="form-control form-control-sm calculate" name="unit_price[]" placeholder="0.00" required></td>
+            //                             <td><input type="number" value="${element.quantity}" class="form-control form-control-sm calculate" name="quantity[]" placeholder="0.00" required></td>
+            //                             <td><input type="number" value="${element.amount}" class="form-control form-control-sm" name="sub_total[]" placeholder="0.00" disabled></td>
+            //                             <td><button class="btn btn-sm btn-danger btn-del" type="button"><i class="fa-solid fa-trash btn-del"></i></button></td>
+            //                         </tr>`;
+            //             });
+            //         }
+            //     }
+            //     $('#tbody').html(tbody);
+            //     calculate(true);
+            // });
 
             $('#product_id').on('change', function(e) {
                 let product_id = $('#product_id').val();
-                let product_title = $('#product_id option:selected').attr('product-title');
+                let product_name = $('#product_id option:selected').attr('product_name');
+                // alert(product_name);
                 let unit_name = $('#product_id option:selected').attr('unit_name');
                 let product_price = $('#product_id option:selected').attr('product-price');
 
@@ -212,7 +213,7 @@
 
                 tbody += `<tr>
                             <td class="serial"></td>
-                            <td class="text-left"><input type="hidden" value="${product_id}" name="product_id[]">${product_title}</td>
+                            <td class="text-left"><input type="hidden" value="${product_id}" name="product_id[]">${product_name}</td>
                             <td>${unit_name}</td>
                             <td><input type="number" value="${unit_price_temp}" class="form-control form-control-sm calculate" name="unit_price[]" placeholder="0.00" required></td>
                             <td><input type="number" value="${quantity_temp}" class="form-control form-control-sm calculate" name="quantity[]" placeholder="0.00" required></td>

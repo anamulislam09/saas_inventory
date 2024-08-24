@@ -8,25 +8,22 @@ use Illuminate\Database\Eloquent\Model;
 class Payment extends Model
 {
     use HasFactory;
-    protected $fillable = 
+    protected $fillable =
     [
-        'order_id',
-        'order_no',
-        'table_id',
+        'client_id',
+        'vendor_id',
         'payment_method_id',
-        'total_amount',
-        'discount',
-        'vat',
-        'total_payable',
-        'paid_amount',
+        'purchase_id',
+        'date',
+        'amount',
         'note',
-        'payment_status',
+        'status',
         'created_by_id',
-        'approved_by_id',
+        'updated_by_id',
     ];
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class, 'supplier_id');
+        return $this->belongsTo(Vendor::class, 'vendor_id');
     }
     public function created_by()
     {

@@ -23,4 +23,8 @@ class VendorLedger extends Model
         'created_by_id',
         'updated_by_id',
     ];
+    public function purchase()
+    {
+        return $this->belongsTo(Purchase::class, 'purchase_id');
+    }
 }
