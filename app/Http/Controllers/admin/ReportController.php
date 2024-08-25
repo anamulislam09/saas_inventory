@@ -73,7 +73,12 @@ class ReportController extends Controller
             $data['purchase'] = $purchase->get();
             return response()->json($data, 200);
         } else {
-            $data['vendors'] = Vendor::where('status', 1)->orderBy('name', 'asc')->get();
+            $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+            if (Auth::guard('admin')->user()->client_id == 0) {
+                $data['vendors'] = Vendor::where('client_id', Auth::guard('admin')->user()->id)->where('status', 1)->orderBy('name', 'asc')->get();
+            } else {
+                $data['vendors'] = Vendor::where('client_id', $client->id)->where('status', 1)->orderBy('name', 'asc')->get();
+            }
             return view('admin.reports.purchase', compact('data'));
         }
     }
@@ -107,37 +112,37 @@ class ReportController extends Controller
 
     public function stocks(Request $request)
     {
-        if ($request->isMethod('post')) {
-            $product_id = $request->product_id;
-            $from_date = $request->from_date;
-            $to_date = $request->to_date;
-            $data = [];
+        // if ($request->isMethod('post')) {
+        //     $product_id = $request->product_id;
+        //     $from_date = $request->from_date;
+        //     $to_date = $request->to_date;
+        //     $data = [];
 
-            if ($product_id != 0) {
-                $stockHistory = StockHistory::query()->where('product_id', $product_id);
+        //     if ($product_id != 0) {
+        //         $stockHistory = StockHistory::query()->where('product_id', $product_id);
 
-                if ($from_date && $to_date) {
-                    $stockHistory->whereBetween('date', [$from_date, $to_date]);
-                } elseif ($from_date) {
-                    $stockHistory->where('date', '>=', $from_date);
-                }
+        //         if ($from_date && $to_date) {
+        //             $stockHistory->whereBetween('date', [$from_date, $to_date]);
+        //         } elseif ($from_date) {
+        //             $stockHistory->where('date', '>=', $from_date);
+        //         }
 
-                $data['stockHistory'] = $stockHistory->orderBy('id', 'asc')->get();
-                $data['unit'] = Product::find($product_id)->unit->title;
-            } else {
-                $data['stockHistory'] = Product::with('unit')
-                    ->where('status', 1)
-                    ->orderBy('product_name', 'asc')
-                    ->get();
-            }
-            return response()->json($data, 200);
-        } else {
-            $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
-            $data['products'] = Product::where('status', 1)
-                ->orderBy('product_name', 'asc')
-                ->get();
-            return view('admin.reports.stocks', compact('data'));
-        }
+        //         $data['stockHistory'] = $stockHistory->orderBy('id', 'asc')->get();
+        //         $data['unit'] = Product::find($product_id)->unit->title;
+        //     } else {
+        //         $data['stockHistory'] = Product::with('unit')
+        //             ->where('status', 1)
+        //             ->orderBy('product_name', 'asc')
+        //             ->get();
+        //     }
+        //     return response()->json($data, 200);
+        // } else {
+        $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
+        $data['products'] = Product::where('status', 1)
+            ->orderBy('product_name', 'asc')
+            ->get();
+        return view('admin.reports.stocks', compact('data'));
+        // }
     }
 
     public function vendorLedgers(Request $request)

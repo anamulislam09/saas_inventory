@@ -26,12 +26,12 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="form-group col-sm-3 col-md-3 col-lg-3">
-                                        <label>Items</label>
-                                        <select name="item_id" id="item_id" class="form-control" required>
-                                            <option item-name="All Item" value="0" selected>All Item</option>
-                                            @foreach ($data['products'] as $item)
-                                                <option item-name="{{ $item->product_name }}" value="{{ $item->id }}">{{ $item->product_name }}</option>
+                                    {{-- <div class="form-group col-sm-3 col-md-3 col-lg-3">
+                                        <label>Products</label>
+                                        <select name="product_id" id="product_id" class="form-control" required>
+                                            <option product-name="All Product" value="0" selected>All product</option>
+                                            @foreach ($data['products'] as $product)
+                                                <option product-name="{{ $product->product_name }}" value="{{ $product->id }}">{{ $product->product_name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -51,22 +51,60 @@
                                         <div id="print_header" hidden>
                                             <div class="row justify-content-center">
                                                 <div class="col-12 text-center">
-                                                    <h1>Supplier Ledger Report</h1>
+                                                    <h1>Vendor Ledger Report</h1>
                                                 </div>
                                                 <div class="col-12">
                                                     <h4>Description: <span id="description"></span></h4>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="bootstrap-data-table-panel text-center">
-                                            <div class="table-responsive">
-                                                <table class="table table-striped table-bordered table-centre">
-                                                    <thead id="thead">
-                                                    </thead>
-                                                    <tbody id="tbody">
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                        </div> --}}
+                                    <div class="bootstrap-data-table-panel text-center">
+                                        <div class="table-responsive">
+                                            <table id="example1" class="table table-striped table-bordered table-centre">
+                                                <thead id="thead">
+                                                    <tr>
+                                                        <th>Sl</th>
+                                                        <th>Category</th>
+                                                        <th>Sub_Category</th>
+                                                        <th>Product Name</th>
+                                                        <th>Image</th>
+                                                        <th>Product Quentity</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbody">
+                                                    @foreach ($data['products'] as $key => $product)
+                                                        @php
+                                                            $categories = App\Models\Category::where(
+                                                                'id',
+                                                                $product->cat_id,
+                                                            )->value('title');
+                                                            $subcategories = App\Models\Category::where(
+                                                                'id',
+                                                                $product->sub_cat_id,
+                                                            )->value('title');
+                                                            $qty = App\Models\Stock::where(
+                                                                'product_id',
+                                                                $product->id,
+                                                            )->value('stock_quantity');
+                                                        @endphp
+                                                        <tr>
+                                                            <td>{{ $key + 1 }}</td>
+                                                            <td>{{ $categories }}</td>
+                                                            <td>{{ $subcategories }}</td>
+                                                            <td>{{ $product->product_name }}</td>
+                                                            <td>
+                                                                <label class="col-md-3" style="cursor:pointer">
+                                                                    <img id="image_view" style="max-width:70%" class="img-thumbnail"
+                                                                        src="{{ asset('public/uploads/product/' . (isset($product->image) && $product->image ? $product->image : 'placeholder.png')) }}">
+                                                                    {{-- <input id="image" name="image" style="display:none" onchange="itemImage(this);"
+                                                                        type="file" accept="image/*"> --}}
+                                                                </label>
+                                                            </td>
+                                                            <td>{{$qty}}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -75,22 +113,23 @@
                     </div>
                 </div>
             </div>
-        </section>
+    </div>
+    </section>
     </div>
 @endsection
-@section('script')
+{{-- @section('script')
     <script>
 
     $(document).ready(function(){
         $('#print').click(function() {
-            let item_id = $('#item_id').val();
+            let product_id = $('#product_id').val();
             let from_date = $('#from_date').val();
             let to_date = $('#to_date').val();
-            let item_name = $('#item_id option:selected').attr('item-name');
-            if(item_id==0){
-                $('#description').html(`${item_name} Stock Report.`);
+            let product_name = $('#product_id option:selected').attr('product-name');
+            if(product_id==0){
+                $('#description').html(`${product_name} Stock Report.`);
             }else{
-                let description = `${item_name} Stock Report`;
+                let description = `${product_name} Stock Report`;
                 if(from_date){
                     description += ` from ${from_date}`;
                     if(to_date){
@@ -125,38 +164,38 @@
 
     $(document).ready(function(){
         initialize();
-        $('#item_id, #from_date, #to_date').on('change', function (event) {
+        $('#product_id, #from_date, #to_date').on('change', function (event) {
             const data = getFormData();
-            nsSetItem("itemReportSearchKeys",data);
+            nsSetProduct("productReportSearchKeys",data);
             getData(data);
         });
     });
 
     function initialize() {
-        const defaultData = {item_id: 0,from_date: null,to_date: null};
-        const data = nsGetItem("itemReportSearchKeys") || defaultData;
-        $('#item_id').val(data.item_id);
+        const defaultData = {product_id: 0,from_date: null,to_date: null};
+        const data = nsGetProduct("productReportSearchKeys") || defaultData;
+        $('#product_id').val(data.product_id);
         $('#from_date').val(data.from_date);
         $('#to_date').val(data.to_date);
-        nsSetItem("itemReportSearchKeys",data);
+        nsSetProduct("productReportSearchKeys",data);
         getData(data);
     }
     async function getData(data){
         res = await nsAjaxPost("{{ route('reports.stocks') }}",data);
-        if(data.item_id==0){
-            allItem(res);
+        if(data.product_id==0){
+            allProduct(res);
         }else{
-            singleItem(res);
+            singleProduct(res);
         }
     }
     function getFormData() {
         return {
-            item_id: $('#item_id').val(),
+            product_id: $('#product_id').val(),
             from_date: $('#from_date').val(),
             to_date: $('#to_date').val()
         }
     }
-    function singleItem(res) {
+    function singleProduct(res) {
         let tbody = ``;
         let thead = ``;
             thead += `<tr>`;
@@ -184,7 +223,7 @@
         });
         $('#tbody').html(tbody);
     }
-    function allItem(res) {
+    function allProduct(res) {
         let tbody = ``;
         let thead = ``;
             thead = `<tr>`;
@@ -205,4 +244,4 @@
     }
 
 </script>
-@endsection
+@endsection --}}

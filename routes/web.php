@@ -37,6 +37,7 @@ use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\SupplierController;
 use App\Http\Controllers\admin\UnitController;
 use App\Http\Controllers\admin\VendorController;
+use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\SuperAdmin\ClientController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -206,7 +207,7 @@ Route::prefix('admin')->group(function () {
             /*-------------------------- purchases route ends here----------------------*/
 
             /*-------------------------- purchases return route start here----------------------*/
-            Route::prefix('purchase-return')->controller(PurchaseController::class)->group(function () {
+            Route::prefix('purchase-return')->controller(PurchaseReturnController::class)->group(function () {
                 Route::get('', 'index')->name('purchase-return.index');
                 Route::get('create', 'createOrEdit')->name('purchase-return.create');
                 Route::post('store', 'store')->name('purchase-return.store');

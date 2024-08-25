@@ -17,7 +17,7 @@ class PurchaseDetails extends Model
         'total_amount',
     ];
     
-    public function item()
+    public function product()
     {
         return $this->belongsTo(Product::class, 'product_id')->with('unit');
     }
