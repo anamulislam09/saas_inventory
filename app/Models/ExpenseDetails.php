@@ -10,6 +10,7 @@ class ExpenseDetails extends Model
     use HasFactory;
     protected $fillable = 
     [
+        'client_id',
         'expense_id',
         'expense_cat_id',
         'expense_head_id',

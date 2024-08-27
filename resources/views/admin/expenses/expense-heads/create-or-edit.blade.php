@@ -35,11 +35,11 @@
                                             <label>Expense Head *</label>
                                             <input value="{{ isset($data['expensehead']) ? $data['expensehead']->title : null }}" type="text" class="form-control" name="title" placeholder="Expense Head" required>
                                         </div>
-                                        <div class="form-group col-sm-12 col-md-6 col-lg-6">
+                                        {{-- <div class="form-group col-sm-12 col-md-6 col-lg-6">
                                             <label>Code</label>
                                             <input value="{{ isset($data['expensehead']) ? $data['expensehead']->code : null }}" type="text" class="form-control" name="code" placeholder="Code">
-                                        </div>
-                                        <div class="form-group col-sm-12 col-md-12 col-lg-12">
+                                        </div> --}}
+                                        <div class="form-group col-sm-12 col-md-6 col-lg-6">
                                             <label>Status *</label>
                                             <select name="status" id="status" class="form-control">
                                                 <option {{ isset($data['expensehead']) ? $data['expensehead']->status == 1 ? 'selected' : null : null }} value="1">Active</option>

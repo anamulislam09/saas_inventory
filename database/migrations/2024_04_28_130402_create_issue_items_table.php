@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('issue_items', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('client_id');
             $table->string('invoice_no');
             $table->date('date');
             $table->double('total_price',20,2);

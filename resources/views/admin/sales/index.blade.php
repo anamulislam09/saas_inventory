@@ -24,7 +24,7 @@
                         <div class="card">
                             <div class="card-header bg-primary p-1">
                                 <h3 class="card-title">
-                                    <a href="{{ route('issue-items.create') }}"class="btn btn-light shadow rounded m-0"><i
+                                    <a href="{{ route('sales.create') }}"class="btn btn-light shadow rounded m-0"><i
                                             class="fas fa-plus"></i>
                                         <span>Add New</span></i></a>
                                 </h3>
@@ -48,17 +48,17 @@
                                                 @foreach ($data['issue_items'] as $issue_item)
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
-                                                        <td><a target="_blank" href="{{ route('issue-items.invoice',[$issue_item->id]) }}"><b>{{ $issue_item->invoice_no }}</b></a></td>
+                                                        <td><a target="_blank" href="{{ route('sales.invoice',[$issue_item->id]) }}"><b>{{ $issue_item->invoice_no }}</b></a></td>
                                                         <td>{{ $issue_item->date }}</td>
                                                         <td>{{ $issue_item->total_price }}</td>
                                                         <td>{{ $issue_item->note }}</td>
                                                         <td>{{ $issue_item->created_by->name }}</td>
                                                         <td>
                                                             <div class="d-flex justify-content-center">
-                                                                <a target="_blank" href="{{ route('issue-items.invoice.print', [$issue_item->id,'print']) }}" class="btn btn-sm btn-dark ml-1">
+                                                                <a target="_blank" href="{{ route('sales.invoice.print', [$issue_item->id,'print']) }}" class="btn btn-sm btn-dark ml-1">
                                                                     <i class="fa fa-print"></i>
                                                                 </a>
-                                                                <a target="_blank" href="{{ route('issue-items.invoice', [$issue_item->id]) }}" class="btn btn-sm btn-info ml-1">
+                                                                <a target="_blank" href="{{ route('sales.invoice', [$issue_item->id]) }}" class="btn btn-sm btn-info ml-1">
                                                                     <i class="fa-solid fa-eye"></i>
                                                                 </a>
                                                             </div>

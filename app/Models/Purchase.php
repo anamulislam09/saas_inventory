@@ -39,6 +39,6 @@ class Purchase extends Model
     }
     public function purchase_details()
     {
-        return $this->hasMany(PurchaseDetails::class, 'purchase_id')->with('item');
+        return $this->hasMany(PurchaseDetails::class, 'purchase_id')->with('product');
     }
 }

@@ -215,6 +215,25 @@ Route::prefix('admin')->group(function () {
             });
             /*-------------------------- purchases return route ends here----------------------*/
 
+            /*--------------------------  payments route ends here----------------------*/
+            Route::prefix('payments')->controller(PaymentController::class)->group(function () {
+                Route::get('', 'index')->name('payments.index');
+                Route::get('create', 'createOrEdit')->name('payments.create');
+                Route::post('store', 'store')->name('payments.store');
+                Route::post('due/vouchars', 'dueVouchars')->name('payments.due.vouchars');
+            });
+            /*-------------------------- payments route ends here----------------------*/
+
+            /*-------------------------- payments route ends here----------------------*/
+            Route::prefix('sales')->controller(IssueItemController::class)->group(function () {
+                Route::get('', 'index')->name('sales.index');
+                Route::post('store', 'store')->name('sales.store');
+                Route::get('create', 'createOrEdit')->name('sales.create');
+                Route::get('invoice/{id}', 'invoice')->name('sales.invoice');
+                Route::get('invoice/{id}/{print}', 'invoice')->name('sales.invoice.print');
+            });
+            /*-------------------------- payments route ends here----------------------*/
+
 
             Route::prefix('reports')->controller(ReportController::class)->group(function () {
                 Route::match(['get', 'post'], 'vendor-ledgers', 'vendorLedgers')->name('reports.vendor-ledgers');
@@ -389,19 +408,8 @@ Route::prefix('admin')->group(function () {
             //     Route::delete('payment/destroy', 'destroy')->name('purchases.payment.destroy');
             //     Route::get('purchase-requisition/{vouchar_no}', 'purchaseRequisition')->name('purchase-orders.purchase-requisition');
             // });
-            Route::prefix('payments')->controller(PaymentController::class)->group(function () {
-                Route::get('', 'index')->name('payments.index');
-                Route::get('create', 'createOrEdit')->name('payments.create');
-                Route::post('store', 'store')->name('payments.store');
-                Route::post('due/vouchars', 'dueVouchars')->name('payments.due.vouchars');
-            });
-            Route::prefix('issue-items')->controller(IssueItemController::class)->group(function () {
-                Route::get('', 'index')->name('issue-items.index');
-                Route::post('store', 'store')->name('issue-items.store');
-                Route::get('create', 'createOrEdit')->name('issue-items.create');
-                Route::get('invoice/{id}', 'invoice')->name('issue-items.invoice');
-                Route::get('invoice/{id}/{print}', 'invoice')->name('issue-items.invoice.print');
-            });
+            
+           
             Route::prefix('production-plans')->controller(ProductionPlanController::class)->group(function () {
                 Route::get('', 'index')->name('production-plans.index');
                 Route::get('create', 'createOrEdit')->name('production-plans.create');

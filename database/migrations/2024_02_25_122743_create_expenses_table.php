@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
+            $table->integer('client_id');
             $table->string('expense_no');
             $table->date('date');
             $table->double('total_amount',20,2);

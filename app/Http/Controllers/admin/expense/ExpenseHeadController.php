@@ -5,14 +5,22 @@ namespace App\Http\Controllers\admin\expense;
 use App\Models\ExpenseHead;
 use App\Models\ExpenseDetails;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use Illuminate\Http\Request;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 class ExpenseHeadController extends Controller
 {
     public function index()
     {
-        $expenseheads = ExpenseHead::orderBy('id','desc')->get();
+        
+
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        if (Auth::guard('admin')->user()->client_id == 0) {
+            $expenseheads = ExpenseHead::where('client_id', Auth::guard('admin')->user()->id)->orderBy('id','desc')->get();
+        } else {
+            $expenseheads = ExpenseHead::where('client_id', $client->id)->orderBy('id','desc')->get();
+        }
         return view('admin.expenses.expense-heads.index', compact('expenseheads'));
     }
 
@@ -30,6 +38,13 @@ class ExpenseHeadController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        if (Auth::guard('admin')->user()->client_id == 0) {
+            $data['client_id'] = Auth::guard('admin')->user()->id;
+        } else {
+            $data['client_id'] = $client->id;
+        }
+        
         $data['created_by_id'] = Auth::guard('admin')->user()->id;
         ExpenseHead::create($data);
         return redirect()->route('expense-heads.index')->with('alert',['messageType'=>'success','message'=>'Data Inserted Successfully!']);

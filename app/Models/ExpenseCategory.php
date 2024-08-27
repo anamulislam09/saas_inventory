@@ -10,6 +10,7 @@ class ExpenseCategory extends Model
     use HasFactory;
     protected $fillable = 
     [
+        'client_id',
         'cat_name',
         'status'
     ];

@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('expense_heads', function (Blueprint $table) {
             $table->id();
+            $table->integer('client_id');
             $table->string('title');
             $table->string('code')->nullable();
             $table->tinyInteger('status')->default(1);

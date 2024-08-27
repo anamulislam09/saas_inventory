@@ -24,7 +24,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">{{ $data['title'] }} Form</h3>
                             </div>
-                            <form id="form-submit" action="{{ route('issue-items.store') }}" method="POST" enctype="multipart/form-data">
+                            <form id="form-submit" action="{{ route('sales.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf()
                                 <div class="card-body">
                                     <div class="row">
@@ -49,8 +49,8 @@
                                                                     <option value="" selected>Select Item</option>
                                                                     @foreach ($data['items'] as $key => $item)
                                                                         <option value="{{ $item->id }}"
-                                                                            item-title="{{ $item->title }} ({{ $item->unit->title }})"
-                                                                            item-price="{{ $item->price }}"> {{ $item->title }} ({{ $item->unit->title }})
+                                                                            item-title="{{ $item->product_name }} ({{ $item->unit->title }})"
+                                                                            item-price="{{ $item->price }}"> {{ $item->product_name }} ({{ $item->unit->title }})
                                                                         </option>
                                                                     @endforeach
                                                                 </select>

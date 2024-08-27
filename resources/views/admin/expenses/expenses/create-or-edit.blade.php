@@ -88,7 +88,7 @@
                                                         <th><input placeholder="0.00" type="number" class="form-control form-control-sm calculate" id="quantity_temp"></th>
                                                         <th><input placeholder="0.00" type="number" class="form-control form-control-sm" id="total_temp" disabled></th>
                                                         <th><input placeholder="Note" type="text" class="form-control form-control-sm" id="note_temp"></th>
-                                                        <th><button id="btn-add" class="btn btn-sm btn-success" type="button">save</button></th>
+                                                        <th><button id="btn-add" class="btn btn-sm btn-success" type="button">Add</button></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="table-data">

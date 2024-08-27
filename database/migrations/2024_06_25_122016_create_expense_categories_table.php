@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('expense_categories', function (Blueprint $table) {
             $table->id();
+            $table->integer('client_id');
             $table->string('cat_name');
             $table->tinyInteger('status')->default(1);
             $table->timestamps();

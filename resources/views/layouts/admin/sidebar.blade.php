@@ -548,6 +548,55 @@
                 @endif
 
                 @if (
+                    $authorization->hasMenuAccess(77) ||
+                        (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                    <li class="nav-item {{ request()->is('admin/sales*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->is('admin/sales*') ? 'active' : '' }}">
+                            <i class="nav-icon fa-regular fa-credit-card"></i>
+                            <p>Sales Manage <i class="fas fa-angle-left right"></i></p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @if (
+                                $authorization->hasMenuAccess(78) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                <li class="nav-item">
+                                    <a href="{{ route('sales.index') }}"
+                                        class="nav-link {{ Request::routeIs('sales.index')|| Request::routeIs('sales.edit') ? 'active' : '' }}">
+                                        <i class="far fa-dot-circle nav-icon"></i>
+                                        <p>Sales <i class="fas right fa-solid fa-plus add-new p-1"
+                                                add-new="{{ route('expense-categories.create') }}"></i></p>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (
+                                $authorization->hasMenuAccess(79) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                <li class="nav-item">
+                                    <a href="{{ route('sales.create') }}"
+                                        class="nav-link {{ Request::routeIs('sales.create') ? 'active' : '' }}">
+                                        <i class="far fa-dot-circle nav-icon"></i>
+                                        <p>New Sales <i class="fas right fa-solid fa-plus add-new p-1"
+                                                add-new="{{ route('expense-heads.create') }}"></i></p>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (
+                                $authorization->hasMenuAccess(80) ||
+                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                <li class="nav-item">
+                                    <a href="{{ route('purchase-return.create') }}"
+                                        class="nav-link {{ Request::routeIs('purchase-return.create') ? 'active' : '' }}">
+                                        <i class="far fa-dot-circle nav-icon"></i>
+                                        <p>Sales Return<i class="fas right fa-solid fa-plus add-new p-1"
+                                                add-new="{{ route('expenses.create') }}"></i></p>
+                                    </a>
+                                </li>
+                            @endif
+                        </ul>
+                    </li>
+                @endif
+
+                @if (
                     $authorization->hasMenuAccess(161) ||
                         (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                     <li class="nav-item {{ request()->is('admin/inventory*') ? 'menu-open' : '' }}">
@@ -629,7 +678,7 @@
                                     </a>
                                 </li>
                             @endif
-                            @if (
+                            {{-- @if (
                                 $authorization->hasMenuAccess(49) ||
                                     (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
@@ -640,7 +689,7 @@
                                                 add-new="{{ route('issue-items.create') }}"></i></p>
                                     </a>
                                 </li>
-                            @endif
+                            @endif --}}
                             @if (
                                 $authorization->hasMenuAccess(68) ||
                                     (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))

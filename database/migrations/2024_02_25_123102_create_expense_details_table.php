@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('expense_details', function (Blueprint $table) {
             $table->id();
+            $table->integer('client_id');
             $table->integer('expense_id');
             $table->integer('expense_cat_id');
             $table->integer('expense_head_id');

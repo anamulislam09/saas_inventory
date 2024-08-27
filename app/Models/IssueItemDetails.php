@@ -16,8 +16,8 @@ class IssueItemDetails extends Model
         'unit_price',
         'total_amount',
     ];
-    public function item()
+    public function product()
     {
-        return $this->belongsTo(Item::class, 'item_id')->with('unit');
+        return $this->belongsTo(product::class, 'item_id')->with('unit');
     }
 }

@@ -10,6 +10,7 @@ class ExpenseHead extends Model
     use HasFactory;
     protected $fillable = 
     [
+        'client_id',
         'title',
         'code',
         'status',
