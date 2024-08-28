@@ -81,11 +81,11 @@
                                     $total_price += $value->total_amount;
                                 @endphp
                                 <tr class="list-item">
-                                    <td data-label="Type">{{ $value->item->title }}</td>
+                                    <td data-label="Type">{{ $value->product->title }}</td>
                                     <td data-label="Description">{{ $value->description }}</td>
                                     <td data-label="Quantity">{{ number_format($value->quantity, 2) }}</td>
                                     <td data-label="Unit Price">{{ $data['basicInfo']->currency_symbol }}
-                                        {{ number_format($value->unit_price, 2) }} / {{ $value->item->unit->title }}</td>
+                                        {{ number_format($value->unit_price, 2) }} / {{ $value->product->unit->title }}</td>
                                     <td data-label="Total">{{ $data['basicInfo']->currency_symbol }}
                                         {{ number_format($value->total_amount, 2) }}</td>
                                 </tr>

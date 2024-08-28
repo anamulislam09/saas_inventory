@@ -45,20 +45,20 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($data['issue_items'] as $issue_item)
+                                                @foreach ($data['sales'] as $item)
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
-                                                        <td><a target="_blank" href="{{ route('sales.invoice',[$issue_item->id]) }}"><b>{{ $issue_item->invoice_no }}</b></a></td>
-                                                        <td>{{ $issue_item->date }}</td>
-                                                        <td>{{ $issue_item->total_price }}</td>
-                                                        <td>{{ $issue_item->note }}</td>
-                                                        <td>{{ $issue_item->created_by->name }}</td>
+                                                        <td><a target="_blank" href="{{ route('sales.invoice',[$item->id]) }}"><b>{{ $item->invoice_no }}</b></a></td>
+                                                        <td>{{ $item->date }}</td>
+                                                        <td>{{ $item->total_price }}</td>
+                                                        <td>{{ $item->note }}</td>
+                                                        <td>{{ $item->created_by->name }}</td>
                                                         <td>
                                                             <div class="d-flex justify-content-center">
-                                                                <a target="_blank" href="{{ route('sales.invoice.print', [$issue_item->id,'print']) }}" class="btn btn-sm btn-dark ml-1">
+                                                                <a target="_blank" href="{{ route('sales.invoice.print', [$item->id,'print']) }}" class="btn btn-sm btn-dark ml-1">
                                                                     <i class="fa fa-print"></i>
                                                                 </a>
-                                                                <a target="_blank" href="{{ route('sales.invoice', [$issue_item->id]) }}" class="btn btn-sm btn-info ml-1">
+                                                                <a target="_blank" href="{{ route('sales.invoice', [$item->id]) }}" class="btn btn-sm btn-info ml-1">
                                                                     <i class="fa-solid fa-eye"></i>
                                                                 </a>
                                                             </div>

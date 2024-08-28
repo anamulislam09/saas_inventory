@@ -24,7 +24,8 @@
                             <div class="card-header">
                                 <h3 class="card-title">{{ $data['title'] }} Form</h3>
                             </div>
-                            <form id="form-submit" action="{{ route('sales.store') }}" method="POST" enctype="multipart/form-data">
+                            <form id="form-submit" action="{{ route('sales.store') }}" method="POST"
+                                enctype="multipart/form-data">
                                 @csrf()
                                 <div class="card-body">
                                     <div class="row">
@@ -36,7 +37,8 @@
                                                         <tr>
                                                             <th width="5%">SN</th>
                                                             <th>Item</th>
-                                                            <th>Purchase Price</th>
+                                                            {{-- <th>Purchase Price</th> --}}
+                                                            <th>Sales Price</th>
                                                             <th>Quantity</th>
                                                             <th>Sub Total</th>
                                                             <th width="5%">Action</th>
@@ -48,9 +50,19 @@
                                                                     id="item_id_temp">
                                                                     <option value="" selected>Select Item</option>
                                                                     @foreach ($data['items'] as $key => $item)
+                                                                        @php
+                                                                            $qty = App\Models\Stock::where(
+                                                                                'product_id',
+                                                                                $item->id,
+                                                                            )->first();
+                                                                        @endphp
                                                                         <option value="{{ $item->id }}"
+                                                                            @if ($qty->stock_quantity < 1) disabled style="color: #fb5200;" @endif
                                                                             item-title="{{ $item->product_name }} ({{ $item->unit->title }})"
-                                                                            item-price="{{ $item->price }}"> {{ $item->product_name }} ({{ $item->unit->title }})
+                                                                            item-price="{{ $item->price }}">
+                                                                            {{ $item->product_name }}
+                                                                            ({{ $item->unit->title }})
+                                                                            ({{ $qty->stock_quantity }})
                                                                         </option>
                                                                     @endforeach
                                                                 </select>
@@ -100,22 +112,67 @@
                                                 </table>
                                             </div>
                                         </div>
-                                        <div class="form-group col-sm-12 col-md-4 col-lg-4">
-                                            <label>Date *</label>
-                                            <input name="date" id="date" type="date"
+                                        <div class="form-group col-sm-4 col-md-3 col-lg-3">
+                                            <label>Selling Amount</label>
+                                            {{-- <input name="date" id="date" type="date"
                                                 value="{{ isset($data['purchase']) ? $data['purchase']->note : date('Y-m-d') }}"
-                                                class="form-control" required>
+                                                class="form-control" required> --}}
+                                            <input type="number" name="sales_price" id="totol" class="form-control"
+                                                placeholder="0.00" readonly>
                                         </div>
-                                        <div class="form-group col-sm-12 col-md-4 col-lg-4">
-                                            <label>Note</label>
-                                            <input value="{{ isset($data['purchase']) ? $data['purchase']->note : null }}"
-                                                class="form-control" type="text" name="note" id="note"
-                                                placeholder="Note">
+                                        <div class="form-group col-sm-4 col-md-3 col-lg-3">
+                                            <label>Discount method</label>
+                                            <select name="discount_method" class="form-control" id="discount_method">
+                                                <option value="1" selected>In Percentage</option>
+                                                <option value="2">Solid Amount</option>
+                                            </select>
                                         </div>
-                                        <div class="form-group col-sm-12 col-md-4 col-lg-4">
+                                        <div class="form-group col-sm-4 col-md-3 col-lg-3">
+                                            <label>Discount Rate</label>
+                                            <input value="0.00" step="0.01" type="number" class="form-control"
+                                                name="discount_rate" id="discount_rate" placeholder="0.00">
+                                        </div>
+                                        <div class="form-group col-sm-4 col-md-3 col-lg-3">
+                                            <label>Dicount Amount</label>
+                                            <input readonly type="number" class="form-control" name="discount_amount"
+                                                id="discount_amount" placeholder="0.00">
+                                        </div>
+                                        {{-- <div class="form-group col-sm-4 col-md-3 col-lg-3">
+                                            <label>Vat</label>
+                                            <input readonly value="0.00" type="number" class="form-control"
+                                                name="tax_amount" id="tax_amount" placeholder="0.00">
+                                        </div> --}}
+                                        <div class="form-group col-sm-4 col-md-3 col-lg-3">
+                                            <label>Total Payable</label>
+                                            <input readonly type="number" class="form-control" name="total_payable"
+                                                id="total_payable" placeholder="0.00">
+                                        </div>
+                                        <div class="form-group col-sm-4 col-md-3 col-lg-3">
+                                            <label>Payment Methods *</label>
+                                            <select name="payment_method_id" id="payment_method_id" class="form-control">
+                                                <option value='' selected>Select Payment Method</option>
+                                                @foreach ($data['paymentMethods'] as $pm)
+                                                    <option @selected($pm->is_default) value="{{ $pm->id }}">
+                                                        {{ $pm->title }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-sm-4 col-md-3 col-lg-3">
+                                            <label>Paid Amount</label>
+                                            <input value="0.00" step="0.01" type="number" class="form-control"
+                                                name="paid_amount" id="paid_amount" placeholder="0.00">
+                                        </div>
+                                        {{-- <div class="form-group col-sm-4 col-md-3 col-lg-3">
                                             <label>Total</label>
-                                            <input value="{{ isset($data['purchase']) ? $data['purchase']->total : null }}"
-                                                class="form-control" type="text" name="total" id="totol" placeholder="0.00" readonly>
+                                            <input
+                                                value=""
+                                                class="form-control" type="text" name="total" id="totol"
+                                                placeholder="0.00" readonly>
+                                        </div> --}}
+                                        <div class="form-group col-sm-4 col-md-3 col-lg-3">
+                                            <label>Note</label>
+                                            <input value="" class="form-control" type="text" name="note"
+                                                id="note" placeholder="Note">
                                         </div>
                                     </div>
                                 </div>
@@ -132,79 +189,109 @@
 @endsection
 @section('script')
     <script>
-        $(document).ready(function() {
+       $(document).ready(function() {
+    // Function to calculate the total, discount, and payable amount
+    function calculate(isDefaultRecipientAmt) {
+        $('#total_temp').val($('#quantity_temp').val() * $('#unit_price_temp').val());
 
-            $('#item_id_temp').on('change', function(e) {
-                $('#unit_price_temp').val($('#item_id_temp option:selected').attr('item-price'));
-                $('#quantity_temp').val(1);
-                calculate(true);
-            });
-
-            $('#expanse-table').bind('keyup, input', function(e) {
-                if ($(e.target).is('.calculate')) {
-                    calculate(true);
-                }
-            });
-            $('#table-data').bind('click', function(e) {
-                $(e.target).is('.btn-del') && e.target.closest('tr').remove();
-                $(".serial").each(function(index) {
-                    $(this).html(index + 1);
-                });
-                calculate(true);
-            });
-            $('#btn-add').click(function() {
-                let item_id = $('#item_id_temp').val();
-                let item_title = $('#item_id_temp option:selected').attr('item-title');
-                let item_price = $('#item_id_temp option:selected').attr('item-price');
-
-                let unit_price_temp = $('#unit_price_temp').val();
-                let quantity_temp = $('#quantity_temp').val();
-                let total_temp = $('#total_temp').val();
-                let td = '';
-                if (!(item_id && unit_price_temp && quantity_temp && total_temp)) return alert(
-                    "Please fill up required field!");
-
-                td += '<tr>';
-                td += '<td class="serial"></td>';
-                td += '<td><input type="hidden" value="' + item_id + '" name="item_id[]">' + item_title + '</td>';
-                td += '<td><input type="number" value="' + unit_price_temp +
-                    '" class="form-control form-control-sm calculate" name="unit_price[]" placeholder="0.00" required></td>';
-                td += '<td><input type="number" value="' + quantity_temp +
-                    '" class="form-control form-control-sm calculate" name="quantity[]" placeholder="0.00" required></td>';
-                td += '<td><input type="number" value="' + total_temp +
-                    '" class="form-control form-control-sm" name="sub_total[]" placeholder="0.00" disabled></td>';
-                td +=
-                    '<td><button class="btn btn-sm btn-danger btn-del" type="button"><i class="fa-solid fa-trash btn-del"></i></button></td>';
-                td += '</tr>';
-
-                $('#table-data').append(td);
-                $(".serial").each(function(index) {
-                    $(this).html(index + 1);
-                });
-
-                $('#item_id_temp').val('');
-                $('#unit_price_temp').val('');
-                $('#quantity_temp').val('');
-                $('#total_temp').val('');
-                calculate(true);
-            });
+        let total = 0;
+        $('input[name="sub_total[]"]').each(function() {
+            total += parseFloat($(this).val());
         });
 
-        $('#form-submit').submit(function(e) {
-            if (!$('input[name="item_id[]"]').length) {
-                e.preventDefault();
-                alert('Please Select Item!');
-            }
-        });
+        $('#totol').val(total);
+        calculateDiscount(total);
+    }
 
-        function calculate(isDefaultRecipentAmt) {
+    // Function to calculate discount and total payable
+    function calculateDiscount(total) {
+        let discountMethod = $('#discount_method').val();
+        let discountRate = parseFloat($('#discount_rate').val());
+        let discountAmount = 0;
 
-            $('#total_temp').val($('#quantity_temp').val() * $('#unit_price_temp').val());
-            let item_id = $('input[name="item_id[]"]');
-            let total = 0;
-            for (let i = 0; i < item_id.length; i++)
-            total += $('input[name="sub_total[]"]')[i].value = ($('input[name="unit_price[]"]')[i].value * $('input[name="quantity[]"]')[i].value);
-            $('#totol').val(total);
+        if (discountMethod == '1') { // Percentage discount
+            discountAmount = (total * discountRate) / 100;
+        } else if (discountMethod == '2') { // Solid amount discount
+            discountAmount = discountRate;
         }
+
+        $('#discount_amount').val(discountAmount.toFixed(2));
+        let totalPayable = total - discountAmount;
+        $('#total_payable').val(totalPayable.toFixed(2));
+    }
+
+    // Event binding for item selection
+    $('#item_id_temp').on('change', function(e) {
+        $('#unit_price_temp').val($('#item_id_temp option:selected').attr('item-price'));
+        $('#quantity_temp').val(1);
+        calculate(true);
+    });
+
+    // Event binding for table inputs
+    $('#expanse-table').bind('keyup, input', function(e) {
+        if ($(e.target).is('.calculate')) {
+            calculate(true);
+        }
+    });
+
+    // Event binding for delete button
+    $('#table-data').bind('click', function(e) {
+        if ($(e.target).is('.btn-del')) {
+            e.target.closest('tr').remove();
+            $(".serial").each(function(index) {
+                $(this).html(index + 1);
+            });
+            calculate(true);
+        }
+    });
+
+    // Event binding for adding new item
+    $('#btn-add').click(function() {
+        let item_id = $('#item_id_temp').val();
+        let item_title = $('#item_id_temp option:selected').attr('item-title');
+        let item_price = $('#item_id_temp option:selected').attr('item-price');
+        let unit_price_temp = $('#unit_price_temp').val();
+        let quantity_temp = $('#quantity_temp').val();
+        let total_temp = $('#total_temp').val();
+
+        if (!(item_id && unit_price_temp && quantity_temp && total_temp)) {
+            return alert("Please fill up required fields!");
+        }
+
+        let td = `<tr>
+            <td class="serial"></td>
+            <td><input type="hidden" value="${item_id}" name="item_id[]">${item_title}</td>
+            <td><input type="number" value="${unit_price_temp}" class="form-control form-control-sm calculate" name="unit_price[]" placeholder="0.00" required></td>
+            <td><input type="number" value="${quantity_temp}" class="form-control form-control-sm calculate" name="quantity[]" placeholder="0.00" required></td>
+            <td><input type="number" value="${total_temp}" class="form-control form-control-sm" name="sub_total[]" placeholder="0.00" disabled></td>
+            <td><button class="btn btn-sm btn-danger btn-del" type="button"><i class="fa-solid fa-trash btn-del"></i></button></td>
+        </tr>`;
+
+        $('#table-data').append(td);
+        $(".serial").each(function(index) {
+            $(this).html(index + 1);
+        });
+
+        $('#item_id_temp').val('');
+        $('#unit_price_temp').val('');
+        $('#quantity_temp').val('');
+        $('#total_temp').val('');
+        calculate(true);
+    });
+
+    // Event binding for form submission
+    $('#form-submit').submit(function(e) {
+        if (!$('input[name="item_id[]"]').length) {
+            e.preventDefault();
+            alert('Please Select Item!');
+        }
+    });
+
+    // Event binding for discount calculation
+    $('#discount_rate, #discount_method').on('change keyup', function() {
+        calculateDiscount(parseFloat($('#totol').val()));
+    });
+});
+
     </script>
 @endsection

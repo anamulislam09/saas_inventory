@@ -33,6 +33,7 @@ use App\Http\Controllers\admin\PurchaseRequisitionController;
 use App\Http\Controllers\admin\RecipeController;
 use App\Http\Controllers\admin\ReportController;
 use App\Http\Controllers\admin\RoleController;
+use App\Http\Controllers\admin\SalesController;
 use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\SupplierController;
 use App\Http\Controllers\admin\UnitController;
@@ -225,7 +226,7 @@ Route::prefix('admin')->group(function () {
             /*-------------------------- payments route ends here----------------------*/
 
             /*-------------------------- payments route ends here----------------------*/
-            Route::prefix('sales')->controller(IssueItemController::class)->group(function () {
+            Route::prefix('sales')->controller(SalesController::class)->group(function () {
                 Route::get('', 'index')->name('sales.index');
                 Route::post('store', 'store')->name('sales.store');
                 Route::get('create', 'createOrEdit')->name('sales.create');

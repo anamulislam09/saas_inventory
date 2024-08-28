@@ -5,26 +5,32 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class IssueItem extends Model
+class Sales extends Model
 {
     use HasFactory;
-    protected $fillable = 
+    protected $fillable =
     [
         'client_id',
         'invoice_no',
         'date',
-        'total_price',
+        'sales_price',
+        'discount_method',
+        'discount_rate',
+        'discount',
+        'vat_tax',
+        'receiveable_amount',
+        'receive_amount',
         'note',
         'status',
         'created_by_id',
-        'updated_by_id',
+        'updated_by_id'
     ];
     public function created_by()
     {
         return $this->belongsTo(Admin::class, 'created_by_id');
     }
-    public function issue_item_details()
+    public function sales_details()
     {
-        return $this->hasMany(IssueItemDetails::class, 'issue_id')->with('product');
+        return $this->hasMany(Sales_Details::class, 'sales_id')->with('product');
     }
 }
