@@ -14,6 +14,7 @@ return new class extends Migration
             $table->integer('vendor_id');
             $table->integer('payment_method_id');
             $table->integer('purchase_id')->nullable();
+            $table->integer('sales_id')->nullable();
             $table->date('date');
             $table->double('amount',20,2);
             $table->text('note')->nullable();

@@ -11,6 +11,7 @@ class Sales extends Model
     protected $fillable =
     [
         'client_id',
+        'vendor_id',
         'invoice_no',
         'date',
         'sales_price',
@@ -25,6 +26,10 @@ class Sales extends Model
         'created_by_id',
         'updated_by_id'
     ];
+    public function vendor()
+    {
+        return $this->belongsTo(Vendor::class, 'vendor_id');
+    }
     public function created_by()
     {
         return $this->belongsTo(Admin::class, 'created_by_id');

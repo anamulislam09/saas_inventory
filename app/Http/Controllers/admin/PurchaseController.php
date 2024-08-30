@@ -207,7 +207,6 @@ class PurchaseController extends Controller
         $vendorledger->client_id = $client_id;
         $vendorledger->vendor_id = $vendor_id;
         $vendorledger->purchase_id = $purchase->id;
-        $vendorledger->payment_id = $payment_id;
         $vendorledger->particular = 'Purchase';
         $vendorledger->date = $date;
         $vendorledger->credit_amount = $total_payable;

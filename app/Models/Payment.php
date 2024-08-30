@@ -14,6 +14,7 @@ class Payment extends Model
         'vendor_id',
         'payment_method_id',
         'purchase_id',
+        'sales_id',
         'date',
         'amount',
         'note',

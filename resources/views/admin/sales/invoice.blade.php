@@ -7,35 +7,27 @@
                 <div class="logo"><img src="{{ asset('public/uploads/basic-info/' . $data['basicInfo']->logo) }}"
                         alt="Logo" /></div>
                 <div class="title">
-                    <h1 class="h1">INVOICE #<span class="invoiceVal invoice_num">{{ $data['sales']->vouchar_no }}</span></h1>
+                    <h1 class="h1">INVOICE #<span class="invoiceVal invoice_num">{{ $data['sales']->invoice_no }}</span></h1>
                     <p class="p">Vouchar Date: <span id="invoice_date">{{ date('dS M Y', strtotime($data['sales']->date)) }}</span></p>
                     <p class="p mt-0"><span><svg class="barcode"></svg></span></p>
                 </div>
-                {{-- <div class="title">
-                    <p class="p">
-                        <svg class="barcode"></svg>
-                    </p>
-                    {{-- <p class="p"><span><svg class="barcode"></svg></span></p>
-                </div> --}}
             </div>
             <div id="invoice-mid">
-                {{-- <div class="cta-group mobile-btn-group">
-                    <a class="a" href="javascript:void(0);" class="btn-primary">Approve</a>
-                    <a class="a" href="javascript:void(0);" class="btn-default">Reject</a>
-                </div> --}}
                 <div class="clearfix">
                     <div class="col-left">
-                        {{-- <div class="clientlogo"><img
-                                src="https://cdn3.iconfinder.com/data/icons/daily-sales/512/Sale-card-address-512.png"
-                                alt="Sup" /></div> --}}
+                        {{-- <div class="clientlogo"> --}}
+                            {{-- <img --}}
+                                {{-- src="https://cdn3.iconfinder.com/data/icons/daily-sales/512/Sale-card-address-512.png"
+                                alt="Sup" /> --}}
+                            {{-- </div> --}}
                         <div class="clientinfo">
-                            {{-- <h2 class="h2" id="vendor">{{ $data['sales']->vendor->name }},
-                                {{ $data['sales']->vendor->organization }}</h2> --}}
-                            {{-- <p class="p"><span
+                            <h2 class="h2" id="vendor">{{ $data['sales']->vendor->name }},
+                                {{ $data['sales']->vendor->organization }}</h2>
+                            <p class="p"><span
                                     id="address">{{ $data['sales']->vendor->address }}</span><br><span
                                     id="city"></span><span id="country"></span><span id="zip"></span><span
                                     id="tax_num">{{ $data['sales']->vendor->phone }},
-                                    {{ $data['sales']->vendor->email }}</span><br></p> --}}
+                                    {{ $data['sales']->vendor->email }}</span><br></p>
                         </div>
                     </div>
                     <div class="col-right">
@@ -175,7 +167,7 @@
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/barcodes/JsBarcode.code128.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
     <script type="text/javascript">
-        JsBarcode(".barcode", "{{ $data['sales']->vouchar_no }}", {
+        JsBarcode(".barcode", "{{ $data['sales']->invoice_no }}", {
             // format: "upc",
             // lineColor: "#0aa",
             width: 1,

@@ -5,12 +5,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Issue Items</h1>
+                        <h1 class="m-0">Sales</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Issue Items</li>
+                            <li class="breadcrumb-item active">Sales</li>
                         </ol>
                     </div>
                 </div>
@@ -36,8 +36,8 @@
                                                     <thead>
                                                         <tr>
                                                             <th width="5%">SN</th>
+                                                            <th>Vendor</th>
                                                             <th>Item</th>
-                                                            {{-- <th>Purchase Price</th> --}}
                                                             <th>Sales Price</th>
                                                             <th>Quantity</th>
                                                             <th>Sub Total</th>
@@ -45,6 +45,17 @@
                                                         </tr>
                                                         <tr class="p-0 m-0">
                                                             <th>#</th>
+                                                            <th>
+                                                                <select class="form-control form-control-sm"
+                                                                    id="vendor_id" name="vendor_id">
+                                                                    <option value="" selected>Select Vendor</option>
+                                                                    @foreach ($data['vendors'] as $key => $vendor)
+                                                                        <option value="{{ $vendor->id }}" vendor-name="{{ $vendor->name }}">
+                                                                            {{ $vendor->name }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </th>
                                                             <th>
                                                                 <select class="form-control form-control-sm"
                                                                     id="item_id_temp">
@@ -247,6 +258,8 @@
 
     // Event binding for adding new item
     $('#btn-add').click(function() {
+        let vendor_id = $('#vendor_id').val();
+        let vendor_name = $('#vendor_id option:selected').attr('vendor-name');
         let item_id = $('#item_id_temp').val();
         let item_title = $('#item_id_temp option:selected').attr('item-title');
         let item_price = $('#item_id_temp option:selected').attr('item-price');
@@ -260,6 +273,7 @@
 
         let td = `<tr>
             <td class="serial"></td>
+            <td><input type="hidden" value="${vendor_id}" name="vendor_id[]">${vendor_name}</td>
             <td><input type="hidden" value="${item_id}" name="item_id[]">${item_title}</td>
             <td><input type="number" value="${unit_price_temp}" class="form-control form-control-sm calculate" name="unit_price[]" placeholder="0.00" required></td>
             <td><input type="number" value="${quantity_temp}" class="form-control form-control-sm calculate" name="quantity[]" placeholder="0.00" required></td>

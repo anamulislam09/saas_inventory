@@ -16,6 +16,7 @@ return new class extends Migration
             $table->tinyInteger('client_id');
             $table->integer('vendor_id');
             $table->integer('purchase_id')->nullable();
+            $table->integer('sales_id')->nullable();
             $table->integer('payment_id')->nullable();
             $table->string('particular')->nullable();
             $table->date('date');
