@@ -10,8 +10,10 @@ class SupplierLedger extends Model
     use HasFactory;
     protected $fillable = 
     [
+        'client_id',
         'supplier_id',
         'purchase_id',
+        'sales_id',
         'payment_id',
         'particular',
         'date',

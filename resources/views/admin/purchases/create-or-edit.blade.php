@@ -48,11 +48,11 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group col-sm-4 col-md-4 col-lg-4">
-                                            <label>Vendor *</label>
-                                            <select name="vendor_id" id="vendor_id" class="form-control" required
+                                            <label>Suppliers *</label>
+                                            <select name="supplier_id" id="vendor_id" class="form-control" required
                                                 @isset($data['purchase']) @disabled(true) @endisset>
-                                                <option value="" selected>Select Vendor</option>
-                                                @foreach ($data['vendors'] as $vendor)
+                                                <option value="" selected>Select Supplier</option>
+                                                @foreach ($data['suppliers'] as $vendor)
                                                     <option
                                                         @isset($data['purchase']) @selected($vendor->id == $data['purchase']->vendor_id) @endisset
                                                         value="{{ $vendor->id }}">

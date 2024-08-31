@@ -37,7 +37,7 @@
                                                 <tr>
                                                     <th>SN</th>
                                                     <th>Vouchar No</th>
-                                                    <th>Vendor|Organization</th>
+                                                    <th>Supplier|Organization</th>
                                                     <th>Date</th>
                                                     <th>Vat/Tax</th>
                                                     <th>Discount</th>
@@ -54,8 +54,8 @@
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
                                                         <td><a target="_blank" href="{{ route('purchases.vouchar',[$purchase->id]) }}"><b>{{ $purchase->vouchar_no }}</b></a></td>
-                                                        <td>{{ $purchase->vendor->name }}<br>
-                                                            <strong>{{ $purchase->vendor->organization }}</strong>
+                                                        <td>{{ $purchase->supplier->name }}<br>
+                                                            <strong>{{ $purchase->supplier->organization }}</strong>
                                                         </td>
                                                         <td>{{ $purchase->date }}</td>
                                                         <td>{{ $data['currency_symbol'] }} {{ $purchase->vat_tax }}</td>
@@ -90,22 +90,6 @@
                                                     </tr>
                                                 @endforeach
                                             </tbody>
-                                            {{-- <tfoot>
-                                                <tr>
-                                                    <th>SN</th>
-                                                    <th>Vouchar No</th>
-                                                    <th>Supplier|Mobile</th>
-                                                    <th>Date</th>
-                                                    <th>Vat/Tax</th>
-                                                    <th>Discount</th>
-                                                    <th>Payable</th>
-                                                    <th>Paid|Due</th>
-                                                    <th>Payment Status</th>
-                                                    <th>Note</th>
-                                                    <th>Created By</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </tfoot> --}}
                                         </table>
                                     </div>
                                 </div>

@@ -22,16 +22,16 @@ class DashboardController extends Controller
         $data['pending_orders_in_kit'] = Order::whereIn('order_status',[1,3])->count();
         $data['todays_orders'] = Order::where('created_at','like',"%". date('Y-m-d') ."%")->count();
         $data['my_orders'] = Order::where('created_by_id',Auth::guard('admin')->user()->id)->where('created_at','like',"%". date('Y-m-d') ."%")->count();
-        $data['todays_collections'] = Collection::where('payment_status',1)->where('created_at','like',"%". date('Y-m-d') ."%")->sum('paid_amount');
+        $data['todays_collections'] = Collection::where('status',1)->where('created_at','like',"%". date('Y-m-d') ."%")->sum('total_collection');
         $data['weekly_collections'] = Collection::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
-                                        ->where('payment_status',1)
-                                        ->sum('paid_amount');
+                                        ->where('status',1)
+                                        ->sum('total_collection');
         $data['monthly_collections'] = Collection::whereMonth('created_at', Carbon::now()->month)
                                         ->whereYear('created_at', Carbon::now()->year)
-                                        ->where('payment_status',1)
-                                        ->sum('paid_amount');
-        $data['total_collections'] = Collection::where('payment_status',1)
-                                        ->sum('paid_amount');
+                                        ->where('status',1)
+                                        ->sum('total_collection');
+        $data['total_collections'] = Collection::where('status',1)
+                                        ->sum('total_collection');
         return view('admin.index',compact('data'));
     }
     public function pendings()

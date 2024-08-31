@@ -14,7 +14,7 @@ class VendorLedger extends Model
         'vendor_id',
         'purchase_id',
         'sales_id',
-        'payment_id',
+        'collection_id',
         'particular',
         'date',
         'debit_amount',

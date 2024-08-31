@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\BasicInfo;
+use App\Models\Collection;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\Sales;
@@ -21,9 +22,11 @@ class SalesController extends Controller
     {
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
         if (Auth::guard('admin')->user()->client_id == 0) {
-            $data['sales'] = Sales::where('client_id', Auth::guard('admin')->user()->id)->with(['created_by'])->orderBy('id', 'desc')->get();
+            $data['sales'] = Sales::where('client_id', Auth::guard('admin')->user()->id)->with(['vendor', 'created_by'])->orderBy('id', 'desc')->get();
+            $data['paymentMethods'] = PaymentMethod::where('client_id', Auth::guard('admin')->user()->id)->orderBy('title', 'asc')->get();
         } else {
-            $data['sales'] = Sales::where('client_id', $client->id)->with(['created_by'])->orderBy('id', 'desc')->get();
+            $data['sales'] = Sales::where('client_id', $client->id)->with(['vendor', 'created_by'])->orderBy('id', 'desc')->get();
+            $data['paymentMethods'] = PaymentMethod::where('client_id', $client->id)->orderBy('title', 'asc')->get();
         }
 
         $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
@@ -72,19 +75,24 @@ class SalesController extends Controller
         //Issue Items......
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
         $date = date('Y-m-d');
+        $receive_amount = $request->paid_amount;
+        // $vendor_id = $request->vendor_id;
+        $vendor_id = is_array($request->vendor_id) ? $request->vendor_id[0] : $request->vendor_id;
+
+        $note = $request->note;
 
         $data =
             [
                 'invoice_no' => $this->formatSrl(Sales::latest()->limit(1)->max('invoice_no') + 1),
                 'date' => date('Y-m-d'),
                 'sales_price' => $request->sales_price,
+                'vendor_id' => $vendor_id,
                 'discount_method' => $request->discount_method,
                 'discount_rate' => $request->discount_rate,
                 'discount' => $request->discount_amount,
-                // 'vat_tax' => $request->total,
                 'receiveable_amount' => $request->total_payable,
-                'receive_amount' => $request->paid_amount,
-                'note' => $request->note,
+                'receive_amount' => $receive_amount,
+                'note' => $note,
                 'status' => 1,
                 'client_id' => (Auth::guard('admin')->user()->client_id == 0) ? Auth::guard('admin')->user()->id : $client->id,
                 'created_by_id' => Auth::guard('admin')->user()->id,
@@ -115,26 +123,56 @@ class SalesController extends Controller
             $stock->save();
         }
 
-          //Supplier Ledger Purchase Create**********
+        //Supplier Ledger Purchase Create**********
         //   $vendor_id = is_array($request->vendor_id) ? $request->vendor_id[0] : $request->vendor_id;
 
-          $vendorledger = new VendorLedger();
-          $vendorledger->client_id = (Auth::guard('admin')->user()->client_id == 0) ? Auth::guard('admin')->user()->id : $client->id;
-          $vendorledger->vendor_id = $request->vendor_id;
-          $vendorledger->sales_id = $sales->id;
-          $vendorledger->particular = 'Sales';
-          $vendorledger->date = $date;
-          $vendorledger->credit_amount = $request->total_payable;
-          $vendorledger->note = $request->note;
-          $vendorledger->status = 1;
-          $vendorledger->created_by_id = Auth::guard('admin')->user()->id;
-          $vendorledger->save();
-          //End*****
+        $vendorledger = new VendorLedger();
+        $vendorledger->client_id = (Auth::guard('admin')->user()->client_id == 0) ? Auth::guard('admin')->user()->id : $client->id;
+        $vendorledger->vendor_id = $vendor_id;
+        $vendorledger->sales_id = $sales->id;
+        $vendorledger->particular = 'Sales';
+        $vendorledger->date = $date;
+        $vendorledger->credit_amount = $request->total_payable;
+        $vendorledger->note = $request->note;
+        $vendorledger->status = 1;
+        $vendorledger->created_by_id = Auth::guard('admin')->user()->id;
+        $vendorledger->save();
+        //End*****
 
-          //Supplier Balance Update****
-          $vendor = Vendor::find($request->vendor_id);
-          $vendor->current_balance = $vendor->current_balance - ((float) $request->total_payable -  (float) $request->paid_amount);
-          $vendor->save();
+        if ($receive_amount) {
+            //Payment Create**********
+            $collection = new Collection();
+            $collection->client_id = $vendorledger->client_id = (Auth::guard('admin')->user()->client_id == 0) ? Auth::guard('admin')->user()->id : $client->id;
+            $collection->vendor_id = $vendor_id;
+            $collection->collection_method_id = $request->payment_method_id;
+            $collection->sales_id = $sales->id;
+            $collection->date = $date;
+            $collection->total_collection = $receive_amount;
+            $collection->note = $note;
+            $collection->status = 1;
+            $collection->created_by_id = Auth::guard('admin')->user()->id;
+            $collection->save();
+            //End*****
+
+            //Supplier Ledger Payment Create**********
+            $vendorLedger = new VendorLedger();
+            $vendorLedger->vendor_id = $vendor_id;
+            $vendorLedger->client_id = (Auth::guard('admin')->user()->client_id == 0) ? Auth::guard('admin')->user()->id : $client->id;
+            $vendorLedger->collection_id = $collection->id;
+            $vendorLedger->particular = 'Paid To Vendor';
+            $vendorLedger->date = $date;
+            $vendorLedger->debit_amount = $receive_amount;
+            $vendorLedger->note = $note;
+            $vendorLedger->status = 1;
+            $vendorLedger->created_by_id = Auth::guard('admin')->user()->id;
+            $vendorLedger->save();
+            //End*****
+        }
+
+        //Supplier Balance Update****
+        $vendor = Vendor::find($vendor_id);
+        $vendor->current_balance = $vendor->current_balance - ((float) $request->total_payable -  (float) $request->paid_amount);
+        $vendor->save();
         return redirect()->route('sales.index')->with('alert', ['messageType' => 'success', 'message' => 'Data Inserted Successfully!']);
     }
 

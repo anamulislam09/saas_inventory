@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('basic_infos', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('client_id');
             $table->string('title',50);
             $table->string('moto',255);
             $table->string('phone1',15);

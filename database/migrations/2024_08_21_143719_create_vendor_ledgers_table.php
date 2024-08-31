@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('vendor_id');
             $table->integer('purchase_id')->nullable();
             $table->integer('sales_id')->nullable();
-            $table->integer('payment_id')->nullable();
+            $table->integer('collection_id')->nullable();
             $table->string('particular')->nullable();
             $table->date('date');
             $table->double('debit_amount',20,2)->default(0);

@@ -51,18 +51,6 @@
                                             <label>Address</label>
                                             <textarea class="form-control" name="address" placeholder="Address" cols="30" rows="2">{{ isset($data['item']) ? $data['item']->address : null }}</textarea>
                                         </div>
-                                        @if(!isset($data['item']))
-                                            <div class="form-group col-sm-6 col-md-6 col-lg-6">
-                                                <label>Opening Payable</label>
-                                                <input value="{{ isset($data['item']) ? $data['item']->opening_payable : null }}" type="number" class="form-control" name="opening_payable" placeholder="0.00" required>
-                                            </div>
-                                        @endif
-                                        @if(!isset($data['item']))
-                                            <div class="form-group col-sm-6 col-md-6 col-lg-6">
-                                                <label>Opening Receivable</label>
-                                                <input value="{{ isset($data['item']) ? $data['item']->opening_receivable : null }}" type="number" class="form-control" name="opening_receivable" placeholder="0.00" required>
-                                            </div>
-                                        @endif
                                         <div class="form-group col-sm-12 col-md-12 col-lg-12">
                                             <label>Status *</label>
                                             <select name="status" id="status" class="form-control">

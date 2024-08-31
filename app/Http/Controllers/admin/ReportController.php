@@ -16,6 +16,7 @@ use App\Models\Order;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Sales;
 use App\Models\Vendor;
 use App\Models\VendorLedger;
 use Illuminate\Http\Request;
@@ -56,14 +57,14 @@ class ReportController extends Controller
     {
         if ($request->isMethod('post')) {
             $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
-            $vendor_id = $request->vendor_id;
+            $supplier_id = $request->supplier_id;
             $from_date = $request->from_date;
             $to_date = $request->to_date;
             $purchase = Purchase::query();
-            if ($vendor_id) {
-                $purchase = $purchase->where('vendor_id', $vendor_id);
+            if ($supplier_id) {
+                $purchase = $purchase->where('supplier_id', $supplier_id);
             } else {
-                $purchase = $purchase->with(['vendor']);
+                $purchase = $purchase->with(['supplier']);
             }
             if ($from_date && $to_date) {
                 $purchase->whereBetween('date', [$from_date, $to_date]);
@@ -75,38 +76,68 @@ class ReportController extends Controller
         } else {
             $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
             if (Auth::guard('admin')->user()->client_id == 0) {
-                $data['vendors'] = Vendor::where('client_id', Auth::guard('admin')->user()->id)->where('status', 1)->orderBy('name', 'asc')->get();
+                $data['suppliers'] = Supplier::where('client_id', Auth::guard('admin')->user()->id)->where('status', 1)->orderBy('name', 'asc')->get();
             } else {
-                $data['vendors'] = Vendor::where('client_id', $client->id)->where('status', 1)->orderBy('name', 'asc')->get();
+                $data['suppliers'] = Supplier::where('client_id', $client->id)->where('status', 1)->orderBy('name', 'asc')->get();
             }
             return view('admin.reports.purchase', compact('data'));
         }
     }
     public function sales(Request $request)
     {
+
         if ($request->isMethod('post')) {
             $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
-            $created_by_id = $request->created_by_id;
+            $vendor_id = $request->vendor_id;
             $from_date = $request->from_date;
             $to_date = $request->to_date;
-            $orders = Order::where('order_status', 5);
-            if ($created_by_id) {
-                $orders = $orders->where(['created_by_id' => $created_by_id]);
+            $sales = Sales::query();
+            if ($vendor_id) {
+                $sales = $sales->where('vendor_id', $vendor_id);
             } else {
-                $orders = $orders->with(['admin']);
+                $sales = $sales->with(['vendor']);
             }
             if ($from_date && $to_date) {
-                $orders = $orders->whereBetween('created_at', [$from_date, $to_date]);
+                $sales->whereBetween('date', [$from_date, $to_date]);
             } elseif ($from_date) {
-                $orders = $orders->whereDate('created_at', '=', $from_date);
+                $sales->where('date', '=', $from_date);
             }
-            $data['orders'] = $orders->get();
+            $data['sales'] = $sales->get();
             return response()->json($data, 200);
         } else {
-            $created_by_ids = Order::groupBy('created_by_id')->pluck('created_by_id')->toArray();
-            $data['admins'] = Admin::whereIn('id', $created_by_ids)->where('status', 1)->orderBy('name', 'asc')->get();
+            $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+            if (Auth::guard('admin')->user()->client_id == 0) {
+                $data['vendors'] = Vendor::where('client_id', Auth::guard('admin')->user()->id)->where('status', 1)->orderBy('name', 'asc')->get();
+            } else {
+                $data['vendors'] = Vendor::where('client_id', $client->id)->where('status', 1)->orderBy('name', 'asc')->get();
+            }
             return view('admin.reports.sales', compact('data'));
         }
+
+
+        // if ($request->isMethod('post')) {
+        //     $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
+        //     $created_by_id = $request->created_by_id;
+        //     $from_date = $request->from_date;
+        //     $to_date = $request->to_date;
+        //     $orders = Order::where('order_status', 5);
+        //     if ($created_by_id) {
+        //         $orders = $orders->where(['created_by_id' => $created_by_id]);
+        //     } else {
+        //         $orders = $orders->with(['admin']);
+        //     }
+        //     if ($from_date && $to_date) {
+        //         $orders = $orders->whereBetween('created_at', [$from_date, $to_date]);
+        //     } elseif ($from_date) {
+        //         $orders = $orders->whereDate('created_at', '=', $from_date);
+        //     }
+        //     $data['orders'] = $orders->get();
+        //     return response()->json($data, 200);
+        // } else {
+        //     $created_by_ids = Order::groupBy('created_by_id')->pluck('created_by_id')->toArray();
+        //     $data['admins'] = Admin::whereIn('id', $created_by_ids)->where('status', 1)->orderBy('name', 'asc')->get();
+        //     return view('admin.reports.sales', compact('data'));
+        // }
     }
 
 

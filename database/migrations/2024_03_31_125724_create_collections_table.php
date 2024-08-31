@@ -10,19 +10,20 @@ return new class extends Migration
     {
         Schema::create('collections', function (Blueprint $table) {
             $table->id();
-            $table->integer('order_id');
-            $table->string('order_no')->nullable();
-            $table->integer('table_id')->nullable();
-            $table->integer('payment_method_id');
-            $table->double('total_amount', 20,2)->nullable();
+            $table->tinyInteger('client_id');
+            $table->integer('vendor_id');
+            $table->integer('collection_method_id');
+            $table->integer('sales_id')->nullable();
+            $table->date('date');
+            $table->double('amount',20,2);
             $table->double('discount', 20,2)->nullable();
             $table->double('vat', 20,2)->nullable();
-            $table->double('total_payable', 20,2)->default(0.00);
-            $table->double('paid_amount', 20,2)->default(0.00);
+            $table->double('total_collection_amount', 20,2)->default(0.00);
+            $table->double('total_collection', 20,2)->default(0.00);
             $table->text('note')->nullable();
-            $table->tinyInteger('payment_status')->default(1);
-            $table->integer('created_by_id');
-            $table->integer('approved_by_id')->nullable();
+            $table->tinyInteger('status')->default(1);
+            $table->integer('created_by_id')->nullable();
+            $table->integer('updated_by_id')->nullable();
             $table->timestamps();
         });
     }

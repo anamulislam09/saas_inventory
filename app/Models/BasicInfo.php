@@ -10,6 +10,7 @@ class BasicInfo extends Model
     use HasFactory;
     protected $fillable = 
     [
+        'client_id',
         'title',
         'moto',
         'phone1',

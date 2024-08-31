@@ -99,6 +99,8 @@ Route::prefix('admin')->group(function () {
             Route::prefix('basic-setup')->group(function () {
                 Route::prefix('basic-infos')->controller(BasicInfoController::class)->group(function () {
                     Route::get('', 'index')->name('basic-infos.index');
+                    Route::get('create', 'create')->name('basic-infos.create');
+                    Route::post('store', 'store')->name('basic-infos.store');
                     Route::put('update/{id}', 'update')->name('basic-infos.update');
                     Route::get('edit/{id?}', 'edit')->name('basic-infos.edit');
                 });
@@ -194,6 +196,17 @@ Route::prefix('admin')->group(function () {
             });
             /*-------------------------- vendor route ends here----------------------*/
 
+            /*-------------------------- Supplier route ends here----------------------*/
+            Route::prefix('suppliers')->controller(SupplierController::class)->group(function () {
+                Route::get('', 'index')->name('suppliers.index');
+                Route::post('store', 'store')->name('suppliers.store');
+                Route::put('update/{id}', 'update')->name('suppliers.update');
+                Route::get('create', 'createOrEdit')->name('suppliers.create');
+                Route::get('edit/{id?}', 'createOrEdit')->name('suppliers.edit');
+                Route::delete('delete/{id}', 'destroy')->name('suppliers.destroy');
+            });
+            /*-------------------------- Supplier route ends here----------------------*/
+
             /*-------------------------- purchases route start here----------------------*/
             Route::prefix('purchases')->controller(PurchaseController::class)->group(function () {
                 Route::get('', 'index')->name('purchases.index');
@@ -212,7 +225,6 @@ Route::prefix('admin')->group(function () {
                 Route::get('', 'index')->name('purchase-return.index');
                 Route::get('create', 'createOrEdit')->name('purchase-return.create');
                 Route::post('store', 'store')->name('purchase-return.store');
-              
             });
             /*-------------------------- purchases return route ends here----------------------*/
 
@@ -232,6 +244,7 @@ Route::prefix('admin')->group(function () {
                 Route::get('create', 'createOrEdit')->name('sales.create');
                 Route::get('invoice/{id}', 'invoice')->name('sales.invoice');
                 Route::get('invoice/{id}/{print}', 'invoice')->name('sales.invoice.print');
+                Route::post('collection/store', 'collection')->name('sales.collection.store');
             });
             /*-------------------------- payments route ends here----------------------*/
 
@@ -390,14 +403,14 @@ Route::prefix('admin')->group(function () {
                     Route::delete('delete/{id}', 'destroy')->name('recipes.destroy');
                 });
 
-                Route::prefix('suppliers')->controller(SupplierController::class)->group(function () {
-                    Route::get('', 'index')->name('suppliers.index');
-                    Route::post('store', 'store')->name('suppliers.store');
-                    Route::put('update/{id}', 'update')->name('suppliers.update');
-                    Route::get('create', 'createOrEdit')->name('suppliers.create');
-                    Route::get('edit/{id?}', 'createOrEdit')->name('suppliers.edit');
-                    Route::delete('delete/{id}', 'destroy')->name('suppliers.destroy');
-                });
+                // Route::prefix('suppliers')->controller(SupplierController::class)->group(function () {
+                //     Route::get('', 'index')->name('suppliers.index');
+                //     Route::post('store', 'store')->name('suppliers.store');
+                //     Route::put('update/{id}', 'update')->name('suppliers.update');
+                //     Route::get('create', 'createOrEdit')->name('suppliers.create');
+                //     Route::get('edit/{id?}', 'createOrEdit')->name('suppliers.edit');
+                //     Route::delete('delete/{id}', 'destroy')->name('suppliers.destroy');
+                // });
             });
             // Route::prefix('purchases')->controller(PurchaseController::class)->group(function () {
             //     Route::get('', 'index')->name('purchases.index');
@@ -409,8 +422,8 @@ Route::prefix('admin')->group(function () {
             //     Route::delete('payment/destroy', 'destroy')->name('purchases.payment.destroy');
             //     Route::get('purchase-requisition/{vouchar_no}', 'purchaseRequisition')->name('purchase-orders.purchase-requisition');
             // });
-            
-           
+
+
             Route::prefix('production-plans')->controller(ProductionPlanController::class)->group(function () {
                 Route::get('', 'index')->name('production-plans.index');
                 Route::get('create', 'createOrEdit')->name('production-plans.create');

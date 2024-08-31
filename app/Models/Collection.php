@@ -8,20 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 class Collection extends Model
 {
     use HasFactory;
-    protected $fillable = 
+    protected $fillable =
     [
-        'order_id',
-        'order_no',
-        'table_id',
-        'payment_method_id',
-        'total_amount',
-        'total_payable',
+        'client_id',
+        'vendor_id',
+        'collection_method_id',
+        'sales_id',
+        'date',
+        'amount',
         'discount',
-        'tax',
-        'paid_amount',
+        'vat',
+        'total_collection_amount',
+        'total_collection',
         'note',
-        'payment_status',
+        'status',
         'created_by_id',
-        'approved_by_id',
+        'updated_by_id'
     ];
 }

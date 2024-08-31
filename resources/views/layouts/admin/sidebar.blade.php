@@ -57,7 +57,8 @@
                         </ul>
                     </li>
 
-                    @if ( $authorization->hasMenuAccess(37) ||
+                    @if (
+                        $authorization->hasMenuAccess(37) ||
                             (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 0))
                         <li class="nav-item">
                             <a href="{{ route('units.index') }}"
@@ -156,8 +157,7 @@
                                     <a href="{{ route('payment-methods.index') }}"
                                         class="nav-link {{ request()->is('admin/inventory/setup/payment-methods*') ? 'active' : '' }}">
                                         <i class="nav-icon far fa-dot-circle text-warning"></i>
-                                        <p>Payment Methods <i
-                                                class="fas right fa-solid fa-plus add-new p-1"
+                                        <p>Payment Methods <i class="fas right fa-solid fa-plus add-new p-1"
                                                 add-new="{{ route('payment-methods.create') }}"></i></p>
                                     </a>
                                 </li>
@@ -497,6 +497,18 @@
                             </a>
                         </li>
                     @endif
+                    @if (
+                        $authorization->hasMenuAccess(33) ||
+                            (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        <li class="nav-item">
+                            <a href="{{ route('suppliers.index') }}"
+                                class="nav-link {{ request()->is('admin/suppliers*') ? 'active' : '' }}">
+                                <i class="far fa-dot-circle nav-icon"></i>
+                                <p>Suppliers <i class="fas right fa-solid fa-plus add-new p-1"
+                                        add-new="{{ route('suppliers.index') }}"></i></p>
+                            </a>
+                        </li>
+                    @endif
                 @endif
                 @if (
                     $authorization->hasMenuAccess(77) ||
@@ -512,7 +524,7 @@
                                     (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('purchases.index') }}"
-                                        class="nav-link {{ Request::routeIs('purchases.index')|| Request::routeIs('purchases.edit') ? 'active' : '' }}">
+                                        class="nav-link {{ Request::routeIs('purchases.index') || Request::routeIs('purchases.edit') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
                                         <p>Purchase <i class="fas right fa-solid fa-plus add-new p-1"
                                                 add-new="{{ route('expense-categories.create') }}"></i></p>
@@ -561,7 +573,7 @@
                                     (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('sales.index') }}"
-                                        class="nav-link {{ Request::routeIs('sales.index')|| Request::routeIs('sales.edit') ? 'active' : '' }}">
+                                        class="nav-link {{ Request::routeIs('sales.index') || Request::routeIs('sales.edit') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
                                         <p>Sales <i class="fas right fa-solid fa-plus add-new p-1"
                                                 add-new="{{ route('expense-categories.create') }}"></i></p>
@@ -596,7 +608,7 @@
                     </li>
                 @endif
 
-                @if (
+                {{-- @if (
                     $authorization->hasMenuAccess(161) ||
                         (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                     <li class="nav-item {{ request()->is('admin/inventory*') ? 'menu-open' : '' }}">
@@ -624,18 +636,6 @@
                                                     <i class="far fa-dot-circle nav-icon"></i>
                                                     <p>Recipes Manage<i class="fas right fa-solid fa-plus add-new p-1"
                                                             add-new="{{ route('recipes.create') }}"></i></p>
-                                                </a>
-                                            </li>
-                                        @endif
-                                        @if (
-                                            $authorization->hasMenuAccess(103) ||
-                                                (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
-                                            <li class="nav-item">
-                                                <a href="{{ route('suppliers.index') }}"
-                                                    class="nav-link {{ request()->is('admin/inventory/setup/suppliers*') ? 'active' : '' }}">
-                                                    <i class="far fa-dot-circle nav-icon"></i>
-                                                    <p>Suppliers <i class="fas right fa-solid fa-plus add-new p-1"
-                                                            add-new="{{ route('suppliers.create') }}"></i></p>
                                                 </a>
                                             </li>
                                         @endif
@@ -678,9 +678,7 @@
                                     </a>
                                 </li>
                             @endif
-                            {{-- @if (
-                                $authorization->hasMenuAccess(49) ||
-                                    (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if ($authorization->hasMenuAccess(49) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
                                     <a href="{{ route('issue-items.index') }}"
                                         class="nav-link {{ request()->is('admin/inventory/issue-items*') ? 'active' : '' }}">
@@ -689,7 +687,7 @@
                                                 add-new="{{ route('issue-items.create') }}"></i></p>
                                     </a>
                                 </li>
-                            @endif --}}
+                            @endif
                             @if (
                                 $authorization->hasMenuAccess(68) ||
                                     (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
@@ -704,7 +702,7 @@
                             @endif
                         </ul>
                     </li>
-                @endif
+                @endif --}}
                 @if (
                     $authorization->hasMenuAccess(77) ||
                         (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
@@ -818,7 +816,7 @@
                                     </a>
                                 </li>
                             @endif
-                            @if (
+                            {{-- @if (
                                 $authorization->hasMenuAccess(110) ||
                                     (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
@@ -828,7 +826,7 @@
                                         <p>Collections Report</p>
                                     </a>
                                 </li>
-                            @endif
+                            @endif --}}
                         </ul>
                     </li>
                 @endif

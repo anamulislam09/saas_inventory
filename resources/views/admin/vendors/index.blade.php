@@ -41,8 +41,6 @@
                                                     <th>Email</th>
                                                     <th>Address</th>
                                                     <th>Organization</th>
-                                                    <th>Opening Payable</th>
-                                                    <th>Opening Receivable</th>
                                                     <th>Current Bal</th>
                                                     <th>Status</th>
                                                     <th>Action</th>
@@ -57,8 +55,6 @@
                                                         <td>{{ $vendor->email }}</td>
                                                         <td>{{ $vendor->address }}</td>
                                                         <td>{{ $vendor->organization }}</td>
-                                                        <td>{{ $data['currency_symbol'] }} {{ number_format($vendor->opening_payable,2) }}</td>
-                                                        <td>{{ $data['currency_symbol'] }} {{ number_format($vendor->opening_receivable,2) }}</td>
                                                         <td>{{ $data['currency_symbol'] }} {{ number_format($vendor->current_balance,2) }}</td>
                                                         <td><span class="badge badge-{{ $vendor->status == 1 ? 'success' : 'danger' }}">{{ $vendor->status==1? 'Active' : 'Inactive' }}</span></td>
                                                         <td>

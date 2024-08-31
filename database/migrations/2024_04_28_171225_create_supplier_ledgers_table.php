@@ -10,13 +10,15 @@ return new class extends Migration
     {
         Schema::create('supplier_ledgers', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('client_id');
             $table->integer('supplier_id');
             $table->integer('purchase_id')->nullable();
+            $table->integer('sales_id')->nullable();
             $table->integer('payment_id')->nullable();
             $table->string('particular')->nullable();
             $table->date('date');
-            $table->double('debit_amount',20,2);
-            $table->double('credit_amount',20,2);
+            $table->double('debit_amount',20,2)->default(0);
+            $table->double('credit_amount',20,2)->default(0);
             $table->text('note')->nullable();
             $table->tinyInteger('status')->default(1);
             $table->integer('created_by_id')->nullable();

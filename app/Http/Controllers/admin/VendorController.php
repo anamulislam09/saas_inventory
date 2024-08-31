@@ -51,36 +51,6 @@ class VendorController extends Controller
         $data['created_by_id'] = Auth::guard('admin')->user()->id;
         $vendor = Vendor::create($data);
 
-        //End
-        //Supplier Ledger Payment Create**********
-        // if ($vendor) {
-        //     $vendorLedger = new VendorLedger();
-        //     $vendorLedger->vendor_id = $vendor->id;
-
-        //     if (Auth::guard('admin')->user()->client_id == 0) {
-        //         $vendorLedger->client_id = Auth::guard('admin')->user()->id;
-        //     } else {
-        //         $vendorLedger->client_id = $client->id;
-        //     }
-
-        //     $vendorLedger->vendor_id = $vendor->id;
-        //     $vendorLedger->date = date('Y-m-d');
-        //     $vendorLedger->credit_amount = $data['opening_payable'];
-        //     $vendorLedger->status = 1;
-        //     $vendorLedger->created_by_id = Auth::guard('admin')->user()->id;
-        //     $vendorLedger->save();
-        // }
-        // if ($data['opening_receivable']) {
-        //     $supplierLedger = new SupplierLedger();
-        //     $supplierLedger->supplier_id = $supplier->id;
-        //     $supplierLedger->particular = 'Opening Receivable';
-        //     $supplierLedger->date = date('Y-m-d');
-        //     $supplierLedger->debit_amount = $data['opening_receivable'];
-        //     $supplierLedger->status = 1;
-        //     $supplierLedger->created_by_id = Auth::guard('admin')->user()->id;
-        //     $supplierLedger->save();
-        // }
-        //End
         return redirect()->route('vendors.index')->with('alert', ['messageType' => 'success', 'message' => 'Data Inserted Successfully!']);
     }
 

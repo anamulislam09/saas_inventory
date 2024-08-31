@@ -41,8 +41,8 @@
                                                     <th>Email</th>
                                                     <th>Address</th>
                                                     <th>Organization</th>
-                                                    <th>Opening Payable</th>
-                                                    <th>Opening Receivable</th>
+                                                    {{-- <th>Opening Payable</th>
+                                                    <th>Opening Receivable</th> --}}
                                                     <th>Current Bal</th>
                                                     <th>Status</th>
                                                     <th>Action</th>
@@ -57,8 +57,8 @@
                                                         <td>{{ $supplier->email }}</td>
                                                         <td>{{ $supplier->address }}</td>
                                                         <td>{{ $supplier->organization }}</td>
-                                                        <td>{{ $data['currency_symbol'] }} {{ number_format($supplier->opening_payable,2) }}</td>
-                                                        <td>{{ $data['currency_symbol'] }} {{ number_format($supplier->opening_receivable,2) }}</td>
+                                                        {{-- <td>{{ $data['currency_symbol'] }} {{ number_format($supplier->opening_payable,2) }}</td>
+                                                        <td>{{ $data['currency_symbol'] }} {{ number_format($supplier->opening_receivable,2) }}</td> --}}
                                                         <td>{{ $data['currency_symbol'] }} {{ number_format($supplier->current_balance,2) }}</td>
                                                         <td><span class="badge badge-{{ $supplier->status == 1 ? 'success' : 'danger' }}">{{ $supplier->status==1? 'Active' : 'Inactive' }}</span></td>
                                                         <td>
@@ -79,21 +79,6 @@
                                                     </tr>
                                                 @endforeach
                                             </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <th>SN</th>
-                                                    <th>Supplier Name</th>
-                                                    <th>Phone</th>
-                                                    <th>Email</th>
-                                                    <th>Address</th>
-                                                    <th>Organization</th>
-                                                    <th>Opening Payable</th>
-                                                    <th>Opening Receivable</th>
-                                                    <th>Current Bal</th>
-                                                    <th>Status</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>
