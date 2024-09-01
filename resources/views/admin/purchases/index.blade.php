@@ -80,9 +80,10 @@
                                                                     <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                                                         More
                                                                     </button>
-                                                                    <div class="dropdown-menu">
+                                                                    <div class="dropdown-menu m-auto">
                                                                         <button due="{{ $purchase->total_payable - $purchase->paid_amount }}" purchase-id="{{ $purchase->id }}" type="button" class="btn btn-success btn-sm pay-now dropdown-item"
                                                                             data-toggle="modal" data-target="#exampleModal" data-whatever="@getbootstrap">Add Payments</button>
+                                                                            <a href="{{route('purchase-return.create', $purchase->id)}}" class="text-center dropdown-item" style="border-top: 1px solid #ddd">Return</a>
                                                                     </div>
                                                                 </div>
                                                             </div>

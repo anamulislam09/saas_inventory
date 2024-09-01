@@ -11,8 +11,6 @@ class PurchaseReturnDetails extends Model
     protected $fillable =
     [
         'client_id',
-        'vendor_id',
-        'vouchar_no',
         'purchase_return_id',
         'product_id',
         'quantity_returned',

@@ -11,20 +11,21 @@ class PurchaseReturn extends Model
     protected $fillable =
     [
         'client_id',
-        'vendor_id',
+        'supplier_id',
         'vouchar_no',
         'purchase_id',
         'date',
         'total_return_amount',
+        'refund_amount',
         'note',
         'return_status',
         'status',
         'created_by_id',
         'updated_by_id'
     ];
-    public function vendor()
+    public function supplier()
     {
-        return $this->belongsTo(Vendor::class, 'vendor_id');
+        return $this->belongsTo(Supplier::class, 'supplier_id');
     }
     public function created_by()
     {

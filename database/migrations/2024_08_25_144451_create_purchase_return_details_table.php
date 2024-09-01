@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('purchase_return_details', function (Blueprint $table) {
             $table->id();
             $table->tinyInteger('client_id');
-            $table->integer('vendor_id');
-            $table->string('vouchar_no');
             $table->tinyInteger('purchase_return_id');
             $table->tinyInteger('product_id');
             $table->double('quantity_returned',20,2);

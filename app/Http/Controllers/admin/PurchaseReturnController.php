@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\BasicInfo;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
-use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\PurchaseDetails;
+use App\Models\PurchaseReturn;
+use App\Models\PurchaseReturnDetails;
 use App\Models\Stock;
 use App\Models\Vendor;
 use App\Models\VendorLedger;
@@ -35,27 +37,19 @@ class PurchaseReturnController extends Controller
 
     public function createOrEdit($id = null)
     {
-        if ($id) {
-            $data['title'] = 'Edit';
-            $data['products'] = Purchase::find($id);
-        } else {
-            $data['title'] = 'Create';
-        }
-
         $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
 
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
         if (Auth::guard('admin')->user()->client_id == 0) {
-            $data['paymentMethods'] = PaymentMethod::where('client_id', Auth::guard('admin')->user()->id)->orderBy('title', 'asc')->get();
-            $data['vendors'] = Vendor::where('client_id', Auth::guard('admin')->user()->id)->where('status', 1)->orderBy('name', 'asc')->get();
-            $data['products'] = Product::where('client_id', Auth::guard('admin')->user()->id)->with('unit')->where('status', 1)->orderBy('product_name', 'asc')->get();
+            // $data['paymentMethods'] = PaymentMethod::where('client_id', Auth::guard('admin')->user()->id)->orderBy('title', 'asc')->get();
+            $data['purchase'] = Purchase::where('client_id', Auth::guard('admin')->user()->id)->with(['purchase_details', 'supplier', 'created_by', 'payments'])->find($id);
         } else {
-            $data['paymentMethods'] = PaymentMethod::where('client_id', $client->id)->orderBy('title', 'asc')->get();
-            $data['vendors'] = Vendor::where('client_id', $client->id)->where('status', 1)->orderBy('name', 'asc')->get();
-            $data['products'] = Product::where('client_id', $client->id)->with('unit')->where('status', 1)->orderBy('product_name', 'asc')->get();
+            // $data['purchase'] = PaymentMethod::where('client_id', $client->id)->orderBy('title', 'asc')->get();
+            $data['purchase'] = Purchase::where('client_id', Auth::guard('admin')->user()->id)->with(['purchase_details', 'supplier', 'created_by', 'payments'])->find($id);
         }
 
-        return view('admin.purchases.create-or-edit', compact('data'));
+        return view('admin.purchases.purchase_return_create', compact('data'));
+
     }
     public function vouchar($id, $print = null)
     {
@@ -132,122 +126,67 @@ class PurchaseReturnController extends Controller
         return redirect()->back()->with('alert', ['messageType' => 'success', 'message' => 'Data Inserted Successfully!']);
     }
 
-    public function store(Request $request)
+    public function returnPurchase(Request $request)
     {
-        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
-
-        if (Auth::guard('admin')->user()->client_id == 0) {
-            $client_id = Auth::guard('admin')->user()->id;
-        } else {
-            $client_id = $client->id;
-        }
-
-        $vendor_id = $request->vendor_id;
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : Admin::where('id', Auth::guard('admin')->user()->client_id)->first()->id;
+        
+        $purchase_id = $request->purchase_id;
+        $purchase = Purchase::where('id', $purchase_id)->first();
         $date = $request->date;
-        $total = $request->total;
-        $tax_amount = $request->tax_amount;
-        $discount_amount = $request->discount_amount;
-        $total_payable = $request->total_payable;
-        $paid_amount = $request->paid_amount;
         $note = $request->note;
-        $payment_id = $request->payment_method_id;
-
-        $product_id = $request->product_id;
-        $unit_price = $request->unit_price;
-        $quantity = $request->quantity;
-
-        $vouchar_no = $this->formatSrl(Purchase::latest()->limit(1)->max('vouchar_no') + 1);
+        $total_return_amount = $request->total_return_amount;
+        $refund_amount = $request->refund_amount;
         $created_by_id = Auth::guard('admin')->user()->id;
-
-        //Purchase create*****
-        $purchase = new Purchase();
-        $purchase->client_id = $client_id;
-        $purchase->vendor_id = $vendor_id;
-        $purchase->vouchar_no = $vouchar_no;
-        $purchase->date = $date;
-        $purchase->total_price = $total;
-        $purchase->vat_tax = $tax_amount;
-        $purchase->discount = $discount_amount;
-        $purchase->total_payable = $total_payable;
-        $purchase->paid_amount = $paid_amount;
-        $purchase->note = $note;
-        $purchase->payment_status = ($total_payable == $paid_amount ? 1 : 0);
-        $purchase->status = 1;
-        $purchase->created_by_id = $created_by_id;
-        $purchase->save();
-        //End*****
-
-        for ($i = 0; $i < count($product_id); $i++) {
-            //Purchase Details create*****
-            $purchaseDetails = new PurchaseDetails();
-            $purchaseDetails->purchase_id = $purchase->id;
-            $purchaseDetails->product_id = $product_id[$i];
-            $purchaseDetails->quantity = $quantity[$i];
-            $purchaseDetails->unit_price = $unit_price[$i];
-            $purchaseDetails->total_amount = $unit_price[$i] * $quantity[$i];
-            $purchaseDetails->save();
-            //End*****
-
-            //Item Stock Update****
-            $stock = Stock::find($product_id[$i]);
-            $stock->stock_quantity = $stock->stock_quantity + $quantity[$i];
-            $stock->updated_date = date('Y-m-d');
+        $vouchar_no = $this->formatSrl(PurchaseReturn::latest()->limit(1)->max('vouchar_no') + 1);
+    
+        // Create Purchase Return Entry
+        $purchaseReturn = new PurchaseReturn();
+        $purchaseReturn->client_id = $client_id;
+        $purchaseReturn->supplier_id = $purchase->supplier_id;
+        $purchaseReturn->vouchar_no = $vouchar_no;
+        $purchaseReturn->purchase_id = $purchase_id;
+        $purchaseReturn->date = $date;
+        $purchaseReturn->total_return_amount = $total_return_amount;
+        $purchaseReturn->note = $note;
+        $purchaseReturn->refund_amount = $refund_amount;
+        $purchaseReturn->return_status = ($total_return_amount <= $refund_amount) ? 1 : 0;
+        $purchaseReturn->created_by_id = $created_by_id;
+        $purchaseReturn->save();
+    
+        // Loop through products and adjust stock
+        foreach ($request->product_id as $index => $productId) {
+            $originalQty = $request->original_quantity[$index];
+            $returnQty = $request->return_quantity[$index];
+            $remainingQty = $originalQty - $returnQty;
+    
+            // Create Purchase Return Details
+            $purchaseReturnDetails = new PurchaseReturnDetails();
+            $purchaseReturnDetails->purchase_return_id = $purchaseReturn->id;
+            $purchaseReturnDetails->client_id = $client_id;
+            $purchaseReturnDetails->product_id = $productId;
+            $purchaseReturnDetails->quantity_returned = $returnQty;
+            $purchaseReturnDetails->unit_price = $request->unit_price[$index];
+            $purchaseReturnDetails->amount = $request->return_total[$index];
+            $purchaseReturnDetails->created_by_id = Auth::guard('admin')->user()->id;
+            $purchaseReturnDetails->save();
+    
+            // Update Purchase Details
+            $purchaseDetail = PurchaseDetails::where('purchase_id', $purchase_id)->where('product_id', $productId)->first();
+            $purchaseDetail->quantity = $remainingQty;
+            $purchaseDetail->save();
+    
+            // Update Stock
+            $stock = Stock::find($productId);
+            $stock->stock_quantity -= $returnQty;
             $stock->save();
-            //End*****
         }
-
-        //Supplier Ledger Purchase Create**********
-        $vendorledger = new VendorLedger();
-        $vendorledger->client_id = $client_id;
-        $vendorledger->vendor_id = $vendor_id;
-        $vendorledger->purchase_id = $purchase->id;
-        $vendorledger->payment_id = $payment_id;
-        $vendorledger->particular = 'Purchase';
-        $vendorledger->date = $date;
-        $vendorledger->credit_amount = $total_payable;
-        $vendorledger->note = $note;
-        $vendorledger->status = 1;
-        $vendorledger->created_by_id = $created_by_id;
-        $vendorledger->save();
-        //End*****
-
-        if ($paid_amount) {
-            //Payment Create**********
-            $payment = new Payment();
-            $payment->client_id = $client_id;
-            $payment->vendor_id = $vendor_id;
-            $payment->payment_method_id = $request->payment_method_id;
-            $payment->purchase_id = $purchase->id;
-            $payment->date = $date;
-            $payment->amount = $paid_amount;
-            $payment->note = $note;
-            $payment->status = 1;
-            $payment->created_by_id = $created_by_id;
-            $payment->save();
-            //End*****
-
-            //Supplier Ledger Payment Create**********
-            $vendorledger = new VendorLedger();
-            $vendorledger->vendor_id = $vendor_id;
-            $vendorledger->payment_id = $payment->id;
-            $vendorledger->particular = 'Paid To Vendor';
-            $vendorledger->date = $date;
-            $vendorledger->debit_amount = $paid_amount;
-            $vendorledger->note = $note;
-            $vendorledger->status = 1;
-            $vendorledger->created_by_id = $created_by_id;
-            $vendorledger->save();
-            //End*****
-        }
-
-        //Supplier Balance Update****
-        $vendor = Vendor::find($vendor_id);
-        $vendor->current_balance = $vendor->current_balance + ((float) $total_payable -  (float) $paid_amount);
-        $vendor->save();
-        //End*****
-
-        return redirect()->route('purchases.index')->with('alert', ['messageType' => 'success', 'message' => 'Data Inserted Successfully!']);
+    
+        // Update Supplier Ledger, Supplier Balance, etc.
+        // (additional code to handle refund and supplier balance update)
+    
+        return redirect()->route('purchases.index')->with('alert', ['messageType' => 'success', 'message' => 'Purchase Return Processed Successfully!']);
     }
+
 
     public function formatSrl($srl)
     {
@@ -303,5 +242,4 @@ class PurchaseReturnController extends Controller
 
         return redirect()->back()->with('alert', ['messageType' => 'success', 'message' => 'Data Deleted Successfully!']);
     }
-  
 }

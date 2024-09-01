@@ -3,7 +3,6 @@
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\admin\BasicInfoController;
 use App\Http\Controllers\admin\CategoryController;
-use App\Http\Controllers\admin\CollectionController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\expense\ExpenseCategoryController;
 use App\Http\Controllers\admin\expense\ExpenseController;
@@ -22,7 +21,6 @@ use App\Http\Controllers\admin\hrm\LoanController;
 use App\Http\Controllers\admin\hrm\SalaryController;
 use App\Http\Controllers\admin\hrm\SalaryProcessController;
 use App\Http\Controllers\admin\hrm\WeeklyHolidayController;
-use App\Http\Controllers\admin\IssueItemController;
 use App\Http\Controllers\admin\MenuController;
 use App\Http\Controllers\admin\PaymentController;
 use App\Http\Controllers\admin\PaymentMethodController;
@@ -30,6 +28,7 @@ use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\ProductionPlanController;
 use App\Http\Controllers\admin\PurchaseController;
 use App\Http\Controllers\admin\PurchaseRequisitionController;
+use App\Http\Controllers\admin\PurchaseReturnController;
 use App\Http\Controllers\admin\RecipeController;
 use App\Http\Controllers\admin\ReportController;
 use App\Http\Controllers\admin\RoleController;
@@ -38,7 +37,6 @@ use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\SupplierController;
 use App\Http\Controllers\admin\UnitController;
 use App\Http\Controllers\admin\VendorController;
-use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\SuperAdmin\ClientController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -223,8 +221,8 @@ Route::prefix('admin')->group(function () {
             /*-------------------------- purchases return route start here----------------------*/
             Route::prefix('purchase-return')->controller(PurchaseReturnController::class)->group(function () {
                 Route::get('', 'index')->name('purchase-return.index');
-                Route::get('create', 'createOrEdit')->name('purchase-return.create');
-                Route::post('store', 'store')->name('purchase-return.store');
+                Route::get('create/{id}', 'createOrEdit')->name('purchase-return.create');
+                Route::post('store', 'returnPurchase')->name('purchase-return.store');
             });
             /*-------------------------- purchases return route ends here----------------------*/
 

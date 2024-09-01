@@ -93,7 +93,7 @@ class SalesController extends Controller
                 'receiveable_amount' => $request->total_payable,
                 'receive_amount' => $receive_amount,
                 'note' => $note,
-                'status' => 1,
+                'status' => ($request->total_payable <= $receive_amount) ? 1 : 0,
                 'client_id' => (Auth::guard('admin')->user()->client_id == 0) ? Auth::guard('admin')->user()->id : $client->id,
                 'created_by_id' => Auth::guard('admin')->user()->id,
             ];
@@ -159,7 +159,7 @@ class SalesController extends Controller
             $vendorLedger->vendor_id = $vendor_id;
             $vendorLedger->client_id = (Auth::guard('admin')->user()->client_id == 0) ? Auth::guard('admin')->user()->id : $client->id;
             $vendorLedger->collection_id = $collection->id;
-            $vendorLedger->particular = 'Paid To Vendor';
+            $vendorLedger->particular = 'Receive From Vendor';
             $vendorLedger->date = $date;
             $vendorLedger->debit_amount = $receive_amount;
             $vendorLedger->note = $note;
@@ -174,6 +174,70 @@ class SalesController extends Controller
         $vendor->current_balance = $vendor->current_balance - ((float) $request->total_payable -  (float) $request->paid_amount);
         $vendor->save();
         return redirect()->route('sales.index')->with('alert', ['messageType' => 'success', 'message' => 'Data Inserted Successfully!']);
+    }
+
+    public function collection(Request $request)
+    {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+
+        if (Auth::guard('admin')->user()->client_id == 0) {
+            $client_id = Auth::guard('admin')->user()->id;
+        } else {
+            $client_id = $client->id;
+        }
+
+        $sales_id = $request->sales_id;
+        $date = $request->date;
+        $payment_method_id = $request->payment_method_id;
+        $due_amount = $request->due_amount;
+        $amount = $request->amount;
+        $note = $request->note;
+        
+        $created_by_id = Auth::guard('admin')->user()->id;
+        $sales = Sales::find($sales_id);
+        $vendor_id = $sales->vendor_id;
+
+        //Payment Create**********
+        $collection = new Collection();
+        $collection->client_id = $client_id;
+        $collection->vendor_id = $vendor_id;
+        $collection->collection_method_id = $payment_method_id;
+        $collection->sales_id = $sales_id;
+        $collection->date = $date;
+        $collection->amount = $amount;
+        $collection->note = $note;
+        $collection->status = 1;
+        $collection->created_by_id = $created_by_id;
+        $collection->save();
+        //End*****
+
+        //Supplier Ledger Payment Create**********
+        $vendorLedger = new VendorLedger();
+        $vendorLedger->vendor_id = $vendor_id;
+        $vendorLedger->client_id = (Auth::guard('admin')->user()->client_id == 0) ? Auth::guard('admin')->user()->id : $client->id;
+        $vendorLedger->collection_id = $collection->id;
+        $vendorLedger->particular = 'Receive From Vendor';
+        $vendorLedger->date = $date;
+        $vendorLedger->debit_amount = $amount;
+        $vendorLedger->note = $note;
+        $vendorLedger->status = 1;
+        $vendorLedger->created_by_id = Auth::guard('admin')->user()->id;
+        $vendorLedger->save();
+        //End*****
+
+        //Supplier Balance Update****
+        $vendor = Vendor::find($vendor_id);
+        $vendor->current_balance = $vendor->current_balance + $amount;
+        $vendor->save();
+        //End*****
+
+        //Vouchar Update****
+        $sales->receive_amount = $sales->receive_amount + $amount;
+        $sales->status = ($sales->receiveable_amount <= $sales->receive_amount) ? 1 : 0;
+        $sales->save();
+        //End*****
+
+        return redirect()->back()->with('alert', ['messageType' => 'success', 'message' => 'Data Inserted Successfully!']);
     }
 
     public function formatSrl($srl)

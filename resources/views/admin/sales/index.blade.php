@@ -98,7 +98,7 @@
             <div class="modal-dialog modal-md">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Add Payment</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Add Collection</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -108,7 +108,7 @@
                         <div class="modal-body">
                             @csrf()
                             <div class="row">
-                                <input type="hidden" name="purchase_id" id="purchase_id">
+                                <input type="hidden" name="sales_id" id="sales_id">
                                 <div class="form-group col-sm-12 col-md-12 col-lg-12">
                                     <label>Payment Date *</label>
                                     <input value="{{ date('Y-m-d') }}" type="date" class="form-control" name="date" id="date" placeholder="0.00">
@@ -127,7 +127,7 @@
                                     <input readonly value="0.00" type="number" class="form-control" name="due_amount" id="due_amount" placeholder="0.00">
                                 </div>
                                 <div class="form-group col-sm-12 col-md-12 col-lg-12">
-                                    <label>Paid Amount</label>
+                                    <label>Receive Amount</label>
                                     <input value="0.00" type="number" class="form-control" name="amount" id="amount" placeholder="0.00">
                                 </div>
                                 <div class="form-group col-sm-12 col-md-12 col-lg-12">
@@ -151,14 +151,14 @@
     <script>
         $(document).ready(function() {
             $('.pay-now').on('click', function(e) {
-                $('#purchase_id').val($(this).attr('purchase-id'));
+                $('#sales_id').val($(this).attr('sales-id'));
                 $('#amount').val(parseFloat($(this).attr('due')).toFixed(2));
                 $('#due_amount').val(parseFloat($(this).attr('due')).toFixed(2));
             });
             $('#form-submit').submit(function(e) {
-                let paid_amount = parseFloat($('#amount').val());
+                let receive_amount = parseFloat($('#amount').val());
                 let due = parseFloat($('#due_amount').val());
-                if(paid_amount>due){
+                if(receive_amount>due){
                     e.preventDefault();
                     Swal.fire("Couldn't be pay more then payable!");
                 }

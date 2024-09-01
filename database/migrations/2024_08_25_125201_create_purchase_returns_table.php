@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('purchase_returns', function (Blueprint $table) {
             $table->id();
             $table->tinyInteger('client_id');
-            $table->integer('vendor_id');
+            $table->integer('supplier_id');
             $table->string('vouchar_no');
             $table->tinyInteger('purchase_id');
             $table->date('date');
             $table->double('total_return_amount',20,2);
+            $table->double('refund_amount',20,2);
             $table->text('note')->nullable();
             $table->string('return_status')->default(0);
             $table->string('status')->default(1);

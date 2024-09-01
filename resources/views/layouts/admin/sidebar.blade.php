@@ -543,7 +543,7 @@
                                     </a>
                                 </li>
                             @endif
-                            @if (
+                            {{-- @if (
                                 $authorization->hasMenuAccess(80) ||
                                     (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
@@ -554,7 +554,7 @@
                                                 add-new="{{ route('expenses.create') }}"></i></p>
                                     </a>
                                 </li>
-                            @endif
+                            @endif --}}
                         </ul>
                     </li>
                 @endif
@@ -592,7 +592,7 @@
                                     </a>
                                 </li>
                             @endif
-                            @if (
+                            {{-- @if (
                                 $authorization->hasMenuAccess(80) ||
                                     (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
@@ -603,7 +603,7 @@
                                                 add-new="{{ route('expenses.create') }}"></i></p>
                                     </a>
                                 </li>
-                            @endif
+                            @endif --}}
                         </ul>
                     </li>
                 @endif
