@@ -121,7 +121,6 @@
                                     <div class="form-group col-sm-12 col-md-12 col-lg-12">
                                         <label>Payment Methods *</label>
                                         <select name="payment_method_id" id="payment_method_id" class="form-control" required>
-                                            <option value='' selected>Select Payment Method</option>
                                             @foreach ($data['paymentMethods'] as $pm)
                                                 <option @selected($pm->is_default) value="{{ $pm->id }}">{{ $pm->title }}</option>
                                             @endforeach

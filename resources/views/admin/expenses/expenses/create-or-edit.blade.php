@@ -87,7 +87,7 @@
                                                         <th><input placeholder="0.00" type="number" class="form-control form-control-sm calculate" id="amount_temp"></th>
                                                         <th><input placeholder="0.00" type="number" class="form-control form-control-sm calculate" id="quantity_temp"></th>
                                                         <th><input placeholder="0.00" type="number" class="form-control form-control-sm" id="total_temp" disabled></th>
-                                                        <th><input placeholder="Note" type="text" class="form-control form-control-sm" id="note_temp"></th>
+                                                        <th><input placeholder="Note" type="text" class="form-control form-control-sm" id="note"></th>
                                                         <th><button id="btn-add" class="btn btn-sm btn-success" type="button">Add</button></th>
                                                     </tr>
                                                 </thead>
@@ -101,7 +101,7 @@
                                                                 <td><input type="number" value="{{ $value->amount }}" class="form-control form-control-sm calculate" name="amount[]" placeholder="0.00"></td>
                                                                 <td><input type="number" value="{{ $value->quantity }}" class="form-control form-control-sm calculate" name="quantity[]" placeholder="0.00"></td>
                                                                 <td><input type="number" value="{{ $value->amount * $value->quantity }}" class="form-control form-control-sm" name="total[]" placeholder="0.00" disabled></td>
-                                                                <td><input type="text"   value="{{ $value->note_temp }}" class="form-control form-control-sm" name="note[]"></td>
+                                                                <td><input type="text"   value="{{ $value->note }}" class="form-control form-control-sm" name="note[]"></td>
                                                                 <td><button class="btn btn-sm btn-danger btn-del" type="button"><i class="fa-solid fa-trash btn-del"></i></button></td>
                                                             </tr>
                                                         @endforeach
@@ -160,7 +160,7 @@
             let amount_temp = $('#amount_temp').val();
             let quantity_temp = $('#quantity_temp').val();
             let total_temp = $('#total_temp').val();
-            let note_temp = $('#note_temp').val();
+            let note = $('#note').val();
 
             let td = ``;
             if(!(expense_cat_id_temp && expense_head_id_temp && amount_temp && quantity_temp && total_temp)) return alert("Please fill up required field!");
@@ -172,7 +172,7 @@
             td +=   `<td><input type="number" value="${amount_temp}" class="form-control form-control-sm calculate" name="amount[]" placeholder="0.00"></td>`;
             td +=   `<td><input type="number" value="${quantity_temp}" class="form-control form-control-sm calculate" name="quantity[]" placeholder="0.00"></td>`;
             td +=   `<td><input type="number" value="${total_temp}" class="form-control form-control-sm" name="total[]" placeholder="0.00" disabled></td>`;
-            td +=   `<td><input type="text" value="${note_temp}" class="form-control form-control-sm" name="note[]"></td>`;
+            td +=   `<td><input type="text" value="${note}" class="form-control form-control-sm" name="note[]"></td>`;
             td +=   `<td><button class="btn btn-sm btn-danger btn-del" type="button"><i class="fa-solid fa-trash btn-del"></i></button></td>`;
             td += `</tr>`;
 
@@ -183,7 +183,7 @@
             $('#amount_temp').val('');
             $('#quantity_temp').val('');
             $('#total_temp').val('');
-            $('#note_temp').val('');
+            $('#note').val('');
             calculate();
         });
     });

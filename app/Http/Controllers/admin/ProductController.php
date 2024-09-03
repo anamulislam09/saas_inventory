@@ -42,7 +42,6 @@ class ProductController extends Controller
 
     public function subCategory($catId)
     {
-
         $sub_category = Category::where('parent_cat_id', $catId)->where('status', 1)->get();
         return response()->json($sub_category, 200);
     }

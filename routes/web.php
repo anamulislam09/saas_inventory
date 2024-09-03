@@ -33,6 +33,7 @@ use App\Http\Controllers\admin\RecipeController;
 use App\Http\Controllers\admin\ReportController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\SalesController;
+use App\Http\Controllers\admin\SalesReturnController;
 use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\SupplierController;
 use App\Http\Controllers\admin\UnitController;
@@ -223,6 +224,8 @@ Route::prefix('admin')->group(function () {
                 Route::get('', 'index')->name('purchase-return.index');
                 Route::get('create/{id}', 'createOrEdit')->name('purchase-return.create');
                 Route::post('store', 'returnPurchase')->name('purchase-return.store');
+                Route::get('vouchar/{id}/{print}', 'vouchar')->name('purchases_return.vouchar.print');
+                Route::get('details/{id}', 'vouchar')->name('purchases_return.vouchar');
             });
             /*-------------------------- purchases return route ends here----------------------*/
 
@@ -245,6 +248,16 @@ Route::prefix('admin')->group(function () {
                 Route::post('collection/store', 'collection')->name('sales.collection.store');
             });
             /*-------------------------- payments route ends here----------------------*/
+
+            /*-------------------------- sales return route start here----------------------*/
+            Route::prefix('sales-return')->controller(SalesReturnController::class)->group(function () {
+                Route::get('', 'index')->name('sales-return.index');
+                Route::get('create/{id}', 'createOrEdit')->name('sales-return.create');
+                Route::post('store', 'returnsales')->name('sales-return.store');
+                Route::get('vouchar/{id}/{print}', 'vouchar')->name('sales-return.vouchar.print');
+                Route::get('details/{id}', 'vouchar')->name('sales-return.vouchar');
+            });
+            /*-------------------------- sales return route ends here----------------------*/
 
 
             Route::prefix('reports')->controller(ReportController::class)->group(function () {

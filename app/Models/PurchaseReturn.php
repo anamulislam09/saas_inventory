@@ -31,4 +31,8 @@ class PurchaseReturn extends Model
     {
         return $this->belongsTo(Admin::class, 'created_by_id');
     }
+    public function purchase_return_details()
+    {
+        return $this->hasMany(PurchaseReturnDetails::class, 'purchase_return_id')->with('product');
+    }
 }

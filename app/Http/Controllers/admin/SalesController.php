@@ -24,12 +24,14 @@ class SalesController extends Controller
         if (Auth::guard('admin')->user()->client_id == 0) {
             $data['sales'] = Sales::where('client_id', Auth::guard('admin')->user()->id)->with(['vendor', 'created_by'])->orderBy('id', 'desc')->get();
             $data['paymentMethods'] = PaymentMethod::where('client_id', Auth::guard('admin')->user()->id)->orderBy('title', 'asc')->get();
+            $data['currency_symbol'] = BasicInfo::where('client_id', Auth::guard('admin')->user()->id)->first()->currency_symbol;
         } else {
             $data['sales'] = Sales::where('client_id', $client->id)->with(['vendor', 'created_by'])->orderBy('id', 'desc')->get();
             $data['paymentMethods'] = PaymentMethod::where('client_id', $client->id)->orderBy('title', 'asc')->get();
+            $data['currency_symbol'] = BasicInfo::where('client_id', $client->id)->first()->currency_symbol;
         }
 
-        $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
+        // $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
         return view('admin.sales.index', compact('data'));
     }
 
@@ -60,12 +62,13 @@ class SalesController extends Controller
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
         if (Auth::guard('admin')->user()->client_id == 0) {
             $data['sales'] = Sales::where('client_id', Auth::guard('admin')->user()->id)->with(['sales_details', 'created_by'])->find($id);
+            $data['basicInfo'] = BasicInfo::where('client_id', Auth::guard('admin')->user()->id)->first();
         } else {
             $data['sales'] = Sales::where('client_id', $client->id)->with(['sales_details', 'created_by'])->find($id);
+            $data['basicInfo'] = BasicInfo::where('client_id', $client->id)->first();
         }
 
         $data['print'] = $print;
-        $data['basicInfo'] = BasicInfo::first();
         $data['currency_symbol'] = $data['basicInfo']->currency_symbol;
         return view('admin.sales.invoice', compact('data'));
     }

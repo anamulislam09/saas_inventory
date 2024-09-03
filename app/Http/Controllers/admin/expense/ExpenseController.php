@@ -122,52 +122,53 @@ class ExpenseController extends Controller
 
     public function reports(Request $request)
     {
+        $user = Auth::guard('admin')->user();
+        $client = Admin::find($user->client_id);
+
         if ($request->isMethod('post')) {
             $expense_cat_id = $request->expense_cat_id;
             $expense_head_id = $request->expense_head_id;
             $date = $request->date;
 
-            $exp = Expense::join('expense_details', 'expense_details.expense_id', '=', 'expenses.id')
+            $query = Expense::query()
+                ->join('expense_details', 'expense_details.expense_id', '=', 'expenses.id')
                 ->join('expense_categories', 'expense_details.expense_cat_id', '=', 'expense_categories.id')
-                ->join('expense_heads', 'expense_details.expense_head_id', '=', 'expense_heads.id');
+                ->join('expense_heads', 'expense_details.expense_head_id', '=', 'expense_heads.id')
+                ->where('expenses.client_id', $user->client_id == 0 ? $user->id : $client->id);
 
-            if ($date) $exp = $exp->where('expenses.date', 'like', "%$date%");
+            $data['currency_symbol'] = BasicInfo::where('client_id', $user->client_id == 0 ? $user->id : $client->id)->value('currency_symbol');
+
+            if ($date) {
+                $query->where('expenses.date', 'like', "%$date%");
+            }
+
             if ($expense_cat_id == -1 || $expense_head_id == -1) {
-                if ($expense_cat_id == -1) $exp = $exp->groupBy('expense_details.expense_cat_id');
-                if ($expense_head_id == -1) $exp = $exp->groupBy('expense_details.expense_head_id');
-                $exp = $exp->orderBy('expenses.date', 'asc')
-                    ->select(DB::raw('sum(amount*quantity) as sub_total'), 'expense_categories.cat_name', 'expense_heads.title')
+                if ($expense_cat_id == -1) $query->groupBy('expense_details.expense_cat_id');
+                if ($expense_head_id == -1) $query->groupBy('expense_details.expense_head_id');
+                $data['expenses'] = $query->orderBy('expenses.date', 'asc')
+                    ->select(DB::raw('sum(amount * quantity) as sub_total'), 'expense_categories.cat_name', 'expense_heads.title')
                     ->get();
             } else {
-                if ($expense_cat_id > 0) $exp = $exp->where('expense_details.expense_cat_id', $expense_cat_id);
-                if ($expense_head_id > 0) $exp = $exp->where('expense_details.expense_head_id', $expense_head_id);
-                $exp = $exp->orderBy('expenses.date', 'asc')
+                if ($expense_cat_id > 0) $query->where('expense_details.expense_cat_id', $expense_cat_id);
+                if ($expense_head_id > 0) $query->where('expense_details.expense_head_id', $expense_head_id);
+                $data['expenses'] = $query->orderBy('expenses.date', 'asc')
                     ->select('expenses.date', 'expense_details.*', DB::raw('expense_details.amount * expense_details.quantity as sub_total'), 'expense_categories.cat_name', 'expense_heads.title')
                     ->get();
             }
 
-
-
-            $data['expenses'] = $exp;
-
-            $data['currency_symbol'] = $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
-            // if($request->expense_head_id==0){
-            //     $data['expenses'] = Expense::with(['admin'])->where('date','like',"%$date%")->get();
-            // }else{
-            //     $data['expense_details'] = Expense::join('expense_details','expense_details.expense_id','=', 'expenses.id')->where('expense_details.expense_head_id', $expense_head_id)
-            //                                 ->where('expenses.date','like',"%$date%")
-            //                                 ->orderBy('expenses.date','asc')
-            //                                 ->select('expenses.date','expenses.expense_no','expense_details.quantity','expense_details.amount')
-            //                                 ->get();
-            // }
             return response()->json($data, 200);
         } else {
-            $data['expense_heads'] = ExpenseHead::where('status', 1)->get();
-            $data['expense_categories'] = ExpenseCategory::where('status', 1)->get();
+            if ($user->client_id == 0) {
+                $data['expense_heads'] = ExpenseHead::where('client_id', $user->id)->where('status', 1)->get();
+                $data['expense_categories'] = ExpenseCategory::where('client_id', $user->id)->where('status', 1)->get();
+            } else {
+                $data['expense_heads'] = ExpenseHead::where('client_id', $client->id)->where('status', 1)->get();
+                $data['expense_categories'] = ExpenseCategory::where('client_id', $client->id)->where('status', 1)->get();
+            }
+
             return view('admin.expenses.reports.index', compact('data'));
         }
     }
-
 
 
 

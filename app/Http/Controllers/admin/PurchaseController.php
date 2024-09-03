@@ -47,35 +47,37 @@ class PurchaseController extends Controller
             $data['title'] = 'Create';
         }
 
-        $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
-
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
         if (Auth::guard('admin')->user()->client_id == 0) {
             $data['paymentMethods'] = PaymentMethod::where('client_id', Auth::guard('admin')->user()->id)->orderBy('title', 'asc')->get();
             $data['suppliers'] = Supplier::where('client_id', Auth::guard('admin')->user()->id)->where('status', 1)->orderBy('name', 'asc')->get();
             $data['products'] = Product::where('client_id', Auth::guard('admin')->user()->id)->with('unit')->where('status', 1)->orderBy('product_name', 'asc')->get();
+            $data['currency_symbol'] = BasicInfo::where('client_id', Auth::guard('admin')->user()->id)->first()->currency_symbol;
         } else {
             $data['paymentMethods'] = PaymentMethod::where('client_id', $client->id)->orderBy('title', 'asc')->get();
             $data['suppliers'] = Supplier::where('client_id', $client->id)->where('status', 1)->orderBy('name', 'asc')->get();
             $data['products'] = Product::where('client_id', $client->id)->with('unit')->where('status', 1)->orderBy('product_name', 'asc')->get();
+            $data['currency_symbol'] = BasicInfo::where('client_id', $client->id)->first()->currency_symbol;
         }
-
         return view('admin.purchases.create-or-edit', compact('data'));
     }
+
     public function vouchar($id, $print = null)
     {
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
         if (Auth::guard('admin')->user()->client_id == 0) {
             $data['purchase'] = Purchase::where('client_id', Auth::guard('admin')->user()->id)->with(['purchase_details', 'supplier', 'created_by', 'payments'])->find($id);
+            $data['basicInfo'] = BasicInfo::where('client_id', Auth::guard('admin')->user()->id)->first();
         } else {
             $data['purchase'] = Purchase::where('client_id', $client->id)->with(['purchase_details', 'supplier', 'created_by', 'payments'])->find($id);
+            $data['basicInfo'] = BasicInfo::where('client_id', $client->id)->first();
         }
-
-        $data['basicInfo'] = BasicInfo::first();
+        
         $data['currency_symbol'] = $data['basicInfo']->currency_symbol;
         $data['print'] = $print;
         return view('admin.purchases.view', compact('data'));
     }
+
     public function payment(Request $request)
     {
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
@@ -155,7 +157,7 @@ class PurchaseController extends Controller
         $total_payable = $request->total_payable;
         $paid_amount = $request->paid_amount;
         $note = $request->note;
-        $payment_id = $request->payment_method_id;
+        $payment_method_id = $request->payment_method_id;
 
         $product_id = $request->product_id;
         $unit_price = $request->unit_price;
@@ -220,7 +222,7 @@ class PurchaseController extends Controller
             $payment = new Payment();
             $payment->client_id = $client_id;
             $payment->supplier_id = $supplier_id;
-            $payment->payment_method_id = $request->payment_method_id;
+            $payment->payment_method_id = $payment_method_id;
             $payment->purchase_id = $purchase->id;
             $payment->date = $date;
             $payment->amount = $paid_amount;

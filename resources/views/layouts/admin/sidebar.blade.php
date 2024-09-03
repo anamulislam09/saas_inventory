@@ -526,8 +526,7 @@
                                     <a href="{{ route('purchases.index') }}"
                                         class="nav-link {{ Request::routeIs('purchases.index') || Request::routeIs('purchases.edit') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
-                                        <p>Purchase <i class="fas right fa-solid fa-plus add-new p-1"
-                                                add-new="{{ route('expense-categories.create') }}"></i></p>
+                                        <p>Purchase </p>
                                     </a>
                                 </li>
                             @endif
@@ -538,23 +537,21 @@
                                     <a href="{{ route('purchases.create') }}"
                                         class="nav-link {{ Request::routeIs('purchases.create') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
-                                        <p>New Purchase <i class="fas right fa-solid fa-plus add-new p-1"
-                                                add-new="{{ route('expense-heads.create') }}"></i></p>
+                                        <p>New Purchase </p>
                                     </a>
                                 </li>
                             @endif
-                            {{-- @if (
+                            @if (
                                 $authorization->hasMenuAccess(80) ||
                                     (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
-                                    <a href="{{ route('purchase-return.create') }}"
-                                        class="nav-link {{ Request::routeIs('purchase-return.create') ? 'active' : '' }}">
+                                    <a href="{{ route('purchase-return.index') }}"
+                                        class="nav-link {{ Request::routeIs('purchase-return.index') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
-                                        <p>Purchase Return<i class="fas right fa-solid fa-plus add-new p-1"
-                                                add-new="{{ route('expenses.create') }}"></i></p>
+                                        <p>Purchase Returns</p>
                                     </a>
                                 </li>
-                            @endif --}}
+                            @endif
                         </ul>
                     </li>
                 @endif
@@ -575,8 +572,7 @@
                                     <a href="{{ route('sales.index') }}"
                                         class="nav-link {{ Request::routeIs('sales.index') || Request::routeIs('sales.edit') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
-                                        <p>Sales <i class="fas right fa-solid fa-plus add-new p-1"
-                                                add-new="{{ route('expense-categories.create') }}"></i></p>
+                                        <p>Sales</p>
                                     </a>
                                 </li>
                             @endif
@@ -587,23 +583,21 @@
                                     <a href="{{ route('sales.create') }}"
                                         class="nav-link {{ Request::routeIs('sales.create') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
-                                        <p>New Sales <i class="fas right fa-solid fa-plus add-new p-1"
-                                                add-new="{{ route('expense-heads.create') }}"></i></p>
+                                        <p>New Sales </p>
                                     </a>
                                 </li>
                             @endif
-                            {{-- @if (
+                            @if (
                                 $authorization->hasMenuAccess(80) ||
                                     (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
-                                    <a href="{{ route('purchase-return.create') }}"
-                                        class="nav-link {{ Request::routeIs('purchase-return.create') ? 'active' : '' }}">
+                                    <a href="{{ route('sales-return.index') }}"
+                                        class="nav-link {{ Request::routeIs('sales-return.index') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
-                                        <p>Sales Return<i class="fas right fa-solid fa-plus add-new p-1"
-                                                add-new="{{ route('expenses.create') }}"></i></p>
+                                        <p>Sales Return</p>
                                     </a>
                                 </li>
-                            @endif --}}
+                            @endif
                         </ul>
                     </li>
                 @endif

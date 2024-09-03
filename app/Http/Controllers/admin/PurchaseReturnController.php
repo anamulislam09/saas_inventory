@@ -23,48 +23,48 @@ class PurchaseReturnController extends Controller
     {
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
         if (Auth::guard('admin')->user()->client_id == 0) {
-            $data['purchases'] = Purchase::where('client_id', Auth::guard('admin')->user()->id)->with(['vendor', 'created_by'])->orderBy('id', 'desc')->get();
+            $data['purchasesReturn'] = PurchaseReturn::where('client_id', Auth::guard('admin')->user()->id)->with(['supplier', 'created_by'])->orderBy('id', 'desc')->get();
             $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
             $data['paymentMethods'] = PaymentMethod::where('client_id', Auth::guard('admin')->user()->id)->orderBy('title', 'asc')->get();
         } else {
-            $data['purchases'] = Purchase::where('client_id', $client->id)->with(['vendor', 'created_by'])->orderBy('id', 'desc')->get();
+            $data['purchasesReturn'] = PurchaseReturn::where('client_id', $client->id)->with(['supplier', 'created_by'])->orderBy('id', 'desc')->get();
             $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
             $data['paymentMethods'] = PaymentMethod::where('client_id', $client->id)->orderBy('title', 'asc')->get();
         }
-
-        return view('admin.purchases.index', compact('data'));
+        return view('admin.purchases.purchase_returns', compact('data'));
     }
 
     public function createOrEdit($id = null)
     {
-        $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
+        
 
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
         if (Auth::guard('admin')->user()->client_id == 0) {
-            // $data['paymentMethods'] = PaymentMethod::where('client_id', Auth::guard('admin')->user()->id)->orderBy('title', 'asc')->get();
             $data['purchase'] = Purchase::where('client_id', Auth::guard('admin')->user()->id)->with(['purchase_details', 'supplier', 'created_by', 'payments'])->find($id);
+            $data['currency_symbol'] = BasicInfo::where('client_id', Auth::guard('admin')->user()->id)->first()->currency_symbol;
         } else {
-            // $data['purchase'] = PaymentMethod::where('client_id', $client->id)->orderBy('title', 'asc')->get();
-            $data['purchase'] = Purchase::where('client_id', Auth::guard('admin')->user()->id)->with(['purchase_details', 'supplier', 'created_by', 'payments'])->find($id);
+            $data['purchase'] = Purchase::where('client_id', $client->id)->with(['purchase_details', 'supplier', 'created_by', 'payments'])->find($id);
+            $data['currency_symbol'] = BasicInfo::where('client_id', $client->id)->first()->currency_symbol;
         }
-
         return view('admin.purchases.purchase_return_create', compact('data'));
-
     }
+
     public function vouchar($id, $print = null)
     {
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
         if (Auth::guard('admin')->user()->client_id == 0) {
-            $data['purchase'] = Purchase::where('client_id', Auth::guard('admin')->user()->id)->with(['purchase_details', 'vendor', 'created_by', 'payments'])->find($id);
+            $data['purchaseReturn'] = PurchaseReturn::where('client_id', Auth::guard('admin')->user()->id)->with(['purchase_return_details', 'supplier', 'created_by'])->find($id);
+            $data['basicInfo'] = BasicInfo::where('client_id', Auth::guard('admin')->user()->id)->first();
         } else {
-            $data['purchase'] = Purchase::where('client_id', $client->id)->with(['purchase_details', 'vendor', 'created_by', 'payments'])->find($id);
+            $data['basicInfo'] = BasicInfo::where('client_id', $client->id)->first();
+            $data['purchaseReturn'] = PurchaseReturn::where('client_id', $client->id)->with(['purchase_return_details', 'supplier', 'created_by'])->find($id);
         }
-
-        $data['basicInfo'] = BasicInfo::first();
         $data['currency_symbol'] = $data['basicInfo']->currency_symbol;
         $data['print'] = $print;
-        return view('admin.purchases.view', compact('data'));
+
+        return view('admin.purchases.purchase_return_details', compact('data'));
     }
+
     public function payment(Request $request)
     {
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
@@ -129,7 +129,7 @@ class PurchaseReturnController extends Controller
     public function returnPurchase(Request $request)
     {
         $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : Admin::where('id', Auth::guard('admin')->user()->client_id)->first()->id;
-        
+
         $purchase_id = $request->purchase_id;
         $purchase = Purchase::where('id', $purchase_id)->first();
         $date = $request->date;
@@ -138,7 +138,7 @@ class PurchaseReturnController extends Controller
         $refund_amount = $request->refund_amount;
         $created_by_id = Auth::guard('admin')->user()->id;
         $vouchar_no = $this->formatSrl(PurchaseReturn::latest()->limit(1)->max('vouchar_no') + 1);
-    
+
         // Create Purchase Return Entry
         $purchaseReturn = new PurchaseReturn();
         $purchaseReturn->client_id = $client_id;
@@ -152,13 +152,13 @@ class PurchaseReturnController extends Controller
         $purchaseReturn->return_status = ($total_return_amount <= $refund_amount) ? 1 : 0;
         $purchaseReturn->created_by_id = $created_by_id;
         $purchaseReturn->save();
-    
+
         // Loop through products and adjust stock
         foreach ($request->product_id as $index => $productId) {
             $originalQty = $request->original_quantity[$index];
             $returnQty = $request->return_quantity[$index];
             $remainingQty = $originalQty - $returnQty;
-    
+
             // Create Purchase Return Details
             $purchaseReturnDetails = new PurchaseReturnDetails();
             $purchaseReturnDetails->purchase_return_id = $purchaseReturn->id;
@@ -169,22 +169,22 @@ class PurchaseReturnController extends Controller
             $purchaseReturnDetails->amount = $request->return_total[$index];
             $purchaseReturnDetails->created_by_id = Auth::guard('admin')->user()->id;
             $purchaseReturnDetails->save();
-    
+
             // Update Purchase Details
             $purchaseDetail = PurchaseDetails::where('purchase_id', $purchase_id)->where('product_id', $productId)->first();
             $purchaseDetail->quantity = $remainingQty;
             $purchaseDetail->save();
-    
+
             // Update Stock
             $stock = Stock::find($productId);
             $stock->stock_quantity -= $returnQty;
             $stock->save();
         }
-    
+
         // Update Supplier Ledger, Supplier Balance, etc.
         // (additional code to handle refund and supplier balance update)
-    
-        return redirect()->route('purchases.index')->with('alert', ['messageType' => 'success', 'message' => 'Purchase Return Processed Successfully!']);
+
+        return redirect()->route('purchase-return.index')->with('alert', ['messageType' => 'success', 'message' => 'Purchase Return Processed Successfully!']);
     }
 
 
@@ -211,35 +211,5 @@ class PurchaseReturnController extends Controller
                 break;
         }
         return $zeros . $srl;
-    }
-    public function destroy(Request $request)
-    {
-        $payment_id = $request->payment_id;
-        $purchase_id = $request->purchase_id;
-        $payment = Payment::find($payment_id);
-        $vendor_id = $payment->vendor_id;
-
-        //Vouchar Update****
-        $purchase = Purchase::find($purchase_id);
-        $purchase->paid_amount = $purchase->paid_amount - $payment->amount;
-        $purchase->payment_status = ($purchase->total_payable <= $purchase->paid_amount) ? 1 : 0;
-        $purchase->save();
-        //End*****
-
-        //Supplier Balance Update****
-        $vendor = Vendor::find($vendor_id);
-        $vendor->current_balance = $vendor->current_balance + $payment->amount;
-        $vendor->save();
-        //End*****
-
-        //Supplier Ledger Payment Destroy**********
-        VendorLedger::where('payment_id', $payment_id)->delete();
-        //End*****
-
-        //Payment Destroy**********
-        $payment->delete();
-        //End*****
-
-        return redirect()->back()->with('alert', ['messageType' => 'success', 'message' => 'Data Deleted Successfully!']);
     }
 }

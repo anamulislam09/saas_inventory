@@ -11,6 +11,8 @@ use App\Models\Item;
 use App\Models\PurchaseDetails;
 use App\Models\SupplierLedger;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
+use App\Models\Collection;
 use Illuminate\Http\Request;
 use Auth;
 
@@ -18,26 +20,39 @@ class PaymentController extends Controller
 {
     public function index()
     {
-        $data['payments'] = Payment::orderBy('id', 'desc')->get();
-        $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        if (Auth::guard('admin')->user()->client_id == 0) {
+            $data['payments'] = Payment::where('client_id', Auth::guard('admin')->user()->id)->orderBy('id', 'desc')->get();
+            $data['currency_symbol'] = BasicInfo::where('client_id', Auth::guard('admin')->user()->id)->first()->currency_symbol;
+        } else {
+            $data['payments'] = Payment::where('client_id', $client->id)->orderBy('id', 'desc')->get();
+            $data['currency_symbol'] = BasicInfo::where('client_id', $client->id)->first()->currency_symbol;
+        }
         return view('admin.payments.index', compact('data'));
     }
 
-    public function createOrEdit($id=null)
+    public function createOrEdit($id = null)
     {
-        if($id){
+        if ($id) {
             $data['title'] = 'Edit';
-        }else{
+        } else {
             $data['title'] = 'Create';
         }
-        $data['paymentMethods'] = PaymentMethod::orderBy('title','asc')->get();
-        $data['suppliers'] = Supplier::orderBy('name','asc')->get();
 
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        if (Auth::guard('admin')->user()->client_id == 0) {
+            $data['paymentMethods'] = PaymentMethod::orderBy('title', 'asc')->get();
+            $data['suppliers'] = Supplier::where('client_id', Auth::guard('admin')->user()->id)->orderBy('name', 'asc')->get();
+            $data['purchases'] = Purchase::where('client_id', Auth::guard('admin')->user()->id)->where('payment_status', 0)->orderBy('date', 'asc')->get();
+            $data['currency_symbol'] = BasicInfo::where('client_id', Auth::guard('admin')->user()->id)->first()->currency_symbol;
+        } else {
+            $data['paymentMethods'] = PaymentMethod::orderBy('title', 'asc')->get();
+            $data['suppliers'] = Supplier::where('client_id', $client->id)->orderBy('name', 'asc')->get();
+            $data['purchases'] = Purchase::where('client_id', $client->id)->where('payment_status', 0)->orderBy('date', 'asc')->get();
+            $data['currency_symbol'] = BasicInfo::where('client_id', $client->id)->first()->currency_symbol;
+        }
 
-        $data['purchases'] = Purchase::where('payment_status',0)->orderBy('date', 'asc')->get();
-        $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
-
-        return view('admin.payments.create-or-edit',compact('data'));
+        return view('admin.payments.create-or-edit', compact('data'));
     }
 
     public function store(Request $request)
@@ -52,10 +67,10 @@ class PaymentController extends Controller
         $pay_it = $request->pay_it;
         $note = $request->note;
         $created_by_id = Auth::guard('admin')->user()->id;
-        
-        if(isset($purchase_id)){
-            for ($i=0; $i < count($purchase_id); $i++) {
-                if($paid_amount[$i]){
+
+        if (isset($purchase_id)) {
+            for ($i = 0; $i < count($purchase_id); $i++) {
+                if ($paid_amount[$i]) {
                     //Payment Create**********
                     $payment = new Payment();
                     $payment->supplier_id = $supplier_id;
@@ -87,19 +102,18 @@ class PaymentController extends Controller
                     $supplier->current_balance = $supplier->current_balance - $paid_amount[$i];
                     $supplier->save();
                     //End*****
-                    
+
                     //Vouchar Update****
                     $purchase = Purchase::find($purchase_id[$i]);
                     $purchase->paid_amount = $purchase->paid_amount + $paid_amount[$i];
-                    $purchase->payment_status = ($purchase->total_payable <= $purchase->paid_amount)? 1 : 0;
+                    $purchase->payment_status = ($purchase->total_payable <= $purchase->paid_amount) ? 1 : 0;
                     $purchase->save();
                     //End*****
                 }
             }
         }
 
-        if($paid_in_advanced)
-        {
+        if ($paid_in_advanced) {
             //Payment Create**********
             $payment = new Payment();
             $payment->supplier_id = $supplier_id;
@@ -125,29 +139,29 @@ class PaymentController extends Controller
             $supplierLedger->save();
             //End*****
         }
-        return redirect()->route('payments.index')->with('alert',['messageType'=>'success','message'=>'Data Inserted Successfully!']);
+        return redirect()->route('payments.index')->with('alert', ['messageType' => 'success', 'message' => 'Data Inserted Successfully!']);
     }
     public function dueVouchars(Request $request)
     {
-        $data['purchases'] = Purchase::where(['payment_status'=>0, 'supplier_id'=> $request->supplier_id])->orderBy('date', 'asc')->get();
+        $data['purchases'] = Purchase::where(['payment_status' => 0, 'supplier_id' => $request->supplier_id])->orderBy('date', 'asc')->get();
         $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
         return response()->json($data, 200);
     }
 
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
         $data = $request->all();
         PaymentMethod::find($id)->update($data);
-        return redirect()->route('payment-methods.index')->with('alert',['messageType'=>'success','message'=>'Data Updated Successfully!']);
+        return redirect()->route('payment-methods.index')->with('alert', ['messageType' => 'success', 'message' => 'Data Updated Successfully!']);
     }
-    
+
     public function destroy($id)
     {
         $isExistInCollections = Collection::where('payment_method_id', $id)->count();
         $isExistInPayment = Payment::where('payment_method_id', $id)->count();
-        if($isExistInCollections || $isExistInPayment)
-            return redirect()->back()->with('alert',['messageType'=>'warning','message'=>'Data Deletion Failed!']);
+        if ($isExistInCollections || $isExistInPayment)
+            return redirect()->back()->with('alert', ['messageType' => 'warning', 'message' => 'Data Deletion Failed!']);
         PaymentMethod::destroy($id);
-        return redirect()->back()->with('alert',['messageType'=>'success','message'=>'Data Deleted Successfully!']);
+        return redirect()->back()->with('alert', ['messageType' => 'success', 'message' => 'Data Deleted Successfully!']);
     }
 }

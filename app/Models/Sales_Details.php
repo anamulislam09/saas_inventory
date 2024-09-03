@@ -18,6 +18,6 @@ class Sales_Details extends Model
     ];
     public function product()
     {
-        return $this->belongsTo(product::class, 'product_id')->with('unit');
+        return $this->belongsTo(Product::class, 'product_id')->with('unit');
     }
 }

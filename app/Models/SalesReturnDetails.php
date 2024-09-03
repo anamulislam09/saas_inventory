@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class SalesReturnDetails extends Model
+{
+    use HasFactory;
+    protected $fillable =
+    [
+        'client_id',
+        'sales_return_id',
+        'product_id',
+        'quantity_returned',
+        'return_reason',
+        'unit_price',
+        'amount',
+        'created_by_id',
+        'updated_by_id',
+    ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id')->with('unit');
+    }
+}

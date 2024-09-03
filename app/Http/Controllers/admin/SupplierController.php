@@ -18,11 +18,12 @@ class SupplierController extends Controller
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
         if (Auth::guard('admin')->user()->client_id == 0) {
             $data['suppliers'] = Supplier::where('client_id', Auth::guard('admin')->user()->id)->orderBy('id')->get();
+            $data['currency_symbol'] = BasicInfo::where('client_id', Auth::guard('admin')->user()->id)->first()->currency_symbol;
         } else {
             $data['suppliers'] = Supplier::where('client_id', $client->id)->orderBy('id')->get();
+            $data['currency_symbol'] = BasicInfo::where('client_id', $client->id)->first()->currency_symbol;
         }
 
-        $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
         return view('admin.suppliers.index', compact('data'));
     }
 

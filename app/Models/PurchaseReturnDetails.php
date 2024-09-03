@@ -20,4 +20,10 @@ class PurchaseReturnDetails extends Model
         'created_by_id',
         'updated_by_id',
     ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id')->with('unit');
+    }
 }
+

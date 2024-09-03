@@ -78,6 +78,7 @@
                                                                     <div class="dropdown-menu">
                                                                         <button due="{{ $item->receiveable_amount -$item->receive_amount }}" sales-id="{{ $item->id }}" type="button" class="btn btn-success btn-sm pay-now dropdown-item"
                                                                             data-toggle="modal" data-target="#exampleModal" data-whatever="@getbootstrap">Add Collection</button>
+                                                                            <a href="{{route('sales-return.create', $item->id)}}" class="text-center dropdown-item" style="border-top: 1px solid #ddd">Return</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -116,7 +117,6 @@
                                 <div class="form-group col-sm-12 col-md-12 col-lg-12">
                                     <label>Payment Methods *</label>
                                     <select name="payment_method_id" id="payment_method_id" class="form-control" required>
-                                        <option value='' selected>Select Payment Method</option>
                                         @foreach ($data['paymentMethods'] as $pm)
                                             <option @selected($pm->is_default) value="{{ $pm->id }}">{{ $pm->title }}</option>
                                         @endforeach

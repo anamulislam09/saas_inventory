@@ -37,7 +37,6 @@
                                                 <tr>
                                                     <th>SN</th>
                                                     <th>Expense Head</th>
-                                                    <th>Code</th>
                                                     <th>Status</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -47,7 +46,6 @@
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
                                                         <td>{{ $expensehead->title }}</td>
-                                                        <td>{{ $expensehead->code }}</td>
                                                         <td>{{ $expensehead->status == 1 ? 'Active' : 'Inactive' }}</td>
                                                         <td>
                                                             <div class="d-flex justify-content-center">

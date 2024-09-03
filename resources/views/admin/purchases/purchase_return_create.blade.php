@@ -142,9 +142,6 @@
                 let original_quantity = $(this).closest('tr').find('input[name="original_quantity[]"]')
                     .val();
 
-                console.log("Return Quantity: ", returnQty);
-                console.log("Original Quantity: ", original_quantity);
-
                 if (parseFloat(returnQty) > parseFloat(original_quantity)) {
                     alert('OH! The return quantity must be less than or equal to the original quantity.');
                     $(this).val(original_quantity);
@@ -156,6 +153,16 @@
                 $(this).closest('tr').find('.return-total').val(returnTotal);
 
                 calculateTotalReturnAmount();
+            });
+
+            // Filter out rows with return_quantity = 0 before submitting the form
+            $('form').on('submit', function(e) {
+                $('input[name="return_quantity[]"]').each(function() {
+                    if ($(this).val() == 0) {
+                        // If the return quantity is 0, remove the corresponding row's input fields
+                        $(this).closest('tr').find('input').attr('disabled', true);
+                    }
+                });
             });
 
             function calculateTotalReturnAmount() {

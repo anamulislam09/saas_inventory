@@ -53,6 +53,7 @@ class ReportController extends Controller
             return view('admin.reports.collections', compact('data'));
         }
     }
+
     public function purchase(Request $request)
     {
         if ($request->isMethod('post')) {
@@ -83,6 +84,7 @@ class ReportController extends Controller
             return view('admin.reports.purchase', compact('data'));
         }
     }
+
     public function sales(Request $request)
     {
 
