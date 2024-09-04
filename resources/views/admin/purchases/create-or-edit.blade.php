@@ -1,24 +1,29 @@
 @extends('layouts.admin.master')
 @section('content')
-<style>
-    table td, table th{
-        padding: 3px!important;
-        text-align: center;
-    }
-    input[type="number"]{
-        text-align: right;
-    }
-    .item{
-        text-align: left;
-    }
-    .form-group{
-        padding: 2px;
-        margin: 0px;
-    }
-    label{
-        margin-bottom: 0px;
-    }
-</style>
+    <style>
+        table td,
+        table th {
+            padding: 3px !important;
+            text-align: center;
+        }
+
+        input[type="number"] {
+            text-align: right;
+        }
+
+        .item {
+            text-align: left;
+        }
+
+        .form-group {
+            padding: 2px;
+            margin: 0px;
+        }
+
+        label {
+            margin-bottom: 0px;
+        }
+    </style>
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -41,9 +46,10 @@
                     <div class="col-12">
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">{{ $data['title'] }} Form</h3>
+                                <h3 class="card-title">{{ $data['title'] }}</h3>
                             </div>
-                            <form id="form-submit" action="{{ route('purchases.store') }}" method="POST" enctype="multipart/form-data">
+                            <form id="form-submit" action="{{ route('purchases.store') }}" method="POST"
+                                enctype="multipart/form-data">
                                 @csrf()
                                 <div class="card-body">
                                     <div class="row">
@@ -72,10 +78,11 @@
                                             <select class="form-control normalize" id="product_id">
                                                 <option value="" selected>Select Product</option>
                                                 @foreach ($data['products'] as $key => $product)
-                                                    <option value="{{ $product->id }}" product_name="{{ $product->product_name }}"
+                                                    <option value="{{ $product->id }}"
+                                                        product_name="{{ $product->product_name }}"
                                                         product_price="{{ $product->cost }}"
-                                                        unit_name="{{ $product->unit->title }}"
-                                                        > {{ $product->product_name }}
+                                                        unit_name="{{ $product->unit->title }}">
+                                                        {{ $product->product_name }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -113,14 +120,13 @@
                                                 name="discount_rate" id="discount_rate" placeholder="0.00">
                                         </div>
                                         <div class="form-group col-sm-3 col-md-3 col-lg-3">
-                                            <label>Dicount Amount</label>
+                                            <label>Discount Amount</label>
                                             <input readonly type="number" class="form-control" name="discount_amount"
                                                 id="discount_amount" placeholder="0.00">
                                         </div>
                                         <div class="form-group col-sm-3 col-md-3 col-lg-3">
                                             <label>Total</label>
-                                            <input
-                                                value="{{ isset($data['purchase']) ? $data['purchase']->total : null }}"
+                                            <input value="{{ isset($data['purchase']) ? $data['purchase']->total : null }}"
                                                 type="number" class="form-control" name="total" id="total"
                                                 placeholder="0.00" readonly>
                                         </div>
@@ -131,23 +137,22 @@
                                         </div>
                                         <div class="form-group col-sm-3 col-md-3 col-lg-3">
                                             <label>Total Payable</label>
-                                            <input readonly type="number" class="form-control"
-                                                name="total_payable" id="total_payable" placeholder="0.00">
+                                            <input readonly type="number" class="form-control" name="total_payable"
+                                                id="total_payable" placeholder="0.00">
                                         </div>
                                         <div class="form-group col-sm-3 col-md-3 col-lg-3">
                                             <label>Payment Methods *</label>
                                             <select name="payment_method_id" id="payment_method_id" class="form-control">
                                                 @foreach ($data['paymentMethods'] as $pm)
-                                                    <option @selected($pm->is_default)
-                                                        value="{{ $pm->id }}">{{ $pm->title }}</option>
+                                                    <option @selected($pm->is_default) value="{{ $pm->id }}">
+                                                        {{ $pm->title }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div class="form-group col-sm-3 col-md-3 col-lg-3">
                                             <label>Paid Amount</label>
-                                            <input value="0.00" step="0.01" type="number"
-                                                class="form-control" name="paid_amount"
-                                                id="paid_amount" placeholder="0.00">
+                                            <input value="0.00" step="0.01" type="number" class="form-control"
+                                                name="paid_amount" id="paid_amount" placeholder="0.00">
                                         </div>
                                         <div class="form-group col-sm-12 col-md-12 col-lg-12">
                                             <label>Note</label>
@@ -178,19 +183,19 @@
             //     let tbody = ``;
             //     if(vouchar_no){
             //         let amount;
-            //         res = await nsAjaxGet('{{ route("purchase-orders.purchase-requisition",":vouchar_no") }}'.replace(":vouchar_no",vouchar_no));
+            //         res = await nsAjaxGet('{{ route('purchase-orders.purchase-requisition', ':vouchar_no') }}'.replace(":vouchar_no",vouchar_no));
             //         if(Object.keys(res).length){
             //             res.prdetails.forEach((element, index) => {
             //                 amount = parseFloat(element.cost) * parseFloat(element.quantity);
             //                 tbody += `<tr>
-            //                             <td class="serial">${index + 1}</td>
-            //                             <td class="text-left"><input type="hidden" value="${element.product_id}" name="product_id[]">${element.product.product_name}</td>
-            //                             <td>${element.product.unit.title}</td>
-            //                             <td><input type="number" value="${element.unit_price}" class="form-control form-control-sm calculate" name="unit_price[]" placeholder="0.00" required></td>
-            //                             <td><input type="number" value="${element.quantity}" class="form-control form-control-sm calculate" name="quantity[]" placeholder="0.00" required></td>
-            //                             <td><input type="number" value="${element.amount}" class="form-control form-control-sm" name="sub_total[]" placeholder="0.00" disabled></td>
-            //                             <td><button class="btn btn-sm btn-danger btn-del" type="button"><i class="fa-solid fa-trash btn-del"></i></button></td>
-            //                         </tr>`;
+        //                             <td class="serial">${index + 1}</td>
+        //                             <td class="text-left"><input type="hidden" value="${element.product_id}" name="product_id[]">${element.product.product_name}</td>
+        //                             <td>${element.product.unit.title}</td>
+        //                             <td><input type="number" value="${element.unit_price}" class="form-control form-control-sm calculate" name="unit_price[]" placeholder="0.00" required></td>
+        //                             <td><input type="number" value="${element.quantity}" class="form-control form-control-sm calculate" name="quantity[]" placeholder="0.00" required></td>
+        //                             <td><input type="number" value="${element.amount}" class="form-control form-control-sm" name="sub_total[]" placeholder="0.00" disabled></td>
+        //                             <td><button class="btn btn-sm btn-danger btn-del" type="button"><i class="fa-solid fa-trash btn-del"></i></button></td>
+        //                         </tr>`;
             //             });
             //         }
             //     }
@@ -208,20 +213,23 @@
                 let unit_price_temp = $('#product_id option:selected').attr('product-price');
                 let quantity_temp = 1;
                 let total_temp = unit_price_temp * quantity_temp;
-                let tbody =  ``;
+                let tbody = ``;
 
                 tbody += `<tr>
                             <td class="serial"></td>
                             <td class="text-left"><input type="hidden" value="${product_id}" name="product_id[]">${product_name}</td>
                             <td>${unit_name}</td>
-                            <td><input type="number" value="${unit_price_temp}" class="form-control form-control-sm calculate" name="unit_price[]" placeholder="0.00" required></td>
-                            <td><input type="number" value="${quantity_temp}" class="form-control form-control-sm calculate" name="quantity[]" placeholder="0.00" required></td>
-                            <td><input type="number" value="${total_temp}" class="form-control form-control-sm" name="sub_total[]" placeholder="0.00" disabled></td>
+                            <td><input type="number" value="${unit_price_temp}" class="form-control form-control-sm calculate" name="unit_price[]" placeholder="0.00" step="0.01" required></td>
+                            <td><input type="number" value="${quantity_temp}" class="form-control form-control-sm calculate" name="quantity[]" placeholder="0.00" step="0.01" required></td>
+                            <td><input type="number" value="${total_temp}" class="form-control form-control-sm" name="sub_total[]" placeholder="0.00" step="0.01" disabled></td>
+
                             <td><button class="btn btn-sm btn-danger btn-del" type="button"><i class="fa-solid fa-trash btn-del"></i></button></td>
                         </tr>`;
 
                 $('#tbody').append(tbody);
-                $(".serial").each(function(index) { $(this).html(index + 1);});
+                $(".serial").each(function(index) {
+                    $(this).html(index + 1);
+                });
                 $('#product_id').val('');
                 calculate(true);
             });
@@ -244,7 +252,7 @@
                 e.preventDefault();
                 Swal.fire("Please Insert product!");
             }
-            if(parseFloat($('#paid_amount').val())>parseFloat($('#total_payable').val())){
+            if (parseFloat($('#paid_amount').val()) > parseFloat($('#total_payable').val())) {
                 e.preventDefault();
                 Swal.fire("Couldn't be pay more then payable!");
             }
@@ -258,15 +266,45 @@
         $('#discount_method').on('change', function(e) {
             calculate(true);
         });
+
+        //     function calculate(isDefaultRecipentAmt) {
+        //         let product_id = $('input[name="product_id[]"]');
+        //         let total = 0;
+        //         for (let i = 0; i < product_id.length; i++) {
+        //             $('input[name="sub_total[]"]')[i].value = ($('input[name="unit_price[]"]')[i].value * $(
+        //                 'input[name="quantity[]"]')[i].value);
+        //             total += $('input[name="unit_price[]"]')[i].value * $('input[name="quantity[]"]')[i].value;
+        //         }
+        //         $('#total').val(total.toFixed(2));
+        //         let discount_method = $('#discount_method').val();
+        //         let discount_rate = parseFloat($('#discount_rate').val());
+        //         let tax_amount = parseFloat($('#tax_amount').val());
+
+        //         let discount_amount = discount_rate;
+        //         if (discount_method == 1) discount_amount = total * (discount_rate / 100);
+        //         let total_payable = total + tax_amount - discount_amount;
+        //         if (isDefaultRecipentAmt) {
+        //             $('#paid_amount').val(total_payable.toFixed(2));
+        //         } else {
+        //             paid_amount = $('#paid_amount').val();
+        //         }
+        //         $('#discount_amount').val(discount_amount.toFixed(2));
+        //         $('#total_payable').val(total_payable.toFixed(2));
+        //     }
+
         function calculate(isDefaultRecipentAmt) {
             let product_id = $('input[name="product_id[]"]');
             let total = 0;
             for (let i = 0; i < product_id.length; i++) {
-                $('input[name="sub_total[]"]')[i].value = ($('input[name="unit_price[]"]')[i].value * $(
-                    'input[name="quantity[]"]')[i].value);
-                total += $('input[name="unit_price[]"]')[i].value * $('input[name="quantity[]"]')[i].value;
+                let unit_price = parseFloat($('input[name="unit_price[]"]')[i].value);
+                let quantity = parseFloat($('input[name="quantity[]"]')[i].value);
+                let sub_total = unit_price * quantity;
+
+                $('input[name="sub_total[]"]')[i].value = sub_total.toFixed(2);
+                total += sub_total;
             }
             $('#total').val(total.toFixed(2));
+
             let discount_method = $('#discount_method').val();
             let discount_rate = parseFloat($('#discount_rate').val());
             let tax_amount = parseFloat($('#tax_amount').val());
@@ -274,14 +312,13 @@
             let discount_amount = discount_rate;
             if (discount_method == 1) discount_amount = total * (discount_rate / 100);
             let total_payable = total + tax_amount - discount_amount;
+
             if (isDefaultRecipentAmt) {
                 $('#paid_amount').val(total_payable.toFixed(2));
-            } else {
-                paid_amount = $('#paid_amount').val();
             }
+
             $('#discount_amount').val(discount_amount.toFixed(2));
             $('#total_payable').val(total_payable.toFixed(2));
         }
-
     </script>
 @endsection

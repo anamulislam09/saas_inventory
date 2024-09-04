@@ -6,12 +6,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Admin</h1>
+                        <h1 class="m-0">Client</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Admin</li>
+                            <li class="breadcrumb-item active">Client</li>
                         </ol>
                     </div>
                 </div>
@@ -23,53 +23,42 @@
                     <div class="col-12">
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">{{ $data['title'] }} Form</h3>
+                                <h3 class="card-title">Edit Client</h3>
                             </div>
-                            <form action="{{ isset($data['item']) ? route('admins.update',$data['item']->id) : route('admins.store'); }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{  route('client.update') }}" method="POST" enctype="multipart/form-data">
                                 @csrf()
-                                @if(isset($data['item']))
-                                    @method('put')
-                                @endif
+                                <input type="hidden" name="client_id" value="{{$data->id}}">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group col-sm-12 col-md-6 col-lg-6">
                                             <label>Full Name</label>
-                                            <input value="{{ $data['item']->name ?? null }}" required type="text" class="form-control" name="name"
+                                            <input value="{{ $data->name ?? null }}" required type="text" class="form-control" name="name"
                                                 placeholder="Full Name">
                                         </div>
                                         <div class="form-group col-sm-12 col-md-6 col-lg-6">
-                                            <label>Role</label>
-                                            <select class="form-control" name="type" required>
-                                                <option value=''>Select Role</option>
-                                                @foreach ($data['roles'] as $role)
-                                                    <option @selected(isset($data['item']) && $data['item']->type == $role->id) value="{{ $role->id }}">{{ $role->role }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-sm-12 col-md-6 col-lg-6">
                                             <label>Email</label>
-                                            <input value="{{ $data['item']->email ?? null }}" required type="text" class="form-control" name="email" placeholder="Email">
+                                            <input value="{{ $data->email ?? null }}" required type="text" class="form-control" name="email" placeholder="Email">
                                         </div>
                                         <div class="form-group col-sm-12 col-md-6 col-lg-6">
                                             <label>Contact No.</label>
-                                            <input value="{{ $data['item']->mobile ?? null }}" required type="number" class="form-control" name="mobile"
+                                            <input value="{{ $data->mobile ?? null }}" required type="number" class="form-control" name="mobile"
                                                 placeholder="01XXXXXXXXX">
                                         </div>
-                                        <div class="form-group col-sm-12 col-md-6 col-lg-6">
-                                            <label>Password</label>
-                                            <input @required(!isset($data['item'])) type="password" class="form-control" id="password" name="password"
-                                            placeholder="Password">
-                                        </div>
-                                        <div class="form-group col-sm-12 col-md-6 col-lg-6">
-                                            <label>Confirm Password</label>
-                                            <input @required(!isset($data['item'])) type="password" onkeyup="checkPassword()" class="form-control"
-                                                id="conpassword" name="conpassword" placeholder="Confirm Password">
+                                        <div class="form-group col-sm-12 col-md-12 col-lg-12">
+                                            <label>Packages</label>
+                                            <select name="package_id" id="package_id" class="form-control">
+                                                <option value="" selected disabled>Select Package</option>
+                                                @foreach ($packages as $package)
+                                                    <option value="{{$package->id}}" @if ($package->id == $data->package_id ) selected @endif>{{$package->package_name}}</option>
+                                                @endforeach
+                                              
+                                            </select>
                                         </div>
                                         <div class="form-group col-sm-12 col-md-12 col-lg-12">
                                             <label>Status</label>
                                             <select name="status" id="status" class="form-control">
-                                                <option @selected(($data['item']->status ?? null) === 1) value="1">Active</option>
-                                                <option @selected(($data['item']->status ?? null) === 0) value="0">Inactive</option>
+                                                <option @selected(($data->status ?? null) === 1) value="1">Active</option>
+                                                <option @selected(($data->status ?? null) === 0) value="0">Inactive</option>
                                             </select>
                                         </div>
                                     </div>
@@ -84,20 +73,4 @@
             </div>
         </section>
     </div>
-@endsection
-@section('script')
-    <script type="text/javascript">
-        function checkPassword() {
-            var x = document.getElementById("password").value;
-            var y = document.getElementById("conpassword").value;
-            if (x == y) {
-
-                var input = document.getElementById("conpassword");
-                input.style.borderColor = 'green';
-            } else {
-                var input = document.getElementById("conpassword");
-                input.style.borderColor = 'red';
-            }
-        }
-    </script>
 @endsection

@@ -67,8 +67,9 @@
                                                         <th>Category</th>
                                                         <th>Sub_Category</th>
                                                         <th>Product Name</th>
+                                                        <th>Measurement</th>
                                                         <th>Image</th>
-                                                        <th>Product Quentity</th>
+                                                        <th>Quentity</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="tbody">
@@ -92,6 +93,7 @@
                                                             <td>{{ $categories }}</td>
                                                             <td>{{ $subcategories }}</td>
                                                             <td>{{ $product->product_name }}</td>
+                                                            <td>{{ $product->unit->title }}</td>
                                                             <td>
                                                                 <label class="col-md-3" style="cursor:pointer">
                                                                     <img id="image_view" style="max-width:70%" class="img-thumbnail"

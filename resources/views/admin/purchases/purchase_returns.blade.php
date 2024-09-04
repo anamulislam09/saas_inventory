@@ -6,12 +6,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Purchases Returns</h1>
+                        <h1 class="m-0">Purchase Return</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Purchases Returns</li>
+                            <li class="breadcrumb-item active">Purchase Return</li>
                         </ol>
                     </div>
                 </div>

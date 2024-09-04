@@ -41,7 +41,7 @@ class SalesController extends Controller
             $data['title'] = 'Edit';
             $data['item'] = Sales::find($id);
         } else {
-            $data['title'] = 'Create';
+            $data['title'] = 'New Sale';
         }
 
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();

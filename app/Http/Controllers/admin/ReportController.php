@@ -56,12 +56,14 @@ class ReportController extends Controller
 
     public function purchase(Request $request)
     {
+        $user = Auth::guard('admin')->user();
+        $client = Admin::find($user->client_id);
         if ($request->isMethod('post')) {
-            $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
+            $data['currency_symbol'] = BasicInfo::where('client_id', $user->client_id == 0 ? $user->id : $client->id)->first()->currency_symbol;
             $supplier_id = $request->supplier_id;
             $from_date = $request->from_date;
             $to_date = $request->to_date;
-            $purchase = Purchase::query();
+            $purchase = Purchase::where('client_id', $user->client_id == 0 ? $user->id : $client->id)->query();
             if ($supplier_id) {
                 $purchase = $purchase->where('supplier_id', $supplier_id);
             } else {
@@ -87,13 +89,14 @@ class ReportController extends Controller
 
     public function sales(Request $request)
     {
-
+        $user = Auth::guard('admin')->user();
+        $client = Admin::find($user->client_id);
         if ($request->isMethod('post')) {
-            $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
+            $data['currency_symbol'] = BasicInfo::where('client_id', $user->client_id == 0 ? $user->id : $client->id)->first()->currency_symbol;
             $vendor_id = $request->vendor_id;
             $from_date = $request->from_date;
             $to_date = $request->to_date;
-            $sales = Sales::query();
+            $sales = Sales::where('client_id', $user->client_id == 0 ? $user->id : $client->id)->query();
             if ($vendor_id) {
                 $sales = $sales->where('vendor_id', $vendor_id);
             } else {
@@ -170,8 +173,10 @@ class ReportController extends Controller
         //     }
         //     return response()->json($data, 200);
         // } else {
-        $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
-        $data['products'] = Product::where('status', 1)
+        $user = Auth::guard('admin')->user();
+        $client = Admin::find($user->client_id);
+        $data['currency_symbol'] = BasicInfo::where('client_id', $user->client_id == 0 ? $user->id : $client->id)->first()->currency_symbol;
+        $data['products'] = Product::where('client_id', $user->client_id == 0 ? $user->id : $client->id)->where('status', 1)
             ->orderBy('product_name', 'asc')
             ->get();
         return view('admin.reports.stocks', compact('data'));

@@ -39,6 +39,7 @@ use App\Http\Controllers\admin\SupplierController;
 use App\Http\Controllers\admin\UnitController;
 use App\Http\Controllers\admin\VendorController;
 use App\Http\Controllers\SuperAdmin\ClientController;
+use App\Http\Controllers\SuperAdmin\PackageController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
@@ -78,6 +79,22 @@ Route::prefix('admin')->group(function () {
             Route::get('/client/edit/{id}', [ClientController::class, 'edit'])->name('client.edit');
             Route::post('/client/update', [ClientController::class, 'update'])->name('client.update');
             Route::post('/client/destroy', [ClientController::class, 'destroy'])->name('client.destroy');
+            /*-------------------------- create client route ends here----------------------*/
+
+            /*-------------------------- client active route ends here----------------------*/
+            Route::get('/client/active/{id}', [ClientController::class, 'ClientActive'])->name('client.active');
+            Route::get('/client/not-active/{id}', [ClientController::class, 'ClientNotActive'])->name('client.notactive');
+            /*-------------------------- client active route ends here----------------------*/
+
+
+
+            /*-------------------------- Pcakage client route start here----------------------*/
+            Route::get('/packages/index', [PackageController::class, 'index'])->name('packages.index');
+            Route::get('/package/create', [PackageController::class, 'create'])->name('package.create');
+            Route::post('/package/store', [PackageController::class, 'store'])->name('package.store');
+            Route::get('/package/edit/{id}', [PackageController::class, 'edit'])->name('package.edit');
+            Route::post('/package/update', [PackageController::class, 'update'])->name('package.update');
+            Route::post('/package/destroy', [PackageController::class, 'destroy'])->name('package.destroy');
             /*-------------------------- create client route ends here----------------------*/
 
             Route::post('logout', [AdminController::class, 'logout'])->name('admin.logout');

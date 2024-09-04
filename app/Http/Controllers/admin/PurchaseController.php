@@ -16,6 +16,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Product;
 use App\Models\Stock;
+use App\Models\Unit;
 use App\Models\Vendor;
 use App\Models\VendorLedger;
 use Illuminate\Http\Request;
@@ -44,7 +45,7 @@ class PurchaseController extends Controller
             $data['title'] = 'Edit';
             $data['products'] = Purchase::find($id);
         } else {
-            $data['title'] = 'Create';
+            $data['title'] = 'New Purchase';
         }
 
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();

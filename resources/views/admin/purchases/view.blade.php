@@ -67,6 +67,7 @@
                             <tr class="tabletitle">
                                 <th>Sl#</th>
                                 <th>Product Name</th>
+                                <th>Unit Measurement</th>
                                 <th>Quantity</th>
                                 <th>Unit Price</th>
                                 <th>Sub Total</th>
@@ -79,10 +80,13 @@
                             @foreach ($data['purchase']->purchase_details as $key => $value)
                                 @php
                                     $total_price += $value->total_amount;
+                                    // $unit = App\Models\Unit::where('id', $value->product_id)->first();
+                                    // dd($value->product_id);
                                 @endphp
                                 <tr class="list-item">
                                     <td data-label="Type">{{ $key+1 }}</td>
                                     <td data-label="Type">{{ $value->product->product_name }}</td>
+                                    <td data-label="Type">{{ $value->product->unit->title }}</td>
                                     <td data-label="Quantity">{{ number_format($value->quantity, 2) }}</td>
                                     <td data-label="Unit Price">{{ $data['basicInfo']->currency_symbol }}
                                         {{ number_format($value->unit_price, 2) }} / {{ $value->product->unit->title }}</td>
@@ -91,32 +95,32 @@
                                 </tr>
                             @endforeach
                             <tr class="list-item total-row">
-                                <th colspan="4">Total</th>
+                                <th colspan="5">Total</th>
                                 <td style="text-align: right;">{{ $data['basicInfo']->currency_symbol }}
                                     {{ number_format($total_price, 2) }}</td>
                             </tr>
                             <tr class="list-item total-row">
-                                <th colspan="4">Discount</th>
+                                <th colspan="5">Discount</th>
                                 <td style="text-align: right;">{{ $data['basicInfo']->currency_symbol }}
                                     {{ number_format($data['purchase']->discount, 2) }}</td>
                             </tr>
                             <tr class="list-item total-row">
-                                <th colspan="4">Tax</th>
+                                <th colspan="5">Tax</th>
                                 <td style="text-align: right;">{{ $data['basicInfo']->currency_symbol }}
                                     {{ number_format(0, 2) }}</td>
                             </tr>
                             <tr class="list-item total-row">
-                                <th colspan="4">Total Payable</th>
+                                <th colspan="5">Total Payable</th>
                                 <td style="text-align: right;">{{ $data['basicInfo']->currency_symbol }}
                                     {{ number_format($data['purchase']->total_payable, 2) }}</td>
                             </tr>
                             <tr class="list-item total-row">
-                                <th colspan="4">Paid Amount</th>
+                                <th colspan="5">Paid Amount</th>
                                 <td style="text-align: right;">{{ $data['basicInfo']->currency_symbol }}
                                     {{ number_format($data['purchase']->paid_amount, 2) }}</td>
                             </tr>
                             <tr class="list-item total-row">
-                                <th colspan="4">Due Amount</th>
+                                <th colspan="5">Due Amount</th>
                                 <td style="text-align: right;">{{ $data['basicInfo']->currency_symbol }}
                                     {{ number_format($data['purchase']->total_payable - $data['purchase']->paid_amount, 2) }}
                                 </td>
@@ -133,7 +137,7 @@
                             <h4>Payments</h4>
                         </div>
                     </div>
-                    <div class="col-right"><a type="button" class="a" href="javascript:void(0);">Add Payment</a></div>
+                    {{-- <div class="col-right"><a type="button" class="a" href="javascript:void(0);">Add Payment</a></div> --}}
                 </div>
             </div>
             <div class="invoice-bot" style="margin: 0px 10px 10px 10px">

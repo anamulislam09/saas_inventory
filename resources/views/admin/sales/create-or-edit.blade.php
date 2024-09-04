@@ -22,7 +22,7 @@
                     <div class="col-12">
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">{{ $data['title'] }} Form</h3>
+                                <h3 class="card-title">{{ $data['title'] }}</h3>
                             </div>
                             <form id="form-submit" action="{{ route('sales.store') }}" method="POST"
                                 enctype="multipart/form-data">
@@ -36,7 +36,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th width="5%">SN</th>
-                                                            <th>Vendor</th>
+                                                            <th>Customer</th>
                                                             <th>Item</th>
                                                             <th>Sales Price</th>
                                                             <th>Quantity</th>
@@ -48,7 +48,7 @@
                                                             <th>
                                                                 <select class="form-control form-control-sm"
                                                                     id="vendor_id" name="vendor_id">
-                                                                    <option value="" selected>Select Vendor</option>
+                                                                    <option value="" selected>Select Customer</option>
                                                                     @foreach ($data['vendors'] as $key => $vendor)
                                                                         <option value="{{ $vendor->id }}" vendor-name="{{ $vendor->name }}">
                                                                             {{ $vendor->name }}
@@ -81,6 +81,7 @@
                                                             <th><input placeholder="0.00" type="number"
                                                                     class="form-control form-control-sm calculate"
                                                                     id="unit_price_temp"></th>
+                                                                    
                                                             <th><input placeholder="0.00" type="number"
                                                                     class="form-control form-control-sm calculate"
                                                                     id="quantity_temp"></th>
@@ -144,7 +145,7 @@
                                                 name="discount_rate" id="discount_rate" placeholder="0.00">
                                         </div>
                                         <div class="form-group col-sm-4 col-md-3 col-lg-3">
-                                            <label>Dicount Amount</label>
+                                            <label>Discount Amount</label>
                                             <input readonly type="number" class="form-control" name="discount_amount"
                                                 id="discount_amount" placeholder="0.00">
                                         </div>
@@ -154,7 +155,7 @@
                                                 name="tax_amount" id="tax_amount" placeholder="0.00">
                                         </div> --}}
                                         <div class="form-group col-sm-4 col-md-3 col-lg-3">
-                                            <label>Total Payable</label>
+                                            <label>Total Receivable</label>
                                             <input readonly type="number" class="form-control" name="total_payable"
                                                 id="total_payable" placeholder="0.00">
                                         </div>
@@ -168,7 +169,7 @@
                                             </select>
                                         </div>
                                         <div class="form-group col-sm-4 col-md-3 col-lg-3">
-                                            <label>Paid Amount</label>
+                                            <label>Receive Amount</label>
                                             <input value="0.00" step="0.01" type="number" class="form-control"
                                                 name="paid_amount" id="paid_amount" placeholder="0.00">
                                         </div>

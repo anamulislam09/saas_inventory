@@ -116,27 +116,27 @@
                                         <div class="form-group col-sm-4 col-md-4 col-lg-4">
                                             <label for="facebook" class="form-label">Facebook Link</label>
                                             <input type="text" class="form-control" id="facebook" name="facebook"
-                                                value="" placeholder="Facebook Link">
+                                                value="#" placeholder="Facebook Link">
                                         </div>
                                         <div class="form-group col-sm-4 col-md-4 col-lg-4">
                                             <label for="instagram" class="form-label">Instagram Link</label>
                                             <input type="text" class="form-control" id="instagram" name="instagram"
-                                                value="" placeholder="Instagram Link">
+                                                value="#" placeholder="Instagram Link">
                                         </div>
                                         <div class="form-group col-sm-4 col-md-4 col-lg-4">
                                             <label for="twitter" class="form-label">Twitter Link</label>
                                             <input type="text" class="form-control" id="twitter" name="twitter"
-                                                value="" placeholder="Twitter Link">
+                                                value="#" placeholder="Twitter Link">
                                         </div>
                                         <div class="form-group col-sm-4 col-md-4 col-lg-4">
                                             <label for="pinterest" class="form-label">Pinterest Link</label>
                                             <input type="text" class="form-control" id="pinterest" name="pinterest"
-                                                value="" placeholder="Pinterest Link">
+                                                value="#" placeholder="Pinterest Link">
                                         </div>
                                         <div class="form-group col-sm-4 col-md-4 col-lg-4">
                                             <label for="linkedIn" class="form-label">LinkedIn Link</label>
                                             <input type="text" class="form-control" id="linkedIn" name="linkedIn"
-                                                value="" placeholder="LinkedIn Link">
+                                                value="#" placeholder="LinkedIn Link">
                                         </div>
                                     </div>
                                 </div>
