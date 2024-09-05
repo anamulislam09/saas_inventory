@@ -18,6 +18,8 @@ return new class extends Migration
             $table->integer('sub_cat_id')->nullable();
             $table->integer('unit_id');
             $table->string('product_name');
+            $table->double('purchase_price',20,2)->default(0.00);
+            $table->double('selling_price',20,2)->default(0.00);
             $table->longText('description')->nullable();
             $table->string('image')->nullable();
             $table->tinyInteger('status')->default(1);

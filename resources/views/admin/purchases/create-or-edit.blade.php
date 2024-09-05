@@ -55,7 +55,7 @@
                                     <div class="row">
                                         <div class="form-group col-sm-4 col-md-4 col-lg-4">
                                             <label>Suppliers *</label>
-                                            <select name="supplier_id" id="vendor_id" class="form-control" required
+                                            <select name="supplier_id" id="vendor_id" class="form-control select2" required
                                                 @isset($data['purchase']) @disabled(true) @endisset>
                                                 <option value="" selected>Select Supplier</option>
                                                 @foreach ($data['suppliers'] as $vendor)
@@ -75,7 +75,7 @@
                                         </div>
                                         <div class="form-group col-sm-4 col-md-4 col-lg-4">
                                             <label>Product</label>
-                                            <select class="form-control normalize" id="product_id">
+                                            <select class="form-control normalize select2" id="product_id">
                                                 <option value="" selected>Select Product</option>
                                                 @foreach ($data['products'] as $key => $product)
                                                     <option value="{{ $product->id }}"

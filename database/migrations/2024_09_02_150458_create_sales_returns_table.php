@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('sales_returns', function (Blueprint $table) {
             $table->id();
             $table->tinyInteger('client_id');
-            $table->integer('vendor_id');
+            $table->integer('vendor_id')->nullable();
             $table->string('invoice_no');
             $table->tinyInteger('sales_id');
             $table->date('date');

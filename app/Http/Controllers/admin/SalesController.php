@@ -79,8 +79,8 @@ class SalesController extends Controller
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
         $date = date('Y-m-d');
         $receive_amount = $request->paid_amount;
-        // $vendor_id = $request->vendor_id;
-        $vendor_id = is_array($request->vendor_id) ? $request->vendor_id[0] : $request->vendor_id;
+        $vendor_id = $request->vendor_id;
+        // $vendor_id = is_array($request->vendor_id) ? $request->vendor_id[0] : $request->vendor_id;
 
         $note = $request->note;
 
@@ -101,11 +101,12 @@ class SalesController extends Controller
                 'created_by_id' => Auth::guard('admin')->user()->id,
             ];
 
+
         $sales = Sales::create($data);
 
         //Issue Item Details......
-        $product_id = $request->item_id;
-        $unit_price = $request->unit_price;
+        $product_id = $request->product_id;
+        $unit_price = $request->product_price;
         $quantity = $request->quantity;
 
         for ($i = 0; $i < count($product_id); $i++) {
@@ -173,9 +174,11 @@ class SalesController extends Controller
         }
 
         //Supplier Balance Update****
-        $vendor = Vendor::find($vendor_id);
-        $vendor->current_balance = $vendor->current_balance - ((float) $request->total_payable -  (float) $request->paid_amount);
-        $vendor->save();
+        if ($vendor_id) {
+            $vendor = Vendor::find($vendor_id);
+            $vendor->current_balance = $vendor->current_balance - ((float) $request->total_payable -  (float) $request->paid_amount);
+            $vendor->save();
+        }
         return redirect()->route('sales.index')->with('alert', ['messageType' => 'success', 'message' => 'Data Inserted Successfully!']);
     }
 
@@ -195,7 +198,7 @@ class SalesController extends Controller
         $due_amount = $request->due_amount;
         $amount = $request->amount;
         $note = $request->note;
-        
+
         $created_by_id = Auth::guard('admin')->user()->id;
         $sales = Sales::find($sales_id);
         $vendor_id = $sales->vendor_id;

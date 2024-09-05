@@ -21,13 +21,13 @@
                                 alt="Sup" /> --}}
                             {{-- </div> --}}
                         <div class="clientinfo">
-                            <h2 class="h2" id="vendor">{{ $data['sales']->vendor->name }},
-                                {{ $data['sales']->vendor->organization }}</h2>
+                            <h2 class="h2" id="vendor">{{ $data['sales']->vendor ? $data['sales']->vendor->name : '' }},
+                                {{ $data['sales']->vendor ? $data['sales']->vendor->organization : '' }}</h2>
                             <p class="p"><span
-                                    id="address">{{ $data['sales']->vendor->address }}</span><br><span
+                                    id="address">{{ $data['sales']->vendo ? $data['sales']->vendor->address : '' }}</span><br><span
                                     id="city"></span><span id="country"></span><span id="zip"></span><span
-                                    id="tax_num">{{ $data['sales']->vendor->phone }},
-                                    {{ $data['sales']->vendor->email }}</span><br></p>
+                                    id="tax_num">{{ $data['sales']->vendor ? $data['sales']->vendor->phone : '' }},
+                                    {{ $data['sales']->vendor ? $data['sales']->vendor->email : '' }}</span><br></p>
                         </div>
                     </div>
                     <div class="col-right">

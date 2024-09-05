@@ -27,7 +27,7 @@
                                 <option value="">All Subcategory</option>
 
                             </select> --}}
-                            <input type="text" class="form-control" value="{{ $subcategories}}" readonly>
+                            <input type="text" class="form-control" value="{{ $subcategories }}" readonly>
                         </div>
                     </div>
 
@@ -48,6 +48,18 @@
                             </select>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="form-group col-sm-6 col-md-6 col-lg-6">
+                            <label>Purchase Price</label>
+                            <input value="{{ $product->purchase_price }}" type="text" class="form-control" readonly>
+                        </div>
+                        <div class="form-group col-sm-6 col-md-6 col-lg-6">
+                            <label>Selling Price</label>
+                            <input value="{{ $product->selling_price }}" type="text" class="form-control"
+                                name="selling_price" placeholder="0.00">
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="form-group col-sm-6 col-md-6 col-lg-6">
                             <label>Description</label>

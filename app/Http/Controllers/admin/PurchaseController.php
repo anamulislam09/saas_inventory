@@ -73,7 +73,7 @@ class PurchaseController extends Controller
             $data['purchase'] = Purchase::where('client_id', $client->id)->with(['purchase_details', 'supplier', 'created_by', 'payments'])->find($id);
             $data['basicInfo'] = BasicInfo::where('client_id', $client->id)->first();
         }
-        
+
         $data['currency_symbol'] = $data['basicInfo']->currency_symbol;
         $data['print'] = $print;
         return view('admin.purchases.view', compact('data'));
@@ -161,7 +161,7 @@ class PurchaseController extends Controller
         $payment_method_id = $request->payment_method_id;
 
         $product_id = $request->product_id;
-        $unit_price = $request->unit_price;
+        $purchase_price = $request->unit_price;
         $quantity = $request->quantity;
 
         $vouchar_no = $this->formatSrl(Purchase::latest()->limit(1)->max('vouchar_no') + 1);
@@ -191,12 +191,18 @@ class PurchaseController extends Controller
             $purchaseDetails->purchase_id = $purchase->id;
             $purchaseDetails->product_id = $product_id[$i];
             $purchaseDetails->quantity = $quantity[$i];
-            $purchaseDetails->unit_price = $unit_price[$i];
-            $purchaseDetails->total_amount = $unit_price[$i] * $quantity[$i];
+            $purchaseDetails->unit_price = $purchase_price[$i];
+            $purchaseDetails->total_amount = $purchase_price[$i] * $quantity[$i];
             $purchaseDetails->save();
             //End*****
 
-            //Item Stock Update****
+            //product Update****
+            $product = Product::find($product_id[$i]);
+            $product->purchase_price = $purchase_price[$i];
+            $product->save();
+            //End*****
+
+            //product Stock Update****
             $stock = Stock::find($product_id[$i]);
             $stock->stock_quantity = $stock->stock_quantity + $quantity[$i];
             $stock->updated_date = date('Y-m-d');

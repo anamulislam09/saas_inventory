@@ -5,12 +5,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Vendors</h1>
+                        <h1 class="m-0">Customer</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Vendors</li>
+                            <li class="breadcrumb-item active">Customer</li>
                         </ol>
                     </div>
                 </div>
@@ -24,7 +24,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">{{ $data['title'] }} Form</h3>
                             </div>
-                            <form action="{{ isset($data['item']) ? route('vendors.update',$data['item']->id) : route('vendors.store'); }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ isset($data['item']) ? route('customers.update',$data['item']->id) : route('customers.store'); }}" method="POST" enctype="multipart/form-data">
                                 @csrf()
                                 @if(isset($data['item']))
                                     @method('put')
@@ -32,7 +32,7 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group col-sm-6 col-md-6 col-lg-6">
-                                            <label>Vendor Name *</label>
+                                            <label>Customer Name *</label>
                                             <input value="{{ isset($data['item']) ? $data['item']->name : null }}" type="text" class="form-control" name="name" placeholder="Vendor Name" required>
                                         </div>
                                         <div class="form-group col-sm-6 col-md-6 col-lg-6">
@@ -43,13 +43,14 @@
                                             <label>Email</label>
                                             <input value="{{ isset($data['item']) ? $data['item']->email : null }}" type="email" class="form-control" name="email" placeholder="example@gmail.com">
                                         </div>
-                                        <div class="form-group col-sm-6 col-md-6 col-lg-6">
+                                        {{-- <div class="form-group col-sm-6 col-md-6 col-lg-6">
                                             <label>Organization</label>
                                             <input value="{{ isset($data['item']) ? $data['item']->organization : null }}" type="text" class="form-control" name="organization" placeholder="Organization" required>
-                                        </div>
-                                        <div class="form-group col-sm-12 col-md-12 col-lg-12">
+                                        </div> --}}
+                                        <div class="form-group col-sm-6 col-md-6 col-lg-6">
                                             <label>Address</label>
-                                            <textarea class="form-control" name="address" placeholder="Address" cols="30" rows="2">{{ isset($data['item']) ? $data['item']->address : null }}</textarea>
+                                            <input class="form-control" name="address" placeholder="Enter Address" value="{{ isset($data['item']) ? $data['item']->address : null }}" >
+
                                         </div>
                                         {{-- @if(!isset($data['item']))
                                             <div class="form-group col-sm-6 col-md-6 col-lg-6">

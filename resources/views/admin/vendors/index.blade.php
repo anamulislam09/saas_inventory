@@ -6,12 +6,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Vendors</h1>
+                        <h1 class="m-0">Customers</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Vendors</li>
+                            <li class="breadcrumb-item active">Customers</li>
                         </ol>
                     </div>
                 </div>
@@ -24,7 +24,7 @@
                         <div class="card">
                             <div class="card-header bg-primary p-1">
                                 <h3 class="card-title">
-                                    <a href="{{ route('vendors.create') }}"class="btn btn-light shadow rounded m-0"><i
+                                    <a href="{{ route('customers.create') }}"class="btn btn-light shadow rounded m-0"><i
                                             class="fas fa-plus"></i>
                                         <span>Add New</span></i></a>
                                 </h3>
@@ -36,11 +36,10 @@
                                             <thead>
                                                 <tr>
                                                     <th>SN</th>
-                                                    <th>Supplier Name</th>
+                                                    <th>Customer Name</th>
                                                     <th>Phone</th>
                                                     <th>Email</th>
                                                     <th>Address</th>
-                                                    <th>Organization</th>
                                                     <th>Current Bal</th>
                                                     <th>Status</th>
                                                     <th>Action</th>
@@ -54,16 +53,15 @@
                                                         <td>{{ $vendor->phone }}</td>
                                                         <td>{{ $vendor->email }}</td>
                                                         <td>{{ $vendor->address }}</td>
-                                                        <td>{{ $vendor->organization }}</td>
                                                         <td>{{ $data['currency_symbol'] }} {{ number_format($vendor->current_balance,2) }}</td>
                                                         <td><span class="badge badge-{{ $vendor->status == 1 ? 'success' : 'danger' }}">{{ $vendor->status==1? 'Active' : 'Inactive' }}</span></td>
                                                         <td>
                                                             <div class="d-flex justify-content-center">
-                                                                <a href="{{ route('vendors.edit',$vendor->id) }}"
+                                                                <a href="{{ route('customers.edit',$vendor->id) }}"
                                                                     class="btn btn-info">
                                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                                 </a>
-                                                                <form class="delete" action="{{ route('vendors.destroy', $vendor->id) }}" method="post">
+                                                                <form class="delete" action="{{ route('customers.destroy', $vendor->id) }}" method="post">
                                                                     @csrf
                                                                     @method('DELETE')
                                                                     <button type="submit" class="btn btn-danger">

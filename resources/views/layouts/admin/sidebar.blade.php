@@ -110,9 +110,7 @@
                                     <a href="{{ route('roles.index') }}"
                                         class="nav-link {{ request()->is('admin/basic-setup/roles*') ? 'active' : '' }}">
                                         <i class="nav-icon far fa-dot-circle text-warning"></i>
-                                        <p>Roles <i class="fas right fa-solid fa-plus add-new p-1"
-                                                add-new="{{ route('roles.create') }}"></i>
-                                        </p>
+                                        <p>Roles</p>
                                     </a>
                                 </li>
                             @endif
@@ -123,8 +121,7 @@
                                     <a href="{{ route('admins.index') }}"
                                         class="nav-link {{ request()->is('admin/basic-setup/admins*') ? 'active' : '' }}">
                                         <i class="nav-icon far fa-dot-circle text-warning"></i>
-                                        <p>Admins <i class="fas right fa-solid fa-plus add-new p-1"
-                                                add-new="{{ route('admins.create') }}"></i></p>
+                                        <p>Admins </p>
                                     </a>
                                 </li>
                             @endif
@@ -157,8 +154,7 @@
                                     <a href="{{ route('payment-methods.index') }}"
                                         class="nav-link {{ request()->is('admin/inventory/setup/payment-methods*') ? 'active' : '' }}">
                                         <i class="nav-icon far fa-dot-circle text-warning"></i>
-                                        <p>Payment Methods <i class="fas right fa-solid fa-plus add-new p-1"
-                                                add-new="{{ route('payment-methods.create') }}"></i></p>
+                                        <p>Payment Methods</p>
                                     </a>
                                 </li>
                             @endif
@@ -489,11 +485,11 @@
                         $authorization->hasMenuAccess(33) ||
                             (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <li class="nav-item">
-                            <a href="{{ route('vendors.index') }}"
-                                class="nav-link {{ request()->is('admin/vendors*') ? 'active' : '' }}">
+                            <a href="{{ route('customers.index') }}"
+                                class="nav-link {{ request()->is('admin/customers*') ? 'active' : '' }}">
                                 <i class="far fa-dot-circle nav-icon"></i>
                                 <p>Customer <i class="fas right fa-solid fa-plus add-new p-1"
-                                        add-new="{{ route('vendors.index') }}"></i></p>
+                                        add-new="{{ route('customers.index') }}"></i></p>
                             </a>
                         </li>
                     @endif
@@ -699,8 +695,7 @@
                                     <a href="{{ route('expense-categories.index') }}"
                                         class="nav-link {{ request()->is('admin/expense/expense-categories*') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
-                                        <p>Expense Category <i class="fas right fa-solid fa-plus add-new p-1"
-                                                add-new="{{ route('expense-categories.create') }}"></i></p>
+                                        <p>Expense Category </p>
                                     </a>
                                 </li>
                             @endif
@@ -711,8 +706,7 @@
                                     <a href="{{ route('expense-heads.index') }}"
                                         class="nav-link {{ request()->is('admin/expense/expense-heads*') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
-                                        <p>Expense Head <i class="fas right fa-solid fa-plus add-new p-1"
-                                                add-new="{{ route('expense-heads.create') }}"></i></p>
+                                        <p>Expense Head </p>
                                     </a>
                                 </li>
                             @endif
@@ -723,8 +717,7 @@
                                     <a href="{{ route('expenses.index') }}"
                                         class="nav-link {{ request()->is('admin/expense/expenses*') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
-                                        <p>Expense Manage<i class="fas right fa-solid fa-plus add-new p-1"
-                                                add-new="{{ route('expenses.create') }}"></i></p>
+                                        <p>Expense Manage</p>
                                     </a>
                                 </li>
                             @endif

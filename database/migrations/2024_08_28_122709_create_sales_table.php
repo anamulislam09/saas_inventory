@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->tinyInteger('client_id');
-            $table->integer('vendor_id');
+            $table->integer('vendor_id')->nullable();
             $table->string('invoice_no');
             $table->date('date');
             $table->double('sales_price',20,2)->default(0.00);

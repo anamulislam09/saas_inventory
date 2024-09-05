@@ -1,10 +1,10 @@
 @extends('layouts.admin.master')
 @section('content')
-<style>
-     .modal-dialog {
+    <style>
+        .modal-dialog {
             max-width: 700px;
         }
-</style>
+    </style>
 
     <div class="content-wrapper">
         <div class="content-header">
@@ -94,46 +94,71 @@
                                                 <th>Subcategory</th>
                                                 <th>Unit</th>
                                                 <th>Image</th>
+                                                <th>Purchase Price</th>
+                                                <th>Selling Price</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody id="memberTable">
                                             @foreach ($products as $key => $product)
-                                            @php
-                                                $categories = App\Models\Category::where('id', $product->cat_id)->value('title');
-                                                $subcategories = App\Models\Category::where('id', $product->sub_cat_id)->value('title');
-                                                $unit = App\Models\Unit::where('id', $product->unit_id)->value('title');
-                                            @endphp
-                                            <tr>
-                                                <td>{{$key+1}}</td>
-                                                <td>{{$product->product_name}}</td>
-                                                <td>{{$categories}}</td>
-                                                <td>{{$subcategories}}</td>
-                                                <td>{{$unit}}</td>
-                                                <td>
-                                                    <label class="col-md-3" style="cursor:pointer">
+                                                @php
+                                                    $categories = App\Models\Category::where(
+                                                        'id',
+                                                        $product->cat_id,
+                                                    )->value('title');
+                                                    $subcategories = App\Models\Category::where(
+                                                        'id',
+                                                        $product->sub_cat_id,
+                                                    )->value('title');
+                                                    $unit = App\Models\Unit::where('id', $product->unit_id)->value(
+                                                        'title',
+                                                    );
+                                                @endphp
+                                                <tr>
+                                                    <td>{{ $key + 1 }}</td>
+                                                    <td>{{ $product->product_name }}</td>
+                                                    <td>{{ $categories }}</td>
+                                                    <td>{{ $subcategories }}</td>
+                                                    <td>{{ $unit }}</td>
+                                                    <td>
+                                                        {{-- <label class="col-md-3" style="cursor:pointer">
                                                         <img id="image_view" style="max-width:100%" class="img-thumbnail"
                                                             src="{{ asset('public/uploads/product/' . (isset($product->image) && $product->image ? $product->image : 'placeholder.png')) }}">
                                                         <input id="image" name="image" style="display:none" onchange="itemImage(this);"
                                                             type="file" accept="image/*">
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    @if ($product->status ==0)
-                                                        <span class="badge badge-danger">Inactive</span>
+                                                    </label> --}}
+                                                        {{-- <label class="col-md-3" style="cursor:pointer">
+                                                        <img id="image_view" 
+                                                             style="max-width:100%; max-height:300px; width:auto; height:auto;" 
+                                                             class="img-thumbnail"
+                                                             src="{{ asset('public/uploads/product/' . (isset($product->image) && $product->image ? $product->image : 'placeholder.png')) }}">
+                                                        <input id="image" name="image" style="display:none" onchange="itemImage(this);" type="file" accept="image/*">
+                                                    </label> --}}
+
+                                                        <img src="{{ asset('public/uploads/product/' . (isset($product->image) && $product->image ? $product->image : 'placeholder.png')) }}"
+                                                            class="img-thumbnail img-fluid"
+                                                            style="max-width: 60px; height: auto;"
+                                                            alt="{{ $product->name }}" />
+
+                                                    </td>
+                                                    <td>{{ $product->purchase_price }}</td>
+                                                    <td>{{ $product->selling_price }}</td>
+                                                    <td>
+                                                        @if ($product->status == 0)
+                                                            <span class="badge badge-danger">Inactive</span>
                                                         @else
-                                                        <span class="badge badge-success">Active</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <a href="" class="btn btn-sm btn-info edit"
-                                                    data-id="{{ $product->id }}" data-toggle="modal"
-                                                    data-target="#editproduct"><i class="fas fa-edit"></i></a>
-                                                </td>
-                                            </tr>
+                                                            <span class="badge badge-success">Active</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <a href="" class="btn btn-sm btn-info edit"
+                                                            data-id="{{ $product->id }}" data-toggle="modal"
+                                                            data-target="#editproduct"><i class="fas fa-edit"></i></a>
+                                                    </td>
+                                                </tr>
                                             @endforeach
-                                           
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -145,30 +170,30 @@
         </section>
     </div>
     <div class="modal fade" id="editproduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Edit Product </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div id="modal_body">
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Product </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="modal_body">
 
+                </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @section('script')
     <script>
         $('body').on('click', '.edit', function() {
             let pid = $(this).data('id');
-            let url = '{{ route("products.edit",":id") }}'.replace(":id", pid)
+            let url = '{{ route('products.edit', ':id') }}'.replace(":id", pid)
 
-            $.get(url , function(data) {
+            $.get(url, function(data) {
                 console.log(data);
                 $('#modal_body').html(data);
             });
@@ -178,7 +203,7 @@
         $(document).ready(function() {
             $('#category_id').change(function() {
                 let catId = $(this).val();
-                let url = '{{ route("products.sub-category",":id") }}'.replace(":id", catId)
+                let url = '{{ route('products.sub-category', ':id') }}'.replace(":id", catId)
                 $.ajax({
                     // url: '/admin/products/sub_category/' + catId,
                     url: url,
@@ -188,7 +213,8 @@
                             '<option value="" selected disabled>All Subcategory</option>'
                         );
                         $.each(data, function(index, sub_category) {
-                            $('#sub_cat_id').append('<option value="' + sub_category.id + '">' + sub_category.title + '</option>');
+                            $('#sub_cat_id').append('<option value="' + sub_category
+                                .id + '">' + sub_category.title + '</option>');
                         });
                     }
                 });

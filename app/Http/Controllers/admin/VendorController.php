@@ -52,9 +52,8 @@ class VendorController extends Controller
         $data['created_by_id'] = Auth::guard('admin')->user()->id;
         $vendor = Vendor::create($data);
 
-        return redirect()->route('vendors.index')->with('alert', ['messageType' => 'success', 'message' => 'Data Inserted Successfully!']);
+        return redirect()->back()->with('alert', ['messageType' => 'success', 'message' => 'Data Inserted Successfully!']);
     }
-
 
     public function update(Request $request, $id)
     {
@@ -62,7 +61,7 @@ class VendorController extends Controller
         $data = $request->all();
         $data['updated_by_id'] = Auth::guard('admin')->user()->id;
         $vendor->update($data);
-        return redirect()->route('vendors.index')->with('alert', ['messageType' => 'success', 'message' => 'Data Updated Successfully!']);
+        return redirect()->route('customers.index')->with('alert', ['messageType' => 'success', 'message' => 'Data Updated Successfully!']);
     }
 
     public function destroy($id)
