@@ -139,12 +139,18 @@
             $('.return-quantity').on('input', function() {
                 let returnQty = $(this).val();
                 let original_quantity = $(this).closest('tr').find('input[name="original_quantity[]"]')
-                .val();
+                    .val();
+
+                // if (parseFloat(returnQty) > parseFloat(original_quantity)) {
+                //     alert('OH! The return quantity must be less than or equal to the original quantity.');
+                //     $(this).val(original_quantity);
+                //     returnQty = original_quantity;
+                // }
 
                 if (parseFloat(returnQty) > parseFloat(original_quantity)) {
-                    alert('OH! The return quantity must be less than or equal to the original quantity.');
-                    $(this).val(original_quantity);
-                    returnQty = original_quantity;
+                    Swal.fire("Error", "The sales quantity cannot exceed the available stock quantity.",
+                        "error");
+                    $(this).val(original_quantity);; // Reset quantity to available stock
                 }
 
                 let unitPrice = $(this).data('unit-price');
@@ -170,6 +176,7 @@
                     totalReturnAmount += parseFloat($(this).val()) || 0;
                 });
                 $('#total_return_amount').val(totalReturnAmount);
+                $('#refund_amount').val(totalReturnAmount);
             }
         });
     </script>

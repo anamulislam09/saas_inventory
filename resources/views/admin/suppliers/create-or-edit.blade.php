@@ -43,13 +43,13 @@
                                             <label>Email</label>
                                             <input value="{{ isset($data['item']) ? $data['item']->email : null }}" type="email" class="form-control" name="email" placeholder="example@gmail.com">
                                         </div>
-                                        <div class="form-group col-sm-6 col-md-6 col-lg-6">
+                                        {{-- <div class="form-group col-sm-6 col-md-6 col-lg-6">
                                             <label>Organization</label>
                                             <input value="{{ isset($data['item']) ? $data['item']->organization : null }}" type="text" class="form-control" name="organization" placeholder="Organization" required>
-                                        </div>
-                                        <div class="form-group col-sm-12 col-md-12 col-lg-12">
+                                        </div> --}}
+                                        <div class="form-group col-sm-6 col-md-6 col-lg-6">
                                             <label>Address</label>
-                                            <textarea class="form-control" name="address" placeholder="Address" cols="30" rows="2">{{ isset($data['item']) ? $data['item']->address : null }}</textarea>
+                                            <input type="text" class="form-control" name="address" placeholder="Address" value="{{ isset($data['item']) ? $data['item']->address : null }}">
                                         </div>
                                         <div class="form-group col-sm-12 col-md-12 col-lg-12">
                                             <label>Status *</label>

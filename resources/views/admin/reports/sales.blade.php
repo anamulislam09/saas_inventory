@@ -27,9 +27,9 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="form-group col-sm-3 col-md-3 col-lg-3">
-                                        <label>Vendor</label>
+                                        <label>Customer</label>
                                         <select name="vendor_id" id="vendor_id" class="form-control" required>
-                                            <option vendor-name="All Vendor" value="0" selected>All Vendor</option>
+                                            <option vendor-name="All Vendor" value="0" selected>All Customer</option>
                                             @foreach ($data['vendors'] as $vendor)
                                                 <option
                                                 vendor-name="{{ $vendor->name }}"
@@ -55,7 +55,7 @@
                                         <div id="print_header" hidden>
                                             <div class="row justify-content-center">
                                                 <div class="col-12 text-center">
-                                                    <h1>Purchase Report</h1>
+                                                    <h1>Sales Report</h1>
                                                 </div>
                                                 <div class="col-12">
                                                     <h4>Description: <span id="description"></span></h4>
@@ -169,9 +169,11 @@
             thead +=    `<th>Date</th>`;
             thead +=    `<th>Payment Status</th>`;
             thead +=    `<th>Note</th>`;    
+            thead +=    `<th>Sales Amount</th>`;
             thead +=    `<th>Vat</th>`;
             thead +=    `<th>Discount</th>`;
-            thead +=    `<th>Payable</th>`;
+            thead +=    `<th>Collection Amount</th>`;
+            thead +=    `<th>Collection</th>`;
             thead +=    `<th>Due</th>`;
             thead += `</tr>`;
             $('#thead').html(thead);
@@ -183,9 +185,11 @@
             tbody +=     `<td>${element.date}</td>`;
             tbody +=     `<td><span class="badge badge-${element.status==1?'success':'danger'}">${element.status==1?'Paid':'Due'}</span></td>`;
             tbody +=     `<td>${element.note??''}</td>`;
+            tbody +=     `<td>${res.currency_symbol} ${element.sales_price}</td>`;
             tbody +=     `<td>${res.currency_symbol} ${element.vat_tax}</td>`;
             tbody +=     `<td>${res.currency_symbol} ${element.discount}</td>`;
             tbody +=     `<td>${res.currency_symbol} ${element.receiveable_amount}</td>`;
+            tbody +=     `<td>${res.currency_symbol} ${element.receive_amount}</td>`;
             tbody +=     `<td style="text-align: center;">${res.currency_symbol} ${element.receiveable_amount - element.receive_amount}</td>`;
             tbody += `</tr>`;
         });

@@ -36,7 +36,7 @@
                                 <tr>
                                     <td><span>Vouchar Total</span><label
                                             id="invoice_total">{{ $data['basicInfo']->currency_symbol }}
-                                            {{ number_format($data['sales']->total_payable, 2) }}</label></td>
+                                            {{ number_format($data['sales']->receiveable_amount, 2) }}</label></td>
                                     {{-- <td><span>Currency</span><label id="currency">EUR</label></td> --}}
                                 </tr>
                                 {{-- <tr>
@@ -57,7 +57,7 @@
                     <table class="table-main">
                         <thead>
                             <tr class="tabletitle">
-                                <th>Type</th>
+                                <th>SL#</th>
                                 <th>Product Name</th>
                                 <th>Unit Price</th>
                                 <th>Quantity</th>

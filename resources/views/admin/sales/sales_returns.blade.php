@@ -31,7 +31,7 @@
                                                     <th>SN</th>
                                                     <th>Invoice No</th>
                                                     <th>Sales ID</th>
-                                                    <th>Vendors|Organization</th>
+                                                    <th>Vendors</th>
                                                     <th>Date</th>
                                                     <th>Refund Amount</th>
                                                     <th>Receive Amount</th>
@@ -47,8 +47,7 @@
                                                         <td>{{ $loop->iteration }}</td>
                                                         <td><a target="_blank" href="{{ route('sales-return.vouchar',[$salesReturn->id]) }}"><b>{{ $salesReturn->invoice_no }}</b></a></td>
                                                         <td>{{ $salesReturn->sales_id }}</td>
-                                                        <td>{{ $salesReturn->vendor->name }}<br>
-                                                            <strong>{{ $salesReturn->vendor->organization }}</strong>
+                                                        <td>{{ $salesReturn->vendor? $salesReturn->vendor->name : '' }}<br>
                                                         </td>
                                                         <td>{{ $salesReturn->date }}</td>
                                                         <td>{{ $data['currency_symbol'] }} {{ $salesReturn->total_amount }}</td>

@@ -44,6 +44,7 @@
                                                     <th>Total Amount</th>
                                                     <th>Collection</th>
                                                     <th>Due</th>
+                                                    <th>Collection Status</th>
                                                     <th>Note</th>
                                                     <th>Created By</th>
                                                     <th>Action</th>
@@ -61,6 +62,7 @@
                                                         <td>{{ $item->receiveable_amount }}</td>
                                                         <td>{{ $item->receive_amount }}</td>
                                                         <td>{{ $item->receiveable_amount -$item->receive_amount }}</td>
+                                                        <td><span class="badge badge-{{ $item->status == 1 ? 'success' : 'danger' }}">{{ $item->status==1? 'Paid' : 'Due' }}</span></td>
                                                         <td>{{ $item->note }}</td>
                                                         <td>{{ $item->created_by->name }}</td>
                                                         <td>

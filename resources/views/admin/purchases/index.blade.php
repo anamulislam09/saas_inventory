@@ -37,7 +37,7 @@
                                                 <tr>
                                                     <th>SN</th>
                                                     <th>Vouchar No</th>
-                                                    <th>Supplier|Organization</th>
+                                                    <th>Supplier</th>
                                                     <th>Date</th>
                                                     <th>Vat/Tax</th>
                                                     <th>Discount</th>
@@ -54,9 +54,7 @@
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
                                                         <td><a target="_blank" href="{{ route('purchases.vouchar',[$purchase->id]) }}"><b>{{ $purchase->vouchar_no }}</b></a></td>
-                                                        <td>{{ $purchase->supplier->name }}<br>
-                                                            <strong>{{ $purchase->supplier->organization }}</strong>
-                                                        </td>
+                                                        <td>{{ $purchase->supplier->name }}</td>
                                                         <td>{{ $purchase->date }}</td>
                                                         <td>{{ $data['currency_symbol'] }} {{ $purchase->vat_tax }}</td>
                                                         <td>{{ $data['currency_symbol'] }} {{ $purchase->discount }}</td>

@@ -5,12 +5,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Vendor Ledgers</h1>
+                        <h1 class="m-0">Customer Ledgers</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Vendor Ledgers</li>
+                            <li class="breadcrumb-item active">Customer Ledgers</li>
                         </ol>
                     </div>
                 </div>
@@ -22,15 +22,15 @@
                     <div class="col-12">
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Vendor Ledgers</h3>
+                                <h3 class="card-title">Customer Ledgers</h3>
                             </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="form-group col-sm-3 col-md-3 col-lg-3">
-                                        <label>Vendor</label>
+                                        <label>Customer</label>
                                         <select name="vendor_id" id="vendor_id" class="form-control" required
                                             @isset($data['purchase']) @disabled(true) @endisset>
-                                            <option vendor-name="All Vendor" value="0" selected>All Vendor</option>
+                                            <option vendor-name="All Vendor" value="0" selected>All Customer</option>
                                             @foreach ($data['vendors'] as $vendor)
                                                 <option vendor-name="{{ $vendor->name }}" value="{{ $vendor->id }}">{{ $vendor->name }}</option>
                                             @endforeach
@@ -52,7 +52,7 @@
                                         <div id="print_header" hidden>
                                             <div class="row justify-content-center">
                                                 <div class="col-12 text-center">
-                                                    <h1>Vendor Ledger Report</h1>
+                                                    <h1>Customer Ledger Report</h1>
                                                 </div>
                                                 <div class="col-12">
                                                     <h4>Description: <span id="description"></span></h4>
@@ -222,7 +222,6 @@
                 thead +=    `<th>Phone</th>`;
                 thead +=    `<th>Email</th>`;
                 thead +=    `<th>Address</th>`;
-                thead +=    `<th>Organization</th>`;
                 thead +=    `<th>Current Balance</th>`;
                 thead += `</tr>`;
                 $('#thead').html(thead);
@@ -235,12 +234,11 @@
                     tbody +=   `<td>${val.phone}</td>`;
                     tbody +=   `<td>${val.email}</td>`;
                     tbody +=   `<td>${val.address}</td>`;
-                    tbody +=   `<td>${val.organization}</td>`;
                     tbody +=   `<td style="text-align: right;">${res.currency_symbol+" "+val.current_balance.toFixed(2)}</td>`;
                     tbody += `</tr>`;
                 });
                 tbody += `<tr>`;
-                tbody +=   `<th style="text-align: right;" colspan="6">Total Balance: </th>`;
+                tbody +=   `<th style="text-align: right;" colspan="5">Total Balance: </th>`;
                 tbody +=   `<th style="text-align: right;">${res.currency_symbol+' '+total_balance.toFixed(2)}</th>`;
                 tbody += `</tr>`;
                 $('#tbody').html(tbody);

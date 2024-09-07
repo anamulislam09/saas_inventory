@@ -54,96 +54,144 @@ class ReportController extends Controller
         }
     }
 
+    // public function purchase(Request $request)
+    // {
+    //     $user = Auth::guard('admin')->user();
+    //     $client = Admin::find($user->client_id);
+    //     if ($request->isMethod('post')) {
+    //         $data['currency_symbol'] = BasicInfo::where('client_id', $user->client_id == 0 ? $user->id : $client->id)->first()->currency_symbol;
+    //         $supplier_id = $request->supplier_id;
+    //         $from_date = $request->from_date;
+    //         $to_date = $request->to_date;
+    //         $purchase = Purchase::where('client_id', $user->client_id == 0 ? $user->id : $client->id)->query();
+    //         if ($supplier_id) {
+    //             $purchase = $purchase->where('supplier_id', $supplier_id);
+    //         } else {
+    //             $purchase = $purchase->with(['supplier']);
+    //         }
+    //         if ($from_date && $to_date) {
+    //             $purchase->whereBetween('date', [$from_date, $to_date]);
+    //         } elseif ($from_date) {
+    //             $purchase->where('date', '=', $from_date);
+    //         }
+    //         $data['purchase'] = $purchase->get();
+    //         return response()->json($data, 200);
+    //     } else {
+    //         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+    //         if (Auth::guard('admin')->user()->client_id == 0) {
+    //             $data['suppliers'] = Supplier::where('client_id', Auth::guard('admin')->user()->id)->where('status', 1)->orderBy('name', 'asc')->get();
+    //         } else {
+    //             $data['suppliers'] = Supplier::where('client_id', $client->id)->where('status', 1)->orderBy('name', 'asc')->get();
+    //         }
+    //         return view('admin.reports.purchase', compact('data'));
+    //     }
+    // }
+
     public function purchase(Request $request)
     {
         $user = Auth::guard('admin')->user();
         $client = Admin::find($user->client_id);
+
         if ($request->isMethod('post')) {
-            $data['currency_symbol'] = BasicInfo::where('client_id', $user->client_id == 0 ? $user->id : $client->id)->first()->currency_symbol;
+            // Get currency symbol
+            $data['currency_symbol'] = BasicInfo::where('client_id', ($user->client_id == 0) ? $user->id : $client->id)->first()->currency_symbol;
+
+            // Start purchase query
             $supplier_id = $request->supplier_id;
             $from_date = $request->from_date;
             $to_date = $request->to_date;
-            $purchase = Purchase::where('client_id', $user->client_id == 0 ? $user->id : $client->id)->query();
+
+            $purchase = Purchase::with(['supplier'])
+                ->where('client_id', ($user->client_id == 0) ? $user->id : $client->id);
+
+            // Filter by supplier if provided
             if ($supplier_id) {
-                $purchase = $purchase->where('supplier_id', $supplier_id);
-            } else {
-                $purchase = $purchase->with(['supplier']);
+                $purchase->where('supplier_id', $supplier_id);
             }
+
+            // Filter by date range
             if ($from_date && $to_date) {
                 $purchase->whereBetween('date', [$from_date, $to_date]);
             } elseif ($from_date) {
                 $purchase->where('date', '=', $from_date);
             }
+
+            // Fetch purchases
             $data['purchase'] = $purchase->get();
+
             return response()->json($data, 200);
         } else {
+            // Fetch client suppliers
             $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
             if (Auth::guard('admin')->user()->client_id == 0) {
-                $data['suppliers'] = Supplier::where('client_id', Auth::guard('admin')->user()->id)->where('status', 1)->orderBy('name', 'asc')->get();
+                $data['suppliers'] = Supplier::where('client_id', Auth::guard('admin')->user()->id)
+                    ->where('status', 1)
+                    ->orderBy('name', 'asc')
+                    ->get();
             } else {
-                $data['suppliers'] = Supplier::where('client_id', $client->id)->where('status', 1)->orderBy('name', 'asc')->get();
+                $data['suppliers'] = Supplier::where('client_id', $client->id)
+                    ->where('status', 1)
+                    ->orderBy('name', 'asc')
+                    ->get();
             }
+
             return view('admin.reports.purchase', compact('data'));
         }
     }
+
 
     public function sales(Request $request)
     {
         $user = Auth::guard('admin')->user();
         $client = Admin::find($user->client_id);
+
         if ($request->isMethod('post')) {
-            $data['currency_symbol'] = BasicInfo::where('client_id', $user->client_id == 0 ? $user->id : $client->id)->first()->currency_symbol;
+            // Fetch currency symbol
+            $data['currency_symbol'] = BasicInfo::where('client_id', ($user->client_id == 0) ? $user->id : $client->id)->first()->currency_symbol;
+
+            // Start sales query
             $vendor_id = $request->vendor_id;
             $from_date = $request->from_date;
             $to_date = $request->to_date;
-            $sales = Sales::where('client_id', $user->client_id == 0 ? $user->id : $client->id)->query();
+
+            $sales = Sales::with(['vendor'])
+                ->where('client_id', ($user->client_id == 0) ? $user->id : $client->id);
+
+            // Filter by vendor if provided
             if ($vendor_id) {
-                $sales = $sales->where('vendor_id', $vendor_id);
-            } else {
-                $sales = $sales->with(['vendor']);
+                $sales->where('vendor_id', $vendor_id);
             }
+
+            // Filter by date range
             if ($from_date && $to_date) {
                 $sales->whereBetween('date', [$from_date, $to_date]);
             } elseif ($from_date) {
                 $sales->where('date', '=', $from_date);
             }
+
+            // Fetch sales data
             $data['sales'] = $sales->get();
+
             return response()->json($data, 200);
         } else {
+            // Fetch client vendors
             $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
             if (Auth::guard('admin')->user()->client_id == 0) {
-                $data['vendors'] = Vendor::where('client_id', Auth::guard('admin')->user()->id)->where('status', 1)->orderBy('name', 'asc')->get();
+                $data['vendors'] = Vendor::where('client_id', Auth::guard('admin')->user()->id)
+                    ->where('status', 1)
+                    ->orderBy('name', 'asc')
+                    ->get();
             } else {
-                $data['vendors'] = Vendor::where('client_id', $client->id)->where('status', 1)->orderBy('name', 'asc')->get();
+                $data['vendors'] = Vendor::where('client_id', $client->id)
+                    ->where('status', 1)
+                    ->orderBy('name', 'asc')
+                    ->get();
             }
+
             return view('admin.reports.sales', compact('data'));
         }
-
-
-        // if ($request->isMethod('post')) {
-        //     $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
-        //     $created_by_id = $request->created_by_id;
-        //     $from_date = $request->from_date;
-        //     $to_date = $request->to_date;
-        //     $orders = Order::where('order_status', 5);
-        //     if ($created_by_id) {
-        //         $orders = $orders->where(['created_by_id' => $created_by_id]);
-        //     } else {
-        //         $orders = $orders->with(['admin']);
-        //     }
-        //     if ($from_date && $to_date) {
-        //         $orders = $orders->whereBetween('created_at', [$from_date, $to_date]);
-        //     } elseif ($from_date) {
-        //         $orders = $orders->whereDate('created_at', '=', $from_date);
-        //     }
-        //     $data['orders'] = $orders->get();
-        //     return response()->json($data, 200);
-        // } else {
-        //     $created_by_ids = Order::groupBy('created_by_id')->pluck('created_by_id')->toArray();
-        //     $data['admins'] = Admin::whereIn('id', $created_by_ids)->where('status', 1)->orderBy('name', 'asc')->get();
-        //     return view('admin.reports.sales', compact('data'));
-        // }
     }
+
 
 
     public function stocks(Request $request)

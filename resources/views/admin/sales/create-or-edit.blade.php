@@ -45,20 +45,23 @@
                                         <div class="form-group col-sm-4 col-md-4 col-lg-4">
                                             <label>Customer *</label>
                                             <div class="input-group">
-                                                <select class="form-control form-control-sm select2" id="vendor_id" name="vendor_id">
+                                                <select class="form-control form-control-sm select2" id="vendor_id"
+                                                    name="vendor_id">
                                                     <option value="" selected>Select Customer</option>
                                                     @foreach ($data['vendors'] as $key => $vendor)
-                                                        <option value="{{ $vendor->id }}" vendor-name="{{ $vendor->name }}">
+                                                        <option value="{{ $vendor->id }}"
+                                                            vendor-name="{{ $vendor->name }}">
                                                             {{ $vendor->name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                                 <div class="input-group-append">
-                                                    <a href="" data-toggle="modal" data-target="#editproduct" class="btn btn-sm btn-info edit">Add New</a>
+                                                    <a href="" data-toggle="modal" data-target="#editproduct"
+                                                        class="btn btn-sm btn-info edit">Add New</a>
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="form-group col-sm-4 col-md-4 col-lg-4">
                                             <label>Date *</label>
                                             <input name="date" id="date" type="date" value="{{ date('Y-m-d') }}"
@@ -76,9 +79,11 @@
                                                         )->first();
                                                     @endphp
                                                     <option value="{{ $item->id }}"
+                                                        @if ($qty->stock_quantity < 1) disabled style="color: #fb5200;" @endif
                                                         product_name="{{ $item->product_name }}"
                                                         product_price="{{ $item->selling_price }}"
-                                                        unit_name="{{ $item->unit->title }}">
+                                                        unit_name="{{ $item->unit->title }}"
+                                                        stock_qty="{{ $qty->stock_quantity }}">
                                                         {{ $item->product_name }}
                                                     </option>
                                                 @endforeach
@@ -167,83 +172,83 @@
     </div>
 
     <div class="modal fade" id="editproduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Customer </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div id="modal_body">
-                <form action="{{ route('customers.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf()
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="form-group col-sm-6 col-md-6 col-lg-6">
-                                <label>Customer Name *</label>
-                                <input value="" type="text" class="form-control" name="name" placeholder="Customer Name" required>
-                            </div>
-                            <div class="form-group col-sm-6 col-md-6 col-lg-6">
-                                <label>Phone *</label>
-                                <input value="" type="number" class="form-control" name="phone" placeholder="+8801XXXXXXXXX" required>
-                            </div>
-                            <div class="form-group col-sm-6 col-md-6 col-lg-6">
-                                <label>Email</label>
-                                <input value="" type="email" class="form-control" name="email" placeholder="example@gmail.com">
-                            </div>
-                            <div class="form-group col-sm-6 col-md-6 col-lg-6">
-                                <label>Address</label>
-                                <input class="form-control" name="address" placeholder="Enter Address" value="{{ isset($data['item']) ? $data['item']->address : null }}" >
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Customer </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="modal_body">
+                    <form action="{{ route('customers.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf()
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="form-group col-sm-6 col-md-6 col-lg-6">
+                                    <label>Customer Name *</label>
+                                    <input value="" type="text" class="form-control" name="name"
+                                        placeholder="Customer Name" required>
+                                </div>
+                                <div class="form-group col-sm-6 col-md-6 col-lg-6">
+                                    <label>Phone *</label>
+                                    <input value="" type="number" class="form-control" name="phone"
+                                        placeholder="+8801XXXXXXXXX" required>
+                                </div>
+                                <div class="form-group col-sm-6 col-md-6 col-lg-6">
+                                    <label>Email</label>
+                                    <input value="" type="email" class="form-control" name="email"
+                                        placeholder="example@gmail.com">
+                                </div>
+                                <div class="form-group col-sm-6 col-md-6 col-lg-6">
+                                    <label>Address</label>
+                                    <input class="form-control" name="address" placeholder="Enter Address"
+                                        value="{{ isset($data['item']) ? $data['item']->address : null }}">
 
-                            </div>
-                            <div class="form-group col-sm-12 col-md-12 col-lg-12">
-                                <label>Status *</label>
-                                <select name="status" id="status" class="form-control">
-                                    <option value="1">Active</option>
-                                    <option value="0">Inactive</option>
-                                </select>
+                                </div>
+                                <div class="form-group col-sm-12 col-md-12 col-lg-12">
+                                    <label>Status *</label>
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="1">Active</option>
+                                        <option value="0">Inactive</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @section('script')
     <script>
         $(document).ready(function() {
-
-           
-
+            // When a product is selected
             $('#product_id').on('change', function(e) {
                 let product_id = $('#product_id').val();
                 let product_name = $('#product_id option:selected').attr('product_name');
-                // alert(product_name);
                 let unit_name = $('#product_id option:selected').attr('unit_name');
                 let product_price = $('#product_id option:selected').attr('product_price');
+                let stock_qty = $('#product_id option:selected').attr('stock_qty');
                 let quantity_temp = 1;
                 let total_temp = product_price * quantity_temp;
-                // alert(total_temp);
-                let tbody = ``;
 
-                tbody += `<tr>
-                        <td class="serial"></td>
-                        <td class="text-left"><input type="hidden" value="${product_id}" name="product_id[]">${product_name}</td>
-                        <td>${unit_name}</td>
-                        <td><input type="number" value="${product_price}" class="form-control form-control-sm" name="product_price[]" placeholder="0.00" step="0.01"></td>
-                        <td><input type="number" value="${quantity_temp}" class="form-control form-control-sm calculate" name="quantity[]" placeholder="0.00" step="0.01" required></td>
-                        <td><input type="number" value="${total_temp}" class="form-control form-control-sm" name="sub_total[]" placeholder="0.00" step="0.01" disabled></td>
-
-                        <td><button class="btn btn-sm btn-danger btn-del" type="button"><i class="fa-solid fa-trash btn-del"></i></button></td>
-                    </tr>`;
+                let tbody = `
+        <tr>
+            <td class="serial"></td>
+            <td class="text-left"><input type="hidden" value="${product_id}" name="product_id[]">${product_name}</td>
+            <td>${unit_name}</td>
+            <td><input type="number" value="${product_price}" class="form-control form-control-sm" name="product_price[]" placeholder="0.00" step="0.01"></td>
+            <td><input type="number" value="${quantity_temp}" class="form-control form-control-sm calculate" id="quantity" name="quantity[]" placeholder="0.00" stock_qty="${stock_qty}" required></td>
+            <td><input type="number" value="${total_temp}" class="form-control form-control-sm sub_total" name="sub_total[]" placeholder="0.00" step="0.01" disabled></td>
+            <td><button class="btn btn-sm btn-danger btn-del" type="button"><i class="fa-solid fa-trash btn-del"></i></button></td>
+        </tr>`;
 
                 $('#tbody').append(tbody);
                 $(".serial").each(function(index) {
@@ -253,91 +258,80 @@
                 calculate(true);
             });
 
-            $('#table').bind('keyup, input', function(e) {
+            // Bind quantity change event to calculate total and check stock
+            $('#table').bind('keyup input', function(e) {
                 if ($(e.target).is('.calculate')) {
+                    let stock_qty = $(e.target).attr('stock_qty');
+                    let sale_quantity = $(e.target).val();
+
+                    if (parseFloat(sale_quantity) > parseFloat(stock_qty)) {
+                        Swal.fire("Error", "The sales quantity cannot exceed the available stock quantity.",
+                            "error");
+                        $(e.target).val(stock_qty); // Reset quantity to available stock
+                    }
+
                     calculate(true);
                 }
             });
-            $('#tbody').bind('click', function(e) {
-                $(e.target).is('.btn-del') && e.target.closest('tr').remove();
-                $(".serial").each(function(index) {
-                    $(this).html(index + 1);
-                });
+
+            // Calculate total amount and update fields
+            function calculate(isDefaultRecipentAmt) {
+                let product_id = $('input[name="product_id[]"]');
+                let total = 0;
+
+                for (let i = 0; i < product_id.length; i++) {
+                    let product_price = parseFloat($('input[name="product_price[]"]')[i].value);
+                    let quantity = parseFloat($('input[name="quantity[]"]')[i].value);
+                    let sub_total = product_price * quantity;
+
+                    $('input[name="sub_total[]"]')[i].value = sub_total.toFixed(2);
+                    total += sub_total;
+                }
+
+                $('#total').val(total.toFixed(2));
+
+                let discount_method = $('#discount_method').val();
+                let discount_rate = parseFloat($('#discount_rate').val());
+                let discount_amount = discount_rate;
+
+                if (discount_method == 1) {
+                    discount_amount = total * (discount_rate / 100);
+                }
+
+                let total_payable = total - discount_amount;
+                if (isDefaultRecipentAmt) {
+                    $('#paid_amount').val(total_payable.toFixed(2));
+                }
+
+                $('#discount_amount').val(discount_amount.toFixed(2));
+                $('#total_payable').val(total_payable.toFixed(2));
+            }
+
+            // Handle form submission
+            $('#form-submit').submit(function(e) {
+                if (!$('input[name="product_id[]"]').length) {
+                    e.preventDefault();
+                    Swal.fire("Please Insert product!");
+                }
+
+                if (parseFloat($('#paid_amount').val()) > parseFloat($('#total_payable').val())) {
+                    e.preventDefault();
+                    Swal.fire("Error", "The paid amount cannot exceed the payable amount.", "error");
+                }
+            });
+
+            // Discount and payment events
+            $('#discount_rate').on('keyup', function(e) {
+                calculate(true);
+            });
+
+            $('#paid_amount').on('keyup', function(e) {
+                calculate(false);
+            });
+
+            $('#discount_method').on('change', function(e) {
                 calculate(true);
             });
         });
-        $('#form-submit').submit(function(e) {
-            if (!$('input[name="product_id[]"]').length) {
-                e.preventDefault();
-                Swal.fire("Please Insert product!");
-            }
-            if (parseFloat($('#paid_amount').val()) > parseFloat($('#total_payable').val())) {
-                e.preventDefault();
-                Swal.fire("Couldn't be pay more then payable!");
-            }
-        });
-        $('#discount_rate').on('keyup', function(e) {
-            calculate(true);
-        });
-        $('#paid_amount').on('keyup', function(e) {
-            calculate(false);
-        });
-        $('#discount_method').on('change', function(e) {
-            calculate(true);
-        });
-
-        //     function calculate(isDefaultRecipentAmt) {
-        //         let product_id = $('input[name="product_id[]"]');
-        //         let total = 0;
-        //         for (let i = 0; i < product_id.length; i++) {
-        //             $('input[name="sub_total[]"]')[i].value = ($('input[name="unit_price[]"]')[i].value * $(
-        //                 'input[name="quantity[]"]')[i].value);
-        //             total += $('input[name="unit_price[]"]')[i].value * $('input[name="quantity[]"]')[i].value;
-        //         }
-        //         $('#total').val(total.toFixed(2));
-        //         let discount_method = $('#discount_method').val();
-        //         let discount_rate = parseFloat($('#discount_rate').val());
-        //         let tax_amount = parseFloat($('#tax_amount').val());
-
-        //         let discount_amount = discount_rate;
-        //         if (discount_method == 1) discount_amount = total * (discount_rate / 100);
-        //         let total_payable = total + tax_amount - discount_amount;
-        //         if (isDefaultRecipentAmt) {
-        //             $('#paid_amount').val(total_payable.toFixed(2));
-        //         } else {
-        //             paid_amount = $('#paid_amount').val();
-        //         }
-        //         $('#discount_amount').val(discount_amount.toFixed(2));
-        //         $('#total_payable').val(total_payable.toFixed(2));
-        //     }
-
-        function calculate(isDefaultRecipentAmt) {
-            let product_id = $('input[name="product_id[]"]');
-            let total = 0;
-            for (let i = 0; i < product_id.length; i++) {
-                let product_price = parseFloat($('input[name="product_price[]"]')[i].value);
-                let quantity = parseFloat($('input[name="quantity[]"]')[i].value);
-                let sub_total = product_price * quantity;
-
-                $('input[name="sub_total[]"]')[i].value = sub_total.toFixed(2);
-                total += sub_total;
-            }
-            $('#total').val(total.toFixed(2));
-
-            let discount_method = $('#discount_method').val();
-            let discount_rate = parseFloat($('#discount_rate').val());
-
-            let discount_amount = discount_rate;
-            if (discount_method == 1) discount_amount = total * (discount_rate / 100);
-            let total_payable = total - discount_amount;
-            // alert(total_payable);
-
-            if (isDefaultRecipentAmt) {
-                $('#paid_amount').val(total_payable.toFixed(2));
-            }
-
-            $('#discount_amount').val(discount_amount.toFixed(2));
-            $('#total_payable').val(total_payable.toFixed(2));
-        }
     </script>
 @endsection

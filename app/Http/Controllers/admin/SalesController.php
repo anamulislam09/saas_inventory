@@ -232,9 +232,11 @@ class SalesController extends Controller
         //End*****
 
         //Supplier Balance Update****
-        $vendor = Vendor::find($vendor_id);
-        $vendor->current_balance = $vendor->current_balance + $amount;
-        $vendor->save();
+        if ($vendor_id) {
+            $vendor = Vendor::find($vendor_id);
+            $vendor->current_balance = $vendor->current_balance + $amount;
+            $vendor->save();
+        }
         //End*****
 
         //Vouchar Update****

@@ -40,7 +40,7 @@
                                                     <th>Phone</th>
                                                     <th>Email</th>
                                                     <th>Address</th>
-                                                    <th>Organization</th>
+                                                    {{-- <th>Organization</th> --}}
                                                     {{-- <th>Opening Payable</th>
                                                     <th>Opening Receivable</th> --}}
                                                     <th>Current Bal</th>
@@ -56,7 +56,7 @@
                                                         <td>{{ $supplier->phone }}</td>
                                                         <td>{{ $supplier->email }}</td>
                                                         <td>{{ $supplier->address }}</td>
-                                                        <td>{{ $supplier->organization }}</td>
+                                                        {{-- <td>{{ $supplier->organization }}</td> --}}
                                                         {{-- <td>{{ $data['currency_symbol'] }} {{ number_format($supplier->opening_payable,2) }}</td>
                                                         <td>{{ $data['currency_symbol'] }} {{ number_format($supplier->opening_receivable,2) }}</td> --}}
                                                         <td>{{ $data['currency_symbol'] }} {{ number_format($supplier->current_balance,2) }}</td>
