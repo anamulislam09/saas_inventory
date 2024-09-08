@@ -171,6 +171,7 @@ class ReportController extends Controller
 
             // Fetch sales data
             $data['sales'] = $sales->get();
+            // dd($data);
 
             return response()->json($data, 200);
         } else {
@@ -231,7 +232,62 @@ class ReportController extends Controller
         // }
     }
 
-    public function vendorLedgers(Request $request)
+    public function ledger(Request $request)
+    {
+        $user = Auth::guard('admin')->user();
+        $client = Admin::find($user->client_id);
+
+        if ($request->isMethod('post')) {
+            // Fetch currency symbol
+            $data['currency_symbol'] = BasicInfo::where('client_id', ($user->client_id == 0) ? $user->id : $client->id)->first()->currency_symbol;
+
+            // Start sales query
+            $vendor_id = $request->vendor_id;
+            $from_date = $request->from_date;
+            $to_date = $request->to_date;
+
+            $sales = Sales::with(['vendor'])
+                ->where('client_id', ($user->client_id == 0) ? $user->id : $client->id);
+
+            // Filter by vendor if provided
+            if ($vendor_id) {
+                $sales->where('vendor_id', $vendor_id);
+            }
+
+            // Filter by date range
+            if ($from_date && $to_date) {
+                $sales->whereBetween('date', [$from_date, $to_date]);
+            } elseif ($from_date) {
+                $sales->where('date', '=', $from_date);
+            }
+
+            // Fetch sales data
+            $data['sales'] = $sales->get();
+
+            return response()->json($data, 200);
+        } else {
+            // Fetch client vendors
+            $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+            if (Auth::guard('admin')->user()->client_id == 0) {
+                $data['vendors'] = Vendor::where('client_id', Auth::guard('admin')->user()->id)
+                    ->where('status', 1)
+                    ->orderBy('name', 'asc')
+                    ->get();
+            } else {
+                $data['vendors'] = Vendor::where('client_id', $client->id)
+                    ->where('status', 1)
+                    ->orderBy('name', 'asc')
+                    ->get();
+            }
+
+
+
+            return view('admin.reports.sales', compact('data'));
+        }
+    }
+
+
+    public function customerLedgers(Request $request)
     {
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
         if ($request->isMethod('post')) {
@@ -272,6 +328,6 @@ class ReportController extends Controller
             $data['vendors'] = Vendor::where('client_id', $client->id)->where('status', 1)->orderBy('name', 'asc')->get();
         }
 
-        return view('admin.reports.supplier-ledgers', compact('data'));
+        return view('admin.reports.customer-ledgers', compact('data'));
     }
 }

@@ -28,12 +28,11 @@
                                 <div class="row">
                                     <div class="form-group col-sm-3 col-md-3 col-lg-3">
                                         <label>Suppliers</label>
-                                        <select name="supplier_id" id="supplier_id" class="form-control" required>
-                                            <option supplier-name="All Supplier" value="0" selected>All Supplier</option>
+                                        <select name="supplier_id" id="supplier_id" class="form-control select2" required>
+                                            <option supplier-name="All Supplier" value="0" selected>All Supplier
+                                            </option>
                                             @foreach ($data['suppliers'] as $supplier)
-                                                <option
-                                                supplier-name="{{ $supplier->name }}"
-                                                    value="{{ $supplier->id }}">
+                                                <option supplier-name="{{ $supplier->name }}" value="{{ $supplier->id }}">
                                                     {{ $supplier->name }}
                                                 </option>
                                             @endforeach
@@ -49,7 +48,8 @@
                                     </div>
                                     <div class="form-group col-sm-3 col-md-3 col-lg-3">
                                         <label>&nbsp;</label>
-                                        <button ame="print" id="print" type="button" class="form-control btn btn-dark p-1"><i class="fa fa-print"></i>Print</button>
+                                        <button ame="print" id="print" type="button"
+                                            class="form-control btn btn-dark p-1"><i class="fa fa-print"></i>Print</button>
                                     </div>
                                     <div class="form-group col-sm-12 col-md-12 col-lg-12" id="printable">
                                         <div id="print_header" hidden>
@@ -58,7 +58,7 @@
                                                     <h1>Purchase Report</h1>
                                                 </div>
                                                 <div class="col-12">
-                                                    <h4>Description: <span id="description"></span></h4>
+                                                    <h4><span id="description"></span></h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -84,146 +84,149 @@
 @endsection
 @section('script')
     <script>
-
-    $(document).ready(function(){
-        $('#print').click(function() {
-            let supplier_id = $('#supplier_id').val();
-            let from_date = $('#from_date').val();
-            let to_date = $('#to_date').val();
-            let item_name = $('#supplier_id option:selected').attr('supplier-name');
-            if(supplier_id==0){
-                $('#description').html(`${item_name} Purchase Report.`);
-            }else{
-                let description = `${item_name} Purchase Report`;
-                if(from_date){
-                    description += ` from ${from_date}`;
-                    if(to_date){
-                        description += ` to ${to_date}`;
+        $(document).ready(function() {
+            $('#print').click(function() {
+                let supplier_id = $('#supplier_id').val();
+                let from_date = $('#from_date').val();
+                let to_date = $('#to_date').val();
+                let supplier_name = $('#supplier_id option:selected').attr('supplier-name');
+                if (supplier_id == 0) {
+                    $('#description').html(`All Purchase Report.`);
+                } else {
+                    let description = `${supplier_name} -> Purchase Report`;
+                    if (from_date) {
+                        description += ` from ${from_date}`;
+                        if (to_date) {
+                            description += ` to ${to_date}`;
+                        }
                     }
+                    description += `.`;
+                    $('#description').html(description);
                 }
-                description += `.`;
-                $('#description').html(description);
-            }
-            // Prepare for printing by expanding the table and showing hidden elements
-            let originalOverflow = $('.table-responsive').css('overflow');
-            let originalMaxHeight = $('.table-responsive').css('max-height');
-            $('.table-responsive').css({
-                'overflow': 'visible',
-                'max-height': 'none'
-            });
-            $('#print_header').prop('hidden', false);
-            var printContents = $('#printable').html();
-            $('#print_header').prop('hidden', true);
-            var originalContents = $('body').html();
-            $('body').html(printContents);
-            window.print();
-            $('body').html(originalContents);
-            // Restore the original state
-            $('.table-responsive').css({
-                'overflow': originalOverflow,
-                'max-height': originalMaxHeight
+                // Prepare for printing by expanding the table and showing hidden elements
+                let originalOverflow = $('.table-responsive').css('overflow');
+                let originalMaxHeight = $('.table-responsive').css('max-height');
+                $('.table-responsive').css({
+                    'overflow': 'visible',
+                    'max-height': 'none'
+                });
+                $('#print_header').prop('hidden', false);
+                var printContents = $('#printable').html();
+                $('#print_header').prop('hidden', true);
+                var originalContents = $('body').html();
+                $('body').html(printContents);
+                window.print();
+                $('body').html(originalContents);
+                // Restore the original state
+                $('.table-responsive').css({
+                    'overflow': originalOverflow,
+                    'max-height': originalMaxHeight
+                });
             });
         });
-    });
 
 
-    $(document).ready(function(){
-        initialize();
-        $('#supplier_id, #from_date, #to_date').on('change', function (event) {
-            const data = getFormData();
-            nsSetItem("purchaseReportSearchKeys",data);
+        $(document).ready(function() {
+            initialize();
+            $('#supplier_id, #from_date, #to_date').on('change', function(event) {
+                const data = getFormData();
+                nsSetItem("purchaseReportSearchKeys", data);
+                getData(data);
+            });
+        });
+
+        function initialize() {
+            const defaultData = {
+                supplier_id: 0,
+                from_date: null,
+                to_date: null
+            };
+            const data = nsGetItem("purchaseReportSearchKeys") || defaultData;
+            $('#supplier_id').val(data.supplier_id);
+            $('#from_date').val(data.from_date);
+            $('#to_date').val(data.to_date);
+            nsSetItem("purchaseReportSearchKeys", data);
             getData(data);
-        });
-    });
+        }
+        async function getData(data) {
+            res = await nsAjaxPost("{{ route('reports.purchase') }}", data);
+            if (data.supplier_id == 0) {
+                allSupplier(res);
+            } else {
+                singleSupplier(res);
+            }
+        }
 
-    function initialize() {
-        const defaultData = {supplier_id: 0,from_date: null,to_date: null};
-        const data = nsGetItem("purchaseReportSearchKeys") || defaultData;
-        $('#supplier_id').val(data.supplier_id);
-        $('#from_date').val(data.from_date);
-        $('#to_date').val(data.to_date);
-        nsSetItem("purchaseReportSearchKeys",data);
-        getData(data);
-    }
-    async function getData(data){
-        res = await nsAjaxPost("{{ route('reports.purchase') }}",data);
-        if(data.supplier_id==0){
-            allSupplier(res);
-        }else{
-            singleSupplier(res);
+        function getFormData() {
+            return {
+                supplier_id: $('#supplier_id').val(),
+                from_date: $('#from_date').val(),
+                to_date: $('#to_date').val()
+            }
         }
-    }
-    function getFormData() {
-        return {
-            supplier_id: $('#supplier_id').val(),
-            from_date: $('#from_date').val(),
-            to_date: $('#to_date').val()
-        }
-    }
-    function singleSupplier(res) {
-        let tbody = ``;
-        let thead = ``;
+
+        function singleSupplier(res) {
+            let tbody = ``;
+            let thead = ``;
             thead += `<tr>`;
-            thead +=    `<th>SN</th>`;
-            thead +=    `<th>Vouchar No</th>`;
-            thead +=    `<th>Date</th>`;
-            thead +=    `<th>Payment Status</th>`;
-            thead +=    `<th>Note</th>`;    
-            thead +=    `<th>Vat</th>`;
-            thead +=    `<th>Discount</th>`;
-            thead +=    `<th>Payable</th>`;
-            thead +=    `<th>Due</th>`;
+            thead += `<th>SN</th>`;
+            thead += `<th>Vouchar No</th>`;
+            thead += `<th>Date</th>`;
+            thead += `<th>Total Purchase</th>`;
+            thead += `<th>Discount</th>`;
+            thead += `<th>Payable</th>`;
+            thead += `<th>Paid Amount</th>`;
+            thead += `<th>Due</th>`;
             thead += `</tr>`;
             $('#thead').html(thead);
-        res.purchase.forEach((element,index)=>{
-            url = '{{ route("purchases.vouchar",":id") }}'.replace(":id",element.id);
-            tbody += `<tr>`;
-            tbody +=     `<td>${index+1}</td>`;
-            tbody +=     `<td><a target="_blank" href="${url}"><b>${element.vouchar_no}</b></a></td>`;
-            tbody +=     `<td>${element.date}</td>`;
-            tbody +=     `<td><span class="badge badge-${element.payment_status==1?'success':'danger'}">${element.payment_status==1?'Paid':'Due'}</span></td>`;
-            tbody +=     `<td>${element.note??''}</td>`;
-            tbody +=     `<td>${res.currency_symbol} ${element.vat_tax}</td>`;
-            tbody +=     `<td>${res.currency_symbol} ${element.discount}</td>`;
-            tbody +=     `<td>${res.currency_symbol} ${element.total_payable}</td>`;
-            tbody +=     `<td style="text-align: center;">${res.currency_symbol} ${element.total_payable - element.paid_amount}</td>`;
-            tbody += `</tr>`;
-        });
-        $('#tbody').html(tbody);
-    }
-    function allSupplier(res) {
-        let tbody = ``;
-        let thead = ``;
+            res.purchase.forEach((element, index) => {
+                url = '{{ route('purchases.vouchar', ':id') }}'.replace(":id", element.id);
+                tbody += `<tr>`;
+                tbody += `<td>${index+1}</td>`;
+                tbody += `<td><a target="_blank" href="${url}"><b>${element.vouchar_no}</b></a></td>`;
+                tbody += `<td>${element.date}</td>`;
+                tbody += `<td>${res.currency_symbol}${element.total_price}</td>`;
+                tbody += `<td>${res.currency_symbol} ${element.discount}</td>`;
+                tbody += `<td>${res.currency_symbol} ${element.total_payable}</td>`;
+                tbody += `<td>${res.currency_symbol} ${element.paid_amount}</td>`;
+                tbody +=
+                    `<td style="text-align: center;">${res.currency_symbol} ${element.total_payable - element.paid_amount}</td>`;
+                tbody += `</tr>`;
+            });
+            $('#tbody').html(tbody);
+        }
+
+        function allSupplier(res) {
+            let tbody = ``;
+            let thead = ``;
             thead += `<tr>`;
-            thead +=    `<th>SN</th>`;
-            thead +=    `<th>Vouchar No</th>`;
-            thead +=    `<th>Supplier</th>`;
-            thead +=    `<th>Date</th>`;
-            thead +=    `<th>Payment Status</th>`;
-            thead +=    `<th>Note</th>`;    
-            thead +=    `<th>Vat</th>`;
-            thead +=    `<th>Discount</th>`;
-            thead +=    `<th>Payable</th>`;
-            thead +=    `<th>Due</th>`;
+            thead += `<th>SN</th>`;
+            thead += `<th>Vouchar No</th>`;
+            thead += `<th>Supplier</th>`;
+            thead += `<th>Date</th>`;
+            thead += `<th>Total Purchase</th>`;
+            thead += `<th>Discount</th>`;
+            thead += `<th>Payable</th>`;
+            thead += `<th>Paid Amount</th>`;
+            thead += `<th>Due</th>`;
             thead += `</tr>`;
             $('#thead').html(thead);
-        res.purchase.forEach((element,index)=>{
-            url = '{{ route("purchases.vouchar",":id") }}'.replace(":id",element.id);
-            tbody += `<tr>`;
-            tbody +=     `<td>${index+1}</td>`;
-            tbody +=     `<td><a target="_blank" href="${url}"><b>${element.vouchar_no}</b></a></td>`;
-            tbody +=     `<td>${element.Supplier.name}</td>`;
-            tbody +=     `<td>${element.date}</td>`;
-            tbody +=     `<td><span class="badge badge-${element.payment_status==1?'success':'danger'}">${element.payment_status==1?'Paid':'Due'}</span></td>`;
-            tbody +=     `<td>${element.note??''}</td>`;
-            tbody +=     `<td>${res.currency_symbol} ${element.vat_tax}</td>`;
-            tbody +=     `<td>${res.currency_symbol} ${element.discount}</td>`;
-            tbody +=     `<td>${res.currency_symbol} ${element.total_payable}</td>`;
-            tbody +=     `<td style="text-align: center;">${res.currency_symbol} ${element.total_payable - element.paid_amount}</td>`;
-            tbody += `</tr>`;
-        });
-        $('#tbody').html(tbody);
-    }
-
-</script>
+            res.purchase.forEach((element, index) => {
+                url = '{{ route('purchases.vouchar', ':id') }}'.replace(":id", element.id);
+                tbody += `<tr>`;
+                tbody += `<td>${index+1}</td>`;
+                tbody += `<td><a target="_blank" href="${url}"><b>${element.vouchar_no}</b></a></td>`;
+                tbody += `<td>${element.supplier.name}</td>`;
+                tbody += `<td>${element.date}</td>`;
+                tbody += `<td>${res.currency_symbol}${element.total_price}</td>`;
+                tbody += `<td>${res.currency_symbol} ${element.discount}</td>`;
+                tbody += `<td>${res.currency_symbol} ${element.total_payable}</td>`;
+                tbody += `<td>${res.currency_symbol} ${element.paid_amount}</td>`;
+                tbody +=
+                    `<td style="text-align: center;">${res.currency_symbol} ${element.total_payable - element.paid_amount}</td>`;
+                tbody += `</tr>`;
+            });
+            $('#tbody').html(tbody);
+        }
+    </script>
 @endsection

@@ -124,7 +124,6 @@
                                 <div class="form-group my-4 ml-4">
                                     <button type="submit" class="btn btn-primary">Submit</button>
                                 </div>
-
                             </form>
                         </div>
                     </div>
@@ -143,9 +142,10 @@
                     .val();
 
                 if (parseFloat(returnQty) > parseFloat(original_quantity)) {
-                    alert('OH! The return quantity must be less than or equal to the original quantity.');
+                    Swal.fire("Error",
+                        "OH! The return quantity must be less than or equal to the original quantity..",
+                        "error");
                     $(this).val(original_quantity);
-                    returnQty = original_quantity;
                 }
 
                 let unitPrice = $(this).data('unit-price');
@@ -171,6 +171,7 @@
                     totalReturnAmount += parseFloat($(this).val()) || 0;
                 });
                 $('#total_return_amount').val(totalReturnAmount);
+                $('#refund_amount').val(totalReturnAmount);
             }
         });
     </script>

@@ -25,89 +25,48 @@
                                 <h3 class="card-title">Stock Reports</h3>
                             </div>
                             <div class="card-body">
-                                <div class="row">
-                                    {{-- <div class="form-group col-sm-3 col-md-3 col-lg-3">
-                                        <label>Products</label>
-                                        <select name="product_id" id="product_id" class="form-control" required>
-                                            <option product-name="All Product" value="0" selected>All product</option>
-                                            @foreach ($data['products'] as $product)
-                                                <option product-name="{{ $product->product_name }}" value="{{ $product->id }}">{{ $product->product_name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-sm-3 col-md-3 col-lg-3">
-                                        <label>From Date</label>
-                                        <input name="from_date" id="from_date" type="date" class="form-control">
-                                    </div>
-                                    <div class="form-group col-sm-3 col-md-3 col-lg-3">
-                                        <label>To Date</label>
-                                        <input name="to_date" id="to_date" type="date" class="form-control">
-                                    </div>
-                                    <div class="form-group col-sm-12 col-md-3 col-lg-3">
-                                        <label>&nbsp;</label>
-                                        <button ame="print" id="print" type="button" class="form-control btn btn-primary">Print</button>
-                                    </div>
-                                    <div class="form-group col-sm-12 col-md-12 col-lg-12" id="printable">
-                                        <div id="print_header" hidden>
-                                            <div class="row justify-content-center">
-                                                <div class="col-12 text-center">
-                                                    <h1>Vendor Ledger Report</h1>
-                                                </div>
-                                                <div class="col-12">
-                                                    <h4>Description: <span id="description"></span></h4>
-                                                </div>
-                                            </div>
-                                        </div> --}}
-                                    <div class="bootstrap-data-table-panel text-center">
-                                        <div class="table-responsive">
-                                            <table id="example1" class="table table-striped table-bordered table-centre">
-                                                <thead id="thead">
+                                <div class="bootstrap-data-table-panel text-center">
+                                    <div class="table-responsive">
+                                        <table id="example1" class="table table-striped table-bordered table-centre">
+                                            <thead id="thead">
+                                                <tr>
+                                                    <th>Sl</th>
+                                                    <th>Category</th>
+                                                    <th>Sub_Category</th>
+                                                    <th>Product Name</th>
+                                                    <th>Product Price</th>
+                                                    <th>Quentity</th>
+                                                    <th>Value</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbody">
+                                                @foreach ($data['products'] as $key => $product)
+                                                    @php
+                                                        $categories = App\Models\Category::where(
+                                                            'id',
+                                                            $product->cat_id,
+                                                        )->value('title');
+                                                        $subcategories = App\Models\Category::where(
+                                                            'id',
+                                                            $product->sub_cat_id,
+                                                        )->value('title');
+                                                        $qty = App\Models\Stock::where(
+                                                            'product_id',
+                                                            $product->id,
+                                                        )->value('stock_quantity');
+                                                    @endphp
                                                     <tr>
-                                                        <th>Sl</th>
-                                                        <th>Category</th>
-                                                        <th>Sub_Category</th>
-                                                        <th>Product Name</th>
-                                                        <th>Measurement</th>
-                                                        <th>Image</th>
-                                                        <th>Quentity</th>
+                                                        <td>{{ $key + 1 }}</td>
+                                                        <td>{{ $categories }}</td>
+                                                        <td>{{ $subcategories }}</td>
+                                                        <td>{{ $product->product_name }} ({{ $product->unit->title }})</td>
+                                                        <td>{{ $product->purchase_price }}</td>
+                                                        <td>{{ $qty }}</td>
+                                                        <td>{{ $product->purchase_price * $qty }}</td>
                                                     </tr>
-                                                </thead>
-                                                <tbody id="tbody">
-                                                    @foreach ($data['products'] as $key => $product)
-                                                        @php
-                                                            $categories = App\Models\Category::where(
-                                                                'id',
-                                                                $product->cat_id,
-                                                            )->value('title');
-                                                            $subcategories = App\Models\Category::where(
-                                                                'id',
-                                                                $product->sub_cat_id,
-                                                            )->value('title');
-                                                            $qty = App\Models\Stock::where(
-                                                                'product_id',
-                                                                $product->id,
-                                                            )->value('stock_quantity');
-                                                        @endphp
-                                                        <tr>
-                                                            <td>{{ $key + 1 }}</td>
-                                                            <td>{{ $categories }}</td>
-                                                            <td>{{ $subcategories }}</td>
-                                                            <td>{{ $product->product_name }}</td>
-                                                            <td>{{ $product->unit->title }}</td>
-                                                            <td>
-                                                                <label class="col-md-3" style="cursor:pointer">
-                                                                    <img id="image_view" style="max-width:70%" class="img-thumbnail"
-                                                                        src="{{ asset('public/uploads/product/' . (isset($product->image) && $product->image ? $product->image : 'placeholder.png')) }}">
-                                                                    {{-- <input id="image" name="image" style="display:none" onchange="itemImage(this);"
-                                                                        type="file" accept="image/*"> --}}
-                                                                </label>
-                                                            </td>
-                                                            <td>{{$qty}}</td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>

@@ -685,7 +685,7 @@
                     <li class="nav-item {{ request()->is('admin/expense*') ? 'menu-open' : '' }}">
                         <a href="#" class="nav-link {{ request()->is('admin/expense*') ? 'active' : '' }}">
                             <i class="nav-icon fa-regular fa-credit-card"></i>
-                            <p>Expense <i class="fas fa-angle-left right"></i></p>
+                            <p>Manage Expense <i class="fas fa-angle-left right"></i></p>
                         </a>
                         <ul class="nav nav-treeview">
                             @if (
@@ -717,7 +717,7 @@
                                     <a href="{{ route('expenses.index') }}"
                                         class="nav-link {{ request()->is('admin/expense/expenses*') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
-                                        <p>Expense Manage</p>
+                                        <p>Expense</p>
                                     </a>
                                 </li>
                             @endif
@@ -749,8 +749,8 @@
                                 $authorization->hasMenuAccess(108) ||
                                     (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
-                                    <a href="{{ route('reports.vendor-ledgers') }}"
-                                        class="nav-link {{ request()->is('admin/reports/vendor-ledgers*') ? 'active' : '' }}">
+                                    <a href="{{ route('reports.customer-ledgers') }}"
+                                        class="nav-link {{ request()->is('admin/reports/customer-ledgers*') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
                                         <p>Customer Ledgers</p>
                                     </a>
@@ -789,15 +789,15 @@
                                     </a>
                                 </li>
                             @endif
-                            {{-- @if ($authorization->hasMenuAccess(110) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                            @if ($authorization->hasMenuAccess(110) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                 <li class="nav-item">
-                                    <a href="{{ route('reports.collections') }}"
-                                        class="nav-link {{ request()->is('admin/reports/collections*') ? 'active' : '' }}">
+                                    <a href="{{ route('report.ledger') }}"
+                                        class="nav-link {{ request()->is('admin/reports/ledger*') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
-                                        <p>Collections Report</p>
+                                        <p>Ledger Report</p>
                                     </a>
                                 </li>
-                            @endif --}}
+                            @endif
                         </ul>
                     </li>
                 @endif

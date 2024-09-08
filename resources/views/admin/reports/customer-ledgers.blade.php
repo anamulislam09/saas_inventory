@@ -28,7 +28,7 @@
                                 <div class="row">
                                     <div class="form-group col-sm-3 col-md-3 col-lg-3">
                                         <label>Customer</label>
-                                        <select name="vendor_id" id="vendor_id" class="form-control" required
+                                        <select name="vendor_id" id="vendor_id" class="form-control select2" required
                                             @isset($data['purchase']) @disabled(true) @endisset>
                                             <option vendor-name="All Vendor" value="0" selected>All Customer</option>
                                             @foreach ($data['vendors'] as $vendor)
@@ -55,7 +55,7 @@
                                                     <h1>Customer Ledger Report</h1>
                                                 </div>
                                                 <div class="col-12">
-                                                    <h4>Description: <span id="description"></span></h4>
+                                                    <h4> <span id="description"></span></h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -90,9 +90,9 @@
                 let to_date = $('#to_date').val();
                 let vendor_name = $('#vendor_id option:selected').attr('vendor-name');
                 if(vendor_id==0){
-                    $('#description').html(`${vendor_name} Ledeger.`);
+                    $('#description').html(`${vendor_name} Ledger.`);
                 }else{
-                    let description = `${vendor_name} Ledeger`;
+                    let description = `${vendor_name} Ledger`;
                     if(from_date){
                         description += ` from ${from_date}`;
                         if(to_date){
@@ -144,7 +144,7 @@
             getData(data);
         }
         async function getData(data){
-            res = await nsAjaxPost("{{ route('reports.vendor-ledgers') }}",data);
+            res = await nsAjaxPost("{{ route('reports.customer-ledgers') }}",data);
             if(data.vendor_id==0){
                 allVendor(res);
             }else{
@@ -218,9 +218,8 @@
             let tbody = ``;
                 thead += `<tr>`;
                 thead +=    `<th>SN</th>`;
-                thead +=    `<th>Vendor Name</th>`;
+                thead +=    `<th>Customer Name</th>`;
                 thead +=    `<th>Phone</th>`;
-                thead +=    `<th>Email</th>`;
                 thead +=    `<th>Address</th>`;
                 thead +=    `<th>Current Balance</th>`;
                 thead += `</tr>`;
@@ -232,14 +231,13 @@
                     tbody +=   `<td>${index + 1}</td>`;
                     tbody +=   `<td>${val.name}</td>`;
                     tbody +=   `<td>${val.phone}</td>`;
-                    tbody +=   `<td>${val.email}</td>`;
                     tbody +=   `<td>${val.address}</td>`;
-                    tbody +=   `<td style="text-align: right;">${res.currency_symbol+" "+val.current_balance.toFixed(2)}</td>`;
+                    tbody += `<td style="text-align: right;">${val.current_balance < 0 ? '(' + res.currency_symbol + ' ' + Math.abs(val.current_balance.toFixed(2)) + ')' : res.currency_symbol + ' ' + val.current_balance.toFixed(2)}</td>`;
                     tbody += `</tr>`;
                 });
                 tbody += `<tr>`;
-                tbody +=   `<th style="text-align: right;" colspan="5">Total Balance: </th>`;
-                tbody +=   `<th style="text-align: right;">${res.currency_symbol+' '+total_balance.toFixed(2)}</th>`;
+                tbody +=   `<th style="text-align: right;" colspan="4">Total Balance: </th>`;
+                tbody += `<th style="text-align: right;">${total_balance < 0 ? '(' + res.currency_symbol + ' ' + Math.abs(total_balance.toFixed(2)) + ')': res.currency_symbol + ' ' + total_balance.toFixed(2)}</th>`;
                 tbody += `</tr>`;
                 $('#tbody').html(tbody);
         }
