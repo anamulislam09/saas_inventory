@@ -203,11 +203,11 @@ Route::prefix('admin')->group(function () {
 
             /*-------------------------- vendor route start here----------------------*/
             Route::prefix('customers')->controller(VendorController::class)->group(function () {
-                Route::get('', 'index')->name('customers.index');
+                Route::get('create', 'create')->name('customers.create');
+                // Route::get('', 'index')->name('customers.index');
                 Route::post('store', 'store')->name('customers.store');
-                Route::put('update/{id}', 'update')->name('customers.update');
-                Route::get('create', 'createOrEdit')->name('customers.create');
-                Route::get('edit/{id?}', 'createOrEdit')->name('customers.edit');
+                Route::post('update/{id}', 'update')->name('customers.update');
+                Route::get('edit/{id?}', 'edit')->name('customers.edit');
                 Route::delete('delete/{id}', 'destroy')->name('customers.destroy');
             });
             /*-------------------------- vendor route ends here----------------------*/

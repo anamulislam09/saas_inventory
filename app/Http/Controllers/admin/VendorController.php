@@ -13,55 +13,58 @@ use Illuminate\Support\Facades\Auth;
 
 class VendorController extends Controller
 {
-    public function index()
-    {
-        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
-        if (Auth::guard('admin')->user()->client_id == 0) {
-            $data['vendors'] = Vendor::where('client_id', Auth::guard('admin')->user()->id)->orderBy('id')->get();
-            $data['currency_symbol'] = BasicInfo::where('client_id', Auth::guard('admin')->user()->id)->first()->currency_symbol;
-        } else {
-            $data['vendors'] = Vendor::where('client_id', $client->id)->orderBy('id')->get();
-            $data['currency_symbol'] = BasicInfo::where('client_id', $client->id)->first()->currency_symbol;
-        }
-        return view('admin.vendors.index', compact('data'));
-    }
+    // public function index()
+    // {
+    //     $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+    //     if (Auth::guard('admin')->user()->client_id == 0) {
+    //         $data['vendors'] = Vendor::where('client_id', Auth::guard('admin')->user()->id)->orderBy('id')->get();
+    //         $data['currency_symbol'] = BasicInfo::where('client_id', Auth::guard('admin')->user()->id)->first()->currency_symbol;
+    //     } else {
+    //         $data['vendors'] = Vendor::where('client_id', $client->id)->orderBy('id')->get();
+    //         $data['currency_symbol'] = BasicInfo::where('client_id', $client->id)->first()->currency_symbol;
+    //     }
+    //     return view('admin.vendors.index', compact('data'));
+    // }
 
-    public function createOrEdit($id = null)
+    public function create()
     {
-        if ($id) {
-            $data['title'] = 'Edit';
-            $data['item'] = Vendor::find($id);
-        } else {
-            $data['title'] = 'Create';
-        }
-        return view('admin.vendors.create-or-edit', compact('data'));
+        $user = Auth::guard('admin')->user();
+        $client = Admin::find($user->client_id);
+        $data['title'] = 'Create';
+        $data['vendors'] = Vendor::where('client_id', ($user->client_id == 0) ? $user->id : $client->id)->orderBy('id', 'DESC')->get();
+        $data['currency_symbol'] = BasicInfo::where('client_id', ($user->client_id == 0) ? $user->id : $client->id)->first()->currency_symbol;
+        return view('admin.vendors.create', compact('data'));
     }
 
     public function store(Request $request)
     {
-        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
-        //Supplier Create**********
-        $data = $request->all();
-
-        if (Auth::guard('admin')->user()->client_id == 0) {
-            $data['client_id'] = Auth::guard('admin')->user()->id;
+        $user = Auth::guard('admin')->user();
+        $client = Admin::find($user->client_id);
+        $isExist = Vendor::where('client_id', ($user->client_id == 0) ? $user->id : $client->id)->where('phone', $request->phone)->exists();
+        if ($isExist) {
+            return redirect()->back()->with('alert', ['messageType' => 'warning', 'message' => 'This Customer Already Exist!']);
         } else {
-            $data['client_id'] = $client->id;
+            $data = $request->all();
+            $data['client_id'] = $user->client_id == 0 ? $user->id : $client->id;
+            $data['created_by_id'] = Auth::guard('admin')->user()->id;
+            $vendor = Vendor::create($data);
+
+            return redirect()->back()->with('alert', ['messageType' => 'success', 'message' => 'Data Inserted Successfully!']);
         }
+    }
 
-        $data['created_by_id'] = Auth::guard('admin')->user()->id;
-        $vendor = Vendor::create($data);
-
-        return redirect()->back()->with('alert', ['messageType' => 'success', 'message' => 'Data Inserted Successfully!']);
+    public function edit($id)
+    {
+        $customer = Vendor::find($id);
+        return view('admin.vendors.edit', compact('customer'));
     }
 
     public function update(Request $request, $id)
     {
         $vendor = Vendor::find($id);
-        $data = $request->all();
-        $data['updated_by_id'] = Auth::guard('admin')->user()->id;
-        $vendor->update($data);
-        return redirect()->route('customers.index')->with('alert', ['messageType' => 'success', 'message' => 'Data Updated Successfully!']);
+        $vendor['updated_by_id'] = Auth::guard('admin')->user()->id;
+        $vendor->update($request->all());
+        return redirect()->back()->with('alert', ['messageType' => 'success', 'message' => 'Data Updated Successfully!']);
     }
 
     public function destroy($id)

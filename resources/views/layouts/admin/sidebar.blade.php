@@ -121,7 +121,7 @@
                                     <a href="{{ route('admins.index') }}"
                                         class="nav-link {{ request()->is('admin/basic-setup/admins*') ? 'active' : '' }}">
                                         <i class="nav-icon far fa-dot-circle text-warning"></i>
-                                        <p>Admins </p>
+                                        <p>Users </p>
                                     </a>
                                 </li>
                             @endif
@@ -485,11 +485,11 @@
                         $authorization->hasMenuAccess(33) ||
                             (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <li class="nav-item">
-                            <a href="{{ route('customers.index') }}"
+                            <a href="{{ route('customers.create') }}"
                                 class="nav-link {{ request()->is('admin/customers*') ? 'active' : '' }}">
                                 <i class="far fa-dot-circle nav-icon"></i>
                                 <p>Customer <i class="fas right fa-solid fa-plus add-new p-1"
-                                        add-new="{{ route('customers.index') }}"></i></p>
+                                        add-new="{{ route('customers.create') }}"></i></p>
                             </a>
                         </li>
                     @endif
