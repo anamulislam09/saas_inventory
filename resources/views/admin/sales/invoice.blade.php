@@ -1,57 +1,200 @@
 @extends('layouts.admin.master')
 @section('content')
-<link rel="stylesheet" href="{{ asset('public/admin-assets') }}/dist/css/vouchar.css">
-<div id="invoiceholder">
+    <style>
+        #invoice-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 20px 20px 0px 20px !important;
+        }
+
+        .logo {
+            flex: 1;
+        }
+
+        .title {
+            flex: 2;
+            text-align: right;
+            padding-bottom: 0px 20px !important;
+        }
+
+        .col-right {
+            text-align: right;
+            flex: 1;
+        }
+
+        .col-left {
+            flex: 2;
+        }
+
+        .institute {
+            width: 500px;
+        }
+
+        /* style #due-watermark   */
+        #due-watermark {
+            position: absolute;
+            bottom: -4%;
+            left: 30%;
+            font-family: cursive;
+            transform: translate(-50%, -50%) rotate(-20deg);
+            font-size: 90px;
+            color: rgba(255, 0, 0, 0.2);
+            /* Light red color with transparency */
+            font-weight: bold;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        #invoice {
+            position: relative;
+            /* z-index: 1; */
+            /* Ensures invoice content is above the watermark */
+        }
+    </style>
+    @php
+
+        $amountWord = numtowords($data['sales']->receiveable_amount);
+        //  $collectionWord = numtowords($inv->collection);
+        //  $dueWord = numtowords(abs($inv->due));
+
+        function numtowords(float $number)
+        {
+            $decimal = round($number - ($no = floor($number)), 2) * 100;
+            $decimal_part = $decimal;
+            $hundred = null;
+            $hundreds = null;
+            $digits_length = strlen($no);
+            $decimal_length = strlen($decimal);
+            $i = 0;
+            $str = [];
+            $str2 = [];
+            $words = [
+                0 => '',
+                1 => 'one',
+                2 => 'two',
+                3 => 'three',
+                4 => 'four',
+                5 => 'five',
+                6 => 'six',
+                7 => 'seven',
+                8 => 'eight',
+                9 => 'nine',
+                10 => 'ten',
+                11 => 'eleven',
+                12 => 'twelve',
+                13 => 'thirteen',
+                14 => 'fourteen',
+                15 => 'fifteen',
+                16 => 'sixteen',
+                17 => 'seventeen',
+                18 => 'eighteen',
+                19 => 'nineteen',
+                20 => 'twenty',
+                30 => 'thirty',
+                40 => 'forty',
+                50 => 'fifty',
+                60 => 'sixty',
+                70 => 'seventy',
+                80 => 'eighty',
+                90 => 'ninety',
+            ];
+            $digits = ['', 'hundred', 'thousand', 'lakh', 'crore'];
+
+            while ($i < $digits_length) {
+                $divider = $i == 2 ? 10 : 100;
+                $number = floor($no % $divider);
+                $no = floor($no / $divider);
+                $i += $divider == 10 ? 1 : 2;
+                if ($number) {
+                    $plural = ($counter = count($str)) && $number > 9 ? 's' : null;
+                    $hundred = $counter == 1 && $str[0] ? ' and ' : null;
+                    $str[] =
+                        $number < 21
+                            ? $words[$number] . ' ' . $digits[$counter] . $plural . ' ' . $hundred
+                            : $words[floor($number / 10) * 10] .
+                                ' ' .
+                                $words[$number % 10] .
+                                ' ' .
+                                $digits[$counter] .
+                                $plural .
+                                ' ' .
+                                $hundred;
+                } else {
+                    $str[] = null;
+                }
+            }
+
+            $d = 0;
+            while ($d < $decimal_length) {
+                $divider = $d == 2 ? 10 : 100;
+                $decimal_number = floor($decimal % $divider);
+                $decimal = floor($decimal / $divider);
+                $d += $divider == 10 ? 1 : 2;
+                if ($decimal_number) {
+                    $plurals = ($counter = count($str2)) && $decimal_number > 9 ? 's' : null;
+                    $hundreds = $counter == 1 && $str2[0] ? ' and ' : null;
+                    @$str2[] =
+                        $decimal_number < 21
+                            ? $words[$decimal_number] . ' ' . $digits[$decimal_number] . $plural . ' ' . $hundred
+                            : $words[floor($decimal_number / 10) * 10] .
+                                ' ' .
+                                $words[$decimal_number % 10] .
+                                ' ' .
+                                $digits[$counter] .
+                                $plural .
+                                ' ' .
+                                $hundred;
+                } else {
+                    $str2[] = null;
+                }
+            }
+
+            $takas = implode('', array_reverse($str));
+            $paise = implode('', array_reverse($str2));
+            $paise = $decimal_part > 0 ? $paise . ' Paise' : '';
+            return ($takas ? $takas . 'Takas ' : '') . $paise;
+        }
+
+    @endphp
+    <link rel="stylesheet" href="{{ asset('public/admin-assets') }}/dist/css/vouchar.css">
+    <div id="invoiceholder">
         <div id="invoice" class="effect2 pb-5">
-            <div id="invoice-top">
-                <div class="logo"><img src="{{ asset('public/uploads/basic-info/' . $data['basicInfo']->logo) }}"
-                        alt="Logo" /></div>
-                <div class="title">
-                    <h1 class="h1">INVOICE #<span class="invoiceVal invoice_num">{{ $data['sales']->invoice_no }}</span></h1>
-                    <p class="p">Vouchar Date: <span id="invoice_date">{{ date('dS M Y', strtotime($data['sales']->date)) }}</span></p>
-                    <p class="p mt-0"><span><svg class="barcode"></svg></span></p>
+            <div id="invoice-top" class="row">
+                <div class="col-3"><img
+                        src="{{ $data['basicInfo']->logo ? asset('public/uploads/basic-info/' . $data['basicInfo']->logo) : '' }}"
+                        style="width: 70px" />
+                </div>
+                <div class="col-6 text-center">
+                    <h4>{{ $data['basicInfo']->title }}</h4>
+                    <p class="p">{{ $data['basicInfo']->address }}, {{ $data['basicInfo']->phone1 }}</p>
+                </div>
+                <div class="col-3">
+                    <h6>Invoice #<span class="invoiceVal invoice_num">{{ $data['sales']->invoice_no }}</span>
+                    </h6>
+                    <p class="p">Date: <span
+                            id="invoice_date">{{ date('dS M Y', strtotime($data['sales']->date)) }}</span></p>
+                    <p class="p mt-0 mb-0"><span><svg class="barcode"></svg></span></p>
                 </div>
             </div>
-            <div id="invoice-mid">
-                <div class="clearfix">
-                    <div class="col-left">
-                        {{-- <div class="clientlogo"> --}}
-                            {{-- <img --}}
-                                {{-- src="https://cdn3.iconfinder.com/data/icons/daily-sales/512/Sale-card-address-512.png"
-                                alt="Sup" /> --}}
-                            {{-- </div> --}}
-                        <div class="clientinfo">
-                            <h2 class="h2" id="vendor">{{ $data['sales']->vendor ? $data['sales']->vendor->name : '' }},
-                                {{ $data['sales']->vendor ? $data['sales']->vendor->organization : '' }}</h2>
-                            <p class="p"><span
-                                    id="address">{{ $data['sales']->vendo ? $data['sales']->vendor->address : '' }}</span><br><span
-                                    id="city"></span><span id="country"></span><span id="zip"></span><span
-                                    id="tax_num">{{ $data['sales']->vendor ? $data['sales']->vendor->phone : '' }},
-                                    {{ $data['sales']->vendor ? $data['sales']->vendor->email : '' }}</span><br></p>
+            @if ($data['sales']->vendor)
+                <div id="invoice-mid">
+                    <div class="clearfix">
+                        <div class="col-left">
+                            <div class="clientinfo">
+                                <h2 class="h2" id="vendor">
+                                    {{ $data['sales']->vendor ? $data['sales']->vendor->name : '' }}</h2>
+                                <p class="p"><span
+                                        id="address">{{ $data['sales']->vendo ? $data['sales']->vendor->address : '' }}</span><br><span
+                                        id="city"></span><span id="country"></span><span id="zip"></span><span
+                                        id="tax_num">{{ $data['sales']->vendor ? $data['sales']->vendor->phone : '' }}
+                                        {{ $data['sales']->vendor ? $data['sales']->vendor->email : '' }}</span><br></p>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-right">
-                        <table class="table">
-                            <tbody>
-                                <tr>
-                                    <td><span>Vouchar Total</span><label
-                                            id="invoice_total">{{ $data['basicInfo']->currency_symbol }}
-                                            {{ number_format($data['sales']->receiveable_amount, 2) }}</label></td>
-                                    {{-- <td><span>Currency</span><label id="currency">EUR</label></td> --}}
-                                </tr>
-                                {{-- <tr>
-                                    <td><span>Payment Term</span><label id="payment_term">60 gg DFFM</label></td>
-                                    <td><span>Invoice Type</span><label id="invoice_type">EXP REP INV</label></td>
-                                </tr> --}}
-                                <tr>
-                                    <td colspan="2"><span>Note</span>:<label
-                                            id="note">{{ $data['sales']->note }}</label></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
-            </div>
+            @else
+            @endif
             <div class="invoice-bot">
                 <div class="table-2">
                     <table class="table-main">
@@ -73,7 +216,7 @@
                                     // $total_price += $value->total_amount;
                                 @endphp
                                 <tr class="list-item">
-                                    <td>{{$key + 1}}</td>
+                                    <td>{{ $key + 1 }}</td>
                                     <td data-label="Type">{{ $value->product->product_name }}</td>
                                     <td data-label="Description">{{ $value->unit_price }}</td>
                                     <td data-label="Quantity">{{ number_format($value->quantity, 2) }}</td>
@@ -81,7 +224,7 @@
                                         {{ $value->total_amount }}</td>
                                     {{-- <td data-label="Total">{{ $data['basicInfo']->currency_symbol }}
                                         {{ number_format($value->total_amount, 2) }}</td> --}}
-                                        {{-- / {{ $value->product->unit->title }} --}}
+                                    {{-- / {{ $value->product->unit->title }} --}}
                                 </tr>
                             @endforeach
                             <tr class="list-item total-row">
@@ -94,13 +237,9 @@
                                 <td style="text-align: right;">{{ $data['basicInfo']->currency_symbol }}
                                     {{ number_format($data['sales']->discount, 2) }}</td>
                             </tr>
+
                             <tr class="list-item total-row">
-                                <th colspan="4">Tax</th>
-                                <td style="text-align: right;">{{ $data['basicInfo']->currency_symbol }}
-                                    {{ number_format(0, 2) }}</td>
-                            </tr>
-                            <tr class="list-item total-row">
-                                <th colspan="4">Total Receivable Amount</th>
+                                <th colspan="4">Grand total</th>
                                 <td style="text-align: right;">{{ $data['basicInfo']->currency_symbol }}
                                     {{ number_format($data['sales']->receiveable_amount, 2) }}</td>
                             </tr>
@@ -117,34 +256,10 @@
                             </tr>
                         </tbody>
                     </table>
+                    <p style="font-size: 12px; margin-left:10px;"><span style="font-weight: 700">In word :</span>
+                        {{ $amountWord }} (only)</p>
                 </div>
             </div>
-
-            {{-- <div class="payment-head">
-                <div class="clearfix">
-                    <div class="col-left">
-                        <div class="clientinfo">
-                            <h4>Payments</h4>
-                        </div>
-                    </div>
-                    <div class="col-right"><a type="button" class="a" href="javascript:void(0);">Add Payment</a></div>
-                </div>
-            </div>
-            <div class="invoice-bot" style="margin: 0px 10px 10px 10px">
-                <div class="table-2">
-                    <table class="table-main">
-                        <thead>
-                            <tr class="tabletitle">
-                                <th style="text-align: left;">Date</th>
-                                <th style="text-align: center;">Amount</th>
-                                <th style="text-align: right;">Action</th>
-                            </tr>
-                        </thead>
-                       
-                        </tbody>
-                    </table>
-                </div>
-            </div> --}}
         </div>
     </div>
 @endsection
@@ -158,18 +273,17 @@
                 window.print();
                 document.body.innerHTML = originalContents;
             }
-            $('.pay-now').on('click', function(e) {
-                $('#purchase_id').val($(this).attr('purchase-id'));
-                $('#amount').val(parseFloat($(this).attr('due')).toFixed(2));
-            });
+            // Conditionally show DUE watermark if due amount is greater than zero
+            var dueAmount = parseFloat("{{ $data['sales']->receiveable_amount - $data['sales']->receive_amount }}");
+            if (dueAmount > 0) {
+                $('#due-watermark').css('display', 'block');
+            }
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/barcodes/JsBarcode.code128.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
     <script type="text/javascript">
         JsBarcode(".barcode", "{{ $data['sales']->invoice_no }}", {
-            // format: "upc",
-            // lineColor: "#0aa",
             width: 1,
             height: 30,
             displayValue: false

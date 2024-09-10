@@ -31,25 +31,25 @@
                                             <thead id="thead">
                                                 <tr>
                                                     <th>Sl</th>
-                                                    <th>Category</th>
-                                                    <th>Sub_Category</th>
+                                                    {{-- <th>Category</th>
+                                                    <th>Sub_Category</th> --}}
                                                     <th>Product Name</th>
                                                     <th>Product Price</th>
-                                                    <th>Quentity</th>
+                                                    <th>Quantity</th>
                                                     <th>Value</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="tbody">
                                                 @foreach ($data['products'] as $key => $product)
                                                     @php
-                                                        $categories = App\Models\Category::where(
-                                                            'id',
-                                                            $product->cat_id,
-                                                        )->value('title');
-                                                        $subcategories = App\Models\Category::where(
-                                                            'id',
-                                                            $product->sub_cat_id,
-                                                        )->value('title');
+                                                        // $categories = App\Models\Category::where(
+                                                        //     'id',
+                                                        //     $product->cat_id,
+                                                        // )->value('title');
+                                                        // $subcategories = App\Models\Category::where(
+                                                        //     'id',
+                                                        //     $product->sub_cat_id,
+                                                        // )->value('title');
                                                         $qty = App\Models\Stock::where(
                                                             'product_id',
                                                             $product->id,
@@ -57,8 +57,8 @@
                                                     @endphp
                                                     <tr>
                                                         <td>{{ $key + 1 }}</td>
-                                                        <td>{{ $categories }}</td>
-                                                        <td>{{ $subcategories }}</td>
+                                                        {{-- <td>{{ $categories }}</td>
+                                                        <td>{{ $subcategories }}</td> --}}
                                                         <td>{{ $product->product_name }} ({{ $product->unit->title }})</td>
                                                         <td>{{ $product->purchase_price }}</td>
                                                         <td>{{ $qty }}</td>

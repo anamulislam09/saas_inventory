@@ -6,18 +6,18 @@
 }
 
 #invoiceholder {
-    background: #E0E0E0;
-    font-family: 'Roboto', sans-serif;
+    background: #e0e0e0;
+    font-family: "Roboto", sans-serif;
 }
 
 ::selection {
     background: #f31544;
-    color: #FFF;
+    color: #fff;
 }
 
 ::moz-selection {
     background: #f31544;
-    color: #FFF;
+    color: #fff;
 }
 
 .clearfix::after {
@@ -35,16 +35,16 @@
 }
 
 .h1 {
-    font-size: 1.5em;
+    font-size: 20px;
     color: #444;
 }
 
 .h2 {
-    font-size: .9em;
+    font-size: 0.9em;
 }
 
 .p {
-    font-size: .75em;
+    font-size: 0.75em;
     color: #666;
     line-height: 1.2em;
 }
@@ -64,17 +64,7 @@
     position: relative;
     margin: 0 auto;
     width: 700px;
-    background: #FFF;
-}
-
-[id*='invoice-'] {
-    /* Targets all id with 'col-' */
-    /*  border-bottom: 1px solid #EEE;*/
-    padding: 20px;
-}
-
-#invoice-top {
-    /* border-bottom: 2px solid #00a63f; */
+    background: #fff;
 }
 
 #invoice-mid {
@@ -116,7 +106,7 @@
 .clientinfo {
     display: inline-block;
     vertical-align: middle;
-    margin-left: 20px
+    margin-left: 20px;
 }
 
 .title {
@@ -179,7 +169,7 @@ table {
 td {
     padding: 5px 10px 5px 10px;
     border-bottom: 1px solid #cccaca;
-    font-size: 0.70em;
+    font-size: 0.7em;
     text-align: left;
 }
 
@@ -214,15 +204,12 @@ th {
 .total-row td {
     text-align: right;
     font-weight: 700;
-    font-size: .75em;
+    font-size: 0.75em;
     border: 0 none;
 }
 
-.table-main {}
-
 footer {
     border-top: 1px solid #eeeeee;
-    ;
     padding: 15px 20px;
 }
 
@@ -263,7 +250,7 @@ footer {
 
 @media screen and (max-width: 767px) {
     .h1 {
-        font-size: .9em;
+        font-size: 20PX;
     }
 
     #invoice {
@@ -272,10 +259,6 @@ footer {
 
     #message {
         margin-bottom: 20px;
-    }
-
-    [id*='invoice-'] {
-        padding: 20px 10px;
     }
 
     .logo {
