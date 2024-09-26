@@ -15,11 +15,6 @@
             text-align: left;
         }
 
-        .form-group {
-            padding: 2px;
-            margin: 0px;
-        }
-
         label {
             margin-bottom: 0px;
         }

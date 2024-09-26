@@ -477,7 +477,6 @@ Route::prefix('admin')->group(function () {
     });
 
 
-
     //Expense Module Routes
     route::namespace('App\Http\Controllers\admin\expense')->group(function () {
         Route::prefix('expense')->middleware('admin')->group(function () {

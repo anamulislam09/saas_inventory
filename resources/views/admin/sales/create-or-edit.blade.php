@@ -30,18 +30,6 @@
                                 @csrf()
                                 <div class="card-body">
                                     <div class="row">
-                                        {{-- <div class="form-group col-sm-4 col-md-4 col-lg-4">
-                                            <label>Customer *</label>
-                                            <select class="form-control form-control-sm select2" id="vendor_id"
-                                                name="vendor_id">
-                                                <option value="" selected>Select Customer <a href="" class="btn btn-danger">Add New</a></option>
-                                                @foreach ($data['vendors'] as $key => $vendor)
-                                                    <option value="{{ $vendor->id }}" vendor-name="{{ $vendor->name }}">
-                                                        {{ $vendor->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div> --}}
-
                                         <div class="form-group col-sm-4 col-md-4 col-lg-4">
                                             <label>Customer *</label>
                                             <div class="input-group">
