@@ -1,5 +1,6 @@
 @extends('layouts.admin.master')
 @section('content')
+    @inject('authorization', 'App\Services\AuthorizationService')
     <div class="content-wrapper">
         <div class="content-header">
             @include('layouts.admin.flash-message')
@@ -53,21 +54,29 @@
                                                         <td>{{ $vendor->phone }}</td>
                                                         <td>{{ $vendor->email }}</td>
                                                         <td>{{ $vendor->address }}</td>
-                                                        <td>{{ $data['currency_symbol'] }} {{ number_format($vendor->current_balance,2) }}</td>
-                                                        <td><span class="badge badge-{{ $vendor->status == 1 ? 'success' : 'danger' }}">{{ $vendor->status==1? 'Active' : 'Inactive' }}</span></td>
+                                                        <td>{{ $data['currency_symbol'] }}
+                                                            {{ number_format($vendor->current_balance, 2) }}</td>
+                                                        <td><span
+                                                                class="badge badge-{{ $vendor->status == 1 ? 'success' : 'danger' }}">{{ $vendor->status == 1 ? 'Active' : 'Inactive' }}</span>
+                                                        </td>
                                                         <td>
                                                             <div class="d-flex justify-content-center">
-                                                                <a href="{{ route('customers.edit',$vendor->id) }}"
+
+                                                                <a href="{{ route('customers.edit', $vendor->id) }}"
                                                                     class="btn btn-info">
                                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                                 </a>
-                                                                <form class="delete" action="{{ route('customers.destroy', $vendor->id) }}" method="post">
+
+                                                                <form class="delete"
+                                                                    action="{{ route('customers.destroy', $vendor->id) }}"
+                                                                    method="post">
                                                                     @csrf
                                                                     @method('DELETE')
                                                                     <button type="submit" class="btn btn-danger">
                                                                         <i class="fa-solid fa-trash"></i>
                                                                     </button>
                                                                 </form>
+
                                                             </div>
                                                         </td>
                                                     </tr>

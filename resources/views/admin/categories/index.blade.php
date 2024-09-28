@@ -1,5 +1,6 @@
 @extends('layouts.admin.master')
 @section('content')
+    @inject('authorization', 'App\Services\AuthorizationService')
     <div class="content-wrapper">
         <div class="content-header">
             @include('layouts.admin.flash-message')
@@ -24,9 +25,15 @@
                         <div class="card">
                             <div class="card-header bg-primary p-1">
                                 <h3 class="card-title">
-                                    <a href="{{ route('categories.create') }}"class="btn btn-light shadow rounded m-0"><i
-                                            class="fas fa-plus"></i>
-                                        <span>Add New</span></i></a>
+                                    @if (
+                                        $authorization->hasMenuAccess(26) ||
+                                            (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        <a href="{{ route('categories.create') }}"class="btn btn-light shadow rounded m-0"><i
+                                                class="fas fa-plus"></i>
+                                            <span>Add New</span></i></a>
+                                    @else
+                                        <span class="btn btn-light shadow rounded m-0">Category</span>
+                                    @endif
                                 </h3>
                             </div>
                             <div class="card-body">
@@ -48,24 +55,35 @@
                                                         <td>{{ $loop->iteration }}</td>
                                                         <td>{{ $category->title }}</td>
                                                         <td>
-                                                            @if($category->image)
-                                                                <img src="{{ asset('public/uploads/category/' . $category->image) }}" height="50px" width="50px">
+                                                            @if ($category->image)
+                                                                <img src="{{ asset('public/uploads/category/' . $category->image) }}"
+                                                                    height="50px" width="50px">
                                                             @endif
                                                         </td>
-                                                        <td>{{ $category->status==1? 'Active' : 'Inactive' }}</td>
+                                                        <td>{{ $category->status == 1 ? 'Active' : 'Inactive' }}</td>
                                                         <td>
                                                             <div class="d-flex justify-content-center">
-                                                                <a href="{{ route('categories.edit' , $category->id) }}"
-                                                                    class="btn btn-info">
-                                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                                </a>
-                                                                <form class="delete" action="{{ route('categories.destroy', $category->id) }}" method="post">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="btn btn-danger">
-                                                                        <i class="fa-solid fa-trash"></i>
-                                                                    </button>
-                                                                </form>
+                                                                @if (
+                                                                    $authorization->hasMenuAccess(27) ||
+                                                                        (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                                                    <a href="{{ route('categories.edit', $category->id) }}"
+                                                                        class="btn btn-info">
+                                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                                    </a>
+                                                                @endif
+                                                                @if (
+                                                                    $authorization->hasMenuAccess(28) ||
+                                                                        (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                                                    <form class="delete"
+                                                                        action="{{ route('categories.destroy', $category->id) }}"
+                                                                        method="post">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit" class="btn btn-danger">
+                                                                            <i class="fa-solid fa-trash"></i>
+                                                                        </button>
+                                                                    </form>
+                                                                @endif
                                                             </div>
                                                         </td>
                                                     </tr>

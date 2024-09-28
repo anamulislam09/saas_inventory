@@ -1,5 +1,6 @@
 @extends('layouts.admin.master')
 @section('content')
+@inject('authorization', 'App\Services\AuthorizationService')
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">

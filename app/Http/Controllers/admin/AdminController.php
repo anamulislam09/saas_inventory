@@ -7,7 +7,7 @@ use App\Models\Category;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Hash;
 
 class AdminController extends Controller

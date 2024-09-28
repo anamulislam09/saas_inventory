@@ -1,5 +1,6 @@
 @extends('layouts.admin.master')
 @section('content')
+    @inject('authorization', 'App\Services\AuthorizationService')
     <style>
         table,
         tr,
@@ -75,7 +76,13 @@
                                     </div>
                                 </div>
                                 <div class="card-footer">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    @if (
+                                        $authorization->hasMenuAccess(180) ||
+                                            (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    @else
+                                    <span style="color:#fb5200; font-size:14px;">You do not have permission to create customers </span>
+                                    @endif
                                 </div>
                             </form>
                         </div>
@@ -113,19 +120,29 @@
                                                         </span>
                                                     </td>
                                                     <td class="d-flex">
-                                                        <a href="#" class="btn btn-sm btn-info edit" style="font-size: 12px"
-                                                            data-id="{{ $vendor->id }}" data-toggle="modal"
-                                                            data-target="#editcustomer">
-                                                            <i class="fa-solid fa-pen-to-square"></i>
-                                                        </a>
-                                                        <form action="{{ route('customers.destroy', $vendor->id) }}"
-                                                            method="POST" class="d-inline">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm btn-danger" style="font-size: 12px">
-                                                                <i class="fa-solid fa-trash" ></i>
-                                                            </button>
-                                                        </form>
+                                                        @if (
+                                                            $authorization->hasMenuAccess(181) ||
+                                                                (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                                            <a href="#" class="btn btn-sm btn-info edit"
+                                                                style="font-size: 12px" data-id="{{ $vendor->id }}"
+                                                                data-toggle="modal" data-target="#editcustomer">
+                                                                <i class="fa-solid fa-pen-to-square"></i>
+                                                            </a>
+                                                        @endif
+
+                                                        @if (
+                                                            $authorization->hasMenuAccess(182) ||
+                                                                (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                                            <form action="{{ route('customers.destroy', $vendor->id) }}"
+                                                                method="POST" class="d-inline">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                                    style="font-size: 12px">
+                                                                    <i class="fa-solid fa-trash"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach

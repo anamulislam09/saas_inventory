@@ -1,5 +1,6 @@
 @extends('layouts.admin.master')
 @section('content')
+    @inject('authorization', 'App\Services\AuthorizationService')
     <div class="content-wrapper">
         <div class="content-header">
             @include('layouts.admin.flash-message')
@@ -24,9 +25,16 @@
                         <div class="card">
                             <div class="card-header bg-primary p-1">
                                 <h3 class="card-title">
-                                    <a href="{{ route('payment-methods.create') }}"class="btn btn-light shadow rounded m-0"><i
-                                            class="fas fa-plus"></i>
-                                        <span>Add New</span></i></a>
+                                    @if (
+                                        $authorization->hasMenuAccess(100) ||
+                                            (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        <a
+                                            href="{{ route('payment-methods.create') }}"class="btn btn-light shadow rounded m-0"><i
+                                                class="fas fa-plus"></i>
+                                            <span>Add New</span></i></a>
+                                    @else
+                                        <span class="btn btn-light shadow rounded m-0">Payment Methods</span>
+                                    @endif
                                 </h3>
                             </div>
                             <div class="card-body">
@@ -47,29 +55,32 @@
                                                         <td>{{ $paymentMethod->title }}</td>
                                                         <td>
                                                             <div class="d-flex justify-content-center">
-                                                                <a href="{{ route('payment-methods.edit', $paymentMethod->id) }}"
-                                                                    class="btn btn-info">
-                                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                                </a>
-                                                                <form class="delete" action="{{ route('payment-methods.destroy', $paymentMethod->id) }}" method="post">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="btn btn-danger">
-                                                                        <i class="fa-solid fa-trash"></i>
-                                                                    </button>
-                                                                </form>
+                                                                @if (
+                                                                    $authorization->hasMenuAccess(101) ||
+                                                                        (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                                                    <a href="{{ route('payment-methods.edit', $paymentMethod->id) }}"
+                                                                        class="btn btn-info">
+                                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                                    </a>
+                                                                @endif
+                                                                @if (
+                                                                    $authorization->hasMenuAccess(102) ||
+                                                                        (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                                                    <form class="delete"
+                                                                        action="{{ route('payment-methods.destroy', $paymentMethod->id) }}"
+                                                                        method="post">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit" class="btn btn-danger">
+                                                                            <i class="fa-solid fa-trash"></i>
+                                                                        </button>
+                                                                    </form>
+                                                                @endif
                                                             </div>
                                                         </td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <th>SN</th>
-                                                    <th>Title</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>

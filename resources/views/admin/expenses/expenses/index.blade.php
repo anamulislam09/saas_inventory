@@ -1,5 +1,6 @@
 @extends('layouts.admin.master')
 @section('content')
+@inject('authorization', 'App\Services\AuthorizationService')
     <div class="content-wrapper">
         <div class="content-header">
             @include('layouts.admin.flash-message')
@@ -24,9 +25,15 @@
                         <div class="card">
                             <div class="card-header bg-primary p-1">
                                 <h3 class="card-title">
-                                    <a href="{{ route('expenses.create') }}"class="btn btn-light shadow rounded m-0"><i
-                                            class="fas fa-plus"></i>
-                                        <span>Add New</span></i></a>
+                                    @if (
+                                        $authorization->hasMenuAccess(82) ||
+                                            (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        <a href="{{ route('expenses.create') }}"class="btn btn-light shadow rounded m-0"><i
+                                                class="fas fa-plus"></i>
+                                            <span>Add New</span></i></a>
+                                    @else
+                                        <span class="btn btn-light shadow rounded m-0">Expenses</span>
+                                    @endif
                                 </h3>
                             </div>
                             <div class="card-body">
@@ -50,22 +57,39 @@
                                                         <td>{{ $loop->iteration }}</td>
                                                         <td>{{ $expense->expense_no }}</td>
                                                         <td>{{ $expense->date }}</td>
-                                                        <td style="text-align: right;">{{ $data['currency_symbol'] }} {{ number_format($expense->total_amount,2) }}</td>
+                                                        <td style="text-align: right;">{{ $data['currency_symbol'] }}
+                                                            {{ number_format($expense->total_amount, 2) }}</td>
                                                         <td>{{ $expense->expense_note }}</td>
                                                         <td>{{ $expense->admin->name }}</td>
                                                         <td>
                                                             <div class="d-flex justify-content-center">
-                                                                <button total="{{ 435 }}" expense_id="{{ $expense->id }}" type="button" class="btn btn-warning expense-details" data-toggle="modal" data-target="#exampleModal" data-whatever="@getbootstrap">
+                                                                <button total="{{ 435 }}"
+                                                                    expense_id="{{ $expense->id }}" type="button"
+                                                                    class="btn btn-warning expense-details"
+                                                                    data-toggle="modal" data-target="#exampleModal"
+                                                                    data-whatever="@getbootstrap">
                                                                     <i class="fa fa-eye"></i>
                                                                 </button>
-                                                                <a href="{{ route('expenses.edit', $expense->id) }}" class="btn btn-info">
-                                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                                </a>
-                                                                <form class="delete" action="{{ route('expenses.destroy', $expense->id) }}" method="post">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button>
-                                                                </form>
+                                                                @if (
+                                                                    $authorization->hasMenuAccess(83) ||
+                                                                        (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                                                    <a href="{{ route('expenses.edit', $expense->id) }}"
+                                                                        class="btn btn-info">
+                                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                                    </a>
+                                                                @endif
+                                                                @if (
+                                                                    $authorization->hasMenuAccess(84) ||
+                                                                        (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                                                    <form class="delete"
+                                                                        action="{{ route('expenses.destroy', $expense->id) }}"
+                                                                        method="post">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit" class="btn btn-danger"><i
+                                                                                class="fa-solid fa-trash"></i></button>
+                                                                    </form>
+                                                                @endif
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -95,7 +119,8 @@
                         <input type="hidden" name="expense_id" id="expense_id">
                         <div class="form-group col-sm-12 col-md-6 col-lg-6">
                             <label>Expense No</label>
-                            <input type="text" class="form-control" name="expense_no" id="expense_no" disabled placeholder="123456" required>
+                            <input type="text" class="form-control" name="expense_no" id="expense_no" disabled
+                                placeholder="123456" required>
                         </div>
                         <div class="form-group col-sm-12 col-md-6 col-lg-6">
                             <label>Expense Date</label>
@@ -132,30 +157,37 @@
                 $('#expense_id').val(expense_id);
                 $('#note').val('');
                 $.ajax({
-                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                     url: "{{ route('expenses.details') }}",
-                    data:{expense_id: expense_id},
+                    data: {
+                        expense_id: expense_id
+                    },
                     type: 'POST',
                     dataType: 'JSON',
-                    success: function(res){
+                    success: function(res) {
                         let tbody = ``;
                         let currency_symbol = "{{ $data['currency_symbol'] }}";
-                        res.expense_details.forEach((item,index)=>{
+                        res.expense_details.forEach((item, index) => {
                             tbody += `<tr>`;
-                            tbody +=     `<td>${index+1}</td>`;
-                            tbody +=     `<td>${item.expense_cat.cat_name}</td>`;
-                            tbody +=     `<td>${item.expense_head.title}</td>`;
-                            tbody +=     `<td>${item.note?item.note:''}</td>`;
-                            tbody +=     `<td style="text-align: right;">${currency_symbol} ${nsFormatNumber(item.amount)}</td >`;
-                            tbody +=     `<td>${item.quantity}</td>`;
-                            tbody +=     `<td style="text-align: right;">${currency_symbol} ${nsFormatNumber(item.amount * item.quantity)}</td>`;
+                            tbody += `<td>${index+1}</td>`;
+                            tbody += `<td>${item.expense_cat.cat_name}</td>`;
+                            tbody += `<td>${item.expense_head.title}</td>`;
+                            tbody += `<td>${item.note?item.note:''}</td>`;
+                            tbody +=
+                                `<td style="text-align: right;">${currency_symbol} ${nsFormatNumber(item.amount)}</td >`;
+                            tbody += `<td>${item.quantity}</td>`;
+                            tbody +=
+                                `<td style="text-align: right;">${currency_symbol} ${nsFormatNumber(item.amount * item.quantity)}</td>`;
                             tbody += `</tr>`;
                         });
                         tbody += `<tr>`;
-                        tbody +=     `<th>Note</th>`;
-                        tbody +=     `<td colspan="3">${res.expense_note?res.expense_note:''}</td>`;
-                        tbody +=     `<th>Grand Total:</th>`;
-                        tbody +=     `<th colspan="2" style="text-align: right;">${currency_symbol} ${nsFormatNumber(res.total_amount)}</th>`;
+                        tbody += `<th>Note</th>`;
+                        tbody += `<td colspan="3">${res.expense_note?res.expense_note:''}</td>`;
+                        tbody += `<th>Grand Total:</th>`;
+                        tbody +=
+                            `<th colspan="2" style="text-align: right;">${currency_symbol} ${nsFormatNumber(res.total_amount)}</th>`;
                         tbody += `</tr>`;
                         $('#expense_no').val(res.expense_no);
                         $('#tbody').html(tbody);

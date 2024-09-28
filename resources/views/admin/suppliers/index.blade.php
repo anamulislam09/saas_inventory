@@ -1,5 +1,6 @@
 @extends('layouts.admin.master')
 @section('content')
+@inject('authorization', 'App\Services\AuthorizationService')
     <div class="content-wrapper">
         <div class="content-header">
             @include('layouts.admin.flash-message')
@@ -24,9 +25,15 @@
                         <div class="card">
                             <div class="card-header bg-primary p-1">
                                 <h3 class="card-title">
-                                    <a href="{{ route('suppliers.create') }}"class="btn btn-light shadow rounded m-0"><i
-                                            class="fas fa-plus"></i>
-                                        <span>Add New</span></i></a>
+                                    @if (
+                                        $authorization->hasMenuAccess(104) ||
+                                            (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        <a href="{{ route('suppliers.create') }}"class="btn btn-light shadow rounded m-0"><i
+                                                class="fas fa-plus"></i>
+                                            <span>Add New</span></i></a>
+                                    @else
+                                        <span class="btn btn-light shadow rounded m-0">Suppliers</span>
+                                    @endif
                                 </h3>
                             </div>
                             <div class="card-body">
@@ -59,21 +66,34 @@
                                                         {{-- <td>{{ $supplier->organization }}</td> --}}
                                                         {{-- <td>{{ $data['currency_symbol'] }} {{ number_format($supplier->opening_payable,2) }}</td>
                                                         <td>{{ $data['currency_symbol'] }} {{ number_format($supplier->opening_receivable,2) }}</td> --}}
-                                                        <td>{{ $data['currency_symbol'] }} {{ number_format($supplier->current_balance,2) }}</td>
-                                                        <td><span class="badge badge-{{ $supplier->status == 1 ? 'success' : 'danger' }}">{{ $supplier->status==1? 'Active' : 'Inactive' }}</span></td>
+                                                        <td>{{ $data['currency_symbol'] }}
+                                                            {{ number_format($supplier->current_balance, 2) }}</td>
+                                                        <td><span
+                                                                class="badge badge-{{ $supplier->status == 1 ? 'success' : 'danger' }}">{{ $supplier->status == 1 ? 'Active' : 'Inactive' }}</span>
+                                                        </td>
                                                         <td>
                                                             <div class="d-flex justify-content-center">
-                                                                <a href="{{ route('suppliers.edit',$supplier->id) }}"
-                                                                    class="btn btn-info">
-                                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                                </a>
-                                                                <form class="delete" action="{{ route('suppliers.destroy', $supplier->id) }}" method="post">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="btn btn-danger">
-                                                                        <i class="fa-solid fa-trash"></i>
-                                                                    </button>
-                                                                </form>
+                                                                @if (
+                                                                    $authorization->hasMenuAccess(105) ||
+                                                                        (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                                                    <a href="{{ route('suppliers.edit', $supplier->id) }}"
+                                                                        class="btn btn-info">
+                                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                                    </a>
+                                                                @endif
+                                                                @if (
+                                                                    $authorization->hasMenuAccess(106) ||
+                                                                        (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                                                    <form class="delete"
+                                                                        action="{{ route('suppliers.destroy', $supplier->id) }}"
+                                                                        method="post">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit" class="btn btn-danger">
+                                                                            <i class="fa-solid fa-trash"></i>
+                                                                        </button>
+                                                                    </form>
+                                                                @endif
                                                             </div>
                                                         </td>
                                                     </tr>

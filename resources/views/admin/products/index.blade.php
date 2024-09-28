@@ -1,5 +1,6 @@
 @extends('layouts.admin.master')
 @section('content')
+    @inject('authorization', 'App\Services\AuthorizationService')
     <style>
         .modal-dialog {
             max-width: 700px;
@@ -30,59 +31,18 @@
                         <div class="card">
                             <div class="card-header bg-primary p-1">
                                 <h3 class="card-title">
-                                    <a href="{{ route('products.create') }}"class="btn btn-light shadow rounded m-0">
-                                        <i class="fas fa-plus"></i>
-                                        <span>Add New</span></i></a>
+                                    @if (
+                                        $authorization->hasMenuAccess(34) ||
+                                            (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        <a href="{{ route('products.create') }}"class="btn btn-light shadow rounded m-0">
+                                            <i class="fas fa-plus"></i>
+                                            <span>Add New</span></i></a>
+                                    @else
+                                        <span class="btn btn-light shadow rounded m-0">Products</span>
+                                    @endif
                                 </h3>
                             </div>
-                            {{-- <div class="card-body">
-                                <div class="row">
-                                    <div class="form-group col-sm-12 col-md-4 col-lg-4">
-                                        <label>Category</label>
-                                        <select name="cat_id" id="cat_id" class="form-control" required>
-                                            <option value="0" selected>All Category</option>
-                                        </select> 
-                                    </div>
-                                    <div class="form-group col-sm-12 col-md-4 col-lg-4">
-                                        <label>Sub Category</label>
-                                        <select name="sub_cat_id" id="sub_cat_id" class="form-control" required>
-                                            <option value="0" selected>All Sub Category</option>
-                                        </select> 
-                                    </div>
-                                    <div class="form-group col-sm-12 col-md-12 col-lg-12">
-                                        <div class="bootstrap-data-table-panel text-center">
-                                            <div class="table-responsive">
-                                                <table id="itemTable" class="table table-striped table-bordered table-centre">
-                                                    <thead id="thead">
-                                                    </thead>
-                                                    <tbody id="tbody">
-                                                    </tbody>
-                                                    <tfoot id="tfoot">
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> --}}
                             <div class="card-body">
-                                {{-- <div class="row mb-3">
-                                    <div class="col-lg-3 col-md-3 col-sm-12">
-                                        <label for="category_id">Choose Category</label>
-                                        <select name="category_id" id="category_id" class="form-control">
-                                            <option value="0" selected>All category</option>
-                                            @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->title }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-lg-3 col-md-3 col-sm-12 form">
-                                        <label for="sub_cat_id" class="text">Sub Category</label>
-                                        <select name="sub_cat_id" id="sub_cat_id" class="form-control text">
-                                            <option value="0" selected>All Subcategory</option>
-                                        </select>
-                                    </div>
-                                </div> --}}
 
                                 <div class="table-responsive" id="membersTableContainer">
                                     <table id="example1" class="table table-bordered table-striped">
@@ -122,20 +82,6 @@
                                                     <td>{{ $subcategories }}</td>
                                                     <td>{{ $unit }}</td>
                                                     <td>
-                                                        {{-- <label class="col-md-3" style="cursor:pointer">
-                                                        <img id="image_view" style="max-width:100%" class="img-thumbnail"
-                                                            src="{{ asset('public/uploads/product/' . (isset($product->image) && $product->image ? $product->image : 'placeholder.png')) }}">
-                                                        <input id="image" name="image" style="display:none" onchange="itemImage(this);"
-                                                            type="file" accept="image/*">
-                                                    </label> --}}
-                                                        {{-- <label class="col-md-3" style="cursor:pointer">
-                                                        <img id="image_view" 
-                                                             style="max-width:100%; max-height:300px; width:auto; height:auto;" 
-                                                             class="img-thumbnail"
-                                                             src="{{ asset('public/uploads/product/' . (isset($product->image) && $product->image ? $product->image : 'placeholder.png')) }}">
-                                                        <input id="image" name="image" style="display:none" onchange="itemImage(this);" type="file" accept="image/*">
-                                                    </label> --}}
-
                                                         <img src="{{ asset('public/uploads/product/' . (isset($product->image) && $product->image ? $product->image : 'placeholder.png')) }}"
                                                             class="img-thumbnail img-fluid"
                                                             style="max-width: 60px; height: auto;"
@@ -152,9 +98,13 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <a href="" class="btn btn-sm btn-info edit"
-                                                            data-id="{{ $product->id }}" data-toggle="modal"
-                                                            data-target="#editproduct"><i class="fas fa-edit"></i></a>
+                                                        @if (
+                                                            $authorization->hasMenuAccess(35) ||
+                                                                (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                                            <a href="" class="btn btn-sm btn-info edit"
+                                                                data-id="{{ $product->id }}" data-toggle="modal"
+                                                                data-target="#editproduct"><i class="fas fa-edit"></i></a>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach
