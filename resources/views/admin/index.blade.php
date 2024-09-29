@@ -21,12 +21,12 @@
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                    @if($authorization->hasMenuAccess(2))
+                    @if($authorization->hasMenuAccess(2) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <div class="col">
                             <div class="small-box bg-info">
                                 <div class="inner">
-                                    <h3>{{ $data['my_orders'] }}</h3>
-                                    <p>My Today's Orders</p>
+                                    <h3>{{ $data['category'] }}</h3>
+                                    <p>Total Category</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-bag"></i>
@@ -36,12 +36,12 @@
                             </div>
                         </div>
                     @endif
-                    @if($authorization->hasMenuAccess(3))
+                    @if($authorization->hasMenuAccess(3) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <div class="col">
                             <div class="small-box bg-info">
                                 <div class="inner">
-                                    <h3>{{ $data['pending_orders'] }}</h3>
-                                    <p>Pending Orders</p>
+                                    <h3>{{ $data['sub_category'] }}</h3>
+                                    <p>Total SubCategory</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-bag"></i>
@@ -51,12 +51,12 @@
                             </div>
                         </div>
                     @endif
-                    @if($authorization->hasMenuAccess(4))
+                    @if($authorization->hasMenuAccess(4) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <div class="col">
                             <div class="small-box bg-info">
                                 <div class="inner">
-                                    <h3>{{ $data['pending_collections'] }}</h3>
-                                    <p>Pending Collections</p>
+                                    <h3>{{ $data['product'] }}</h3>
+                                    <p>Total Products</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-bag"></i>
@@ -66,12 +66,12 @@
                             </div>
                         </div>
                     @endif
-                    @if($authorization->hasMenuAccess(5))
+                    @if($authorization->hasMenuAccess(5) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <div class="col">
                             <div class="small-box bg-info">
                                 <div class="inner">
-                                    <h3>{{ $data['pending_orders_in_kit'] }}</h3>
-                                    <p>Pending In Kitchen</p>
+                                    <h3>{{ $data['customer'] }}</h3>
+                                    <p>Total Customers</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-stats-bars"></i>
@@ -81,12 +81,12 @@
                             </div>
                         </div>
                     @endif
-                    @if($authorization->hasMenuAccess(6))
+                    @if($authorization->hasMenuAccess(6) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <div class="col">
                             <div class="small-box bg-info">
                                 <div class="inner">
-                                    <h3>{{ $data['todays_orders'] }}</h3>
-                                    <p>Today's Orders</p>
+                                    <h3>{{ $data['supplier'] }}</h3>
+                                    <p>Total Suppliers</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-person-add"></i>
@@ -98,12 +98,12 @@
                     @endif
                 </div>
                 <div class="row">
-                    @if($authorization->hasMenuAccess(7))
+                    @if($authorization->hasMenuAccess(7) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <div class="col-lg-3 col-6">
                             <div class="small-box bg-dark">
                                 <div class="inner">
-                                    <h3>{{ $data['currency_symbol'] }} {{ $data['todays_collections'] }}</h3>
-                                    <p>Today's Collections</p>
+                                    <h3>{{ $data['currency_symbol'] }} {{ $data['purchase'] }}</h3>
+                                    <p>Total Purchase</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-pie-graph"></i>
@@ -113,12 +113,12 @@
                             </div>
                         </div>
                     @endif
-                    @if($authorization->hasMenuAccess(8))
+                    @if($authorization->hasMenuAccess(8) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <div class="col-lg-3 col-6">
                             <div class="small-box bg-dark">
                                 <div class="inner">
-                                    <h3>{{ $data['currency_symbol'] }} {{ $data['weekly_collections'] }}</h3>
-                                    <p>Weekly Collections</p>
+                                    <h3>{{ $data['currency_symbol'] }} {{ $data['purchase_return'] }}</h3>
+                                    <p>Purchase Return</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-bag"></i>
@@ -128,7 +128,67 @@
                             </div>
                         </div>
                     @endif
-                    @if($authorization->hasMenuAccess(9))
+                    @if($authorization->hasMenuAccess(8) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-dark">
+                                <div class="inner">
+                                    <h3>{{ $data['currency_symbol'] }} {{ $data['sales'] }}</h3>
+                                    <p>Total Sales</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="#" class="small-box-footer">More info <i
+                                        class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                    @endif
+                    @if($authorization->hasMenuAccess(8) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-dark">
+                                <div class="inner">
+                                    <h3>{{ $data['currency_symbol'] }} {{ $data['sales_return'] }}</h3>
+                                    <p>Sales Return</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="#" class="small-box-footer">More info <i
+                                        class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                    @endif
+                    @if($authorization->hasMenuAccess(8) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-dark">
+                                <div class="inner">
+                                    <h3>{{ $data['currency_symbol'] }} {{ $data['todaySales'] }}</h3>
+                                    <p>Today Sales</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="#" class="small-box-footer">More info <i
+                                        class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                    @endif
+                    @if($authorization->hasMenuAccess(8) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-dark">
+                                <div class="inner">
+                                    <h3>{{ $data['currency_symbol'] }} {{ $data['todayPurchase'] }}</h3>
+                                    <p>Today Purchase</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="#" class="small-box-footer">More info <i
+                                        class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                    @endif
+                    @if($authorization->hasMenuAccess(9) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <div class="col-lg-3 col-6">
                             <div class="small-box bg-dark">
                                 <div class="inner">
@@ -143,7 +203,7 @@
                             </div>
                         </div>
                     @endif
-                    @if($authorization->hasMenuAccess(10))
+                    @if($authorization->hasMenuAccess(10) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <div class="col-lg-3 col-6">
                             <div class="small-box bg-dark">
                                 <div class="inner">
