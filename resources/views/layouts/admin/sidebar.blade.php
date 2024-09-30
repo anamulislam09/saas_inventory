@@ -630,7 +630,7 @@
                                     <a href="{{ route('reports.customer-ledgers') }}"
                                         class="nav-link {{ request()->is('admin/reports/customer-ledgers*') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
-                                        <p>Customer Ledgers</p>
+                                        <p>Customer Ledger</p>
                                     </a>
                                 </li>
                             @endif
@@ -664,6 +664,15 @@
                                         class="nav-link {{ request()->is('admin/reports/stocks*') ? 'active' : '' }}">
                                         <i class="far fa-dot-circle nav-icon"></i>
                                         <p>Stock Report</p>
+                                    </a>
+                                </li>
+                            @endif
+                            @if ($authorization->hasMenuAccess(110) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                <li class="nav-item">
+                                    <a href="{{ route('reports.collections') }}"
+                                        class="nav-link {{ request()->is('admin/reports/collections*') ? 'active' : '' }}">
+                                        <i class="far fa-dot-circle nav-icon"></i>
+                                        <p>Collection Report</p>
                                     </a>
                                 </li>
                             @endif

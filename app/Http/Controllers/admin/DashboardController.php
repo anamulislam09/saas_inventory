@@ -9,6 +9,7 @@ use App\Models\BasicInfo;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Category;
+use App\Models\Expense;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\PurchaseReturn;
@@ -34,7 +35,7 @@ class DashboardController extends Controller
             $client_id = $client->id;
         }
 
-        $data['currency_symbol'] = BasicInfo::where('client_id', $client_id)->first()->currency_symbol;
+        $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
         $data['category'] = Category::where('client_id', $client_id)->count();
         $data['sub_category'] = Category::where('client_id', $client_id)->where('parent_cat_id', '!=', 0)->count();
         $data['product'] = Product::where('client_id', $client_id)->count();
@@ -46,8 +47,8 @@ class DashboardController extends Controller
         $data['sales_return'] = SalesReturn::where('client_id', $client_id)->sum('total_amount');
         $data['todaySales'] = Sales::where('client_id', $client_id)->where('date','like',"%". date('Y-m-d') ."%")->sum('sales_price');
         $data['todayPurchase'] = Purchase::where('client_id', $client_id)->where('date','like',"%". date('Y-m-d') ."%")->sum('total_price');
+        $data['expense'] = Expense::where('client_id', $client_id)->sum('total_amount');
 
-        $data['my_orders'] = Order::where('created_by_id',Auth::guard('admin')->user()->id)->where('created_at','like',"%". date('Y-m-d') ."%")->count();
         $data['todays_collections'] = Collection::where('status',1)->where('created_at','like',"%". date('Y-m-d') ."%")->sum('total_collection');
         $data['weekly_collections'] = Collection::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
                                         ->where('status',1)

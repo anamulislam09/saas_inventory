@@ -5,12 +5,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Collections Report</h1>
+                        <h1 class="m-0">Ledger</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ url('admin/dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Collections Report</li>
+                            <li class="breadcrumb-item active">Ledger</li>
                         </ol>
                     </div>
                 </div>
@@ -22,40 +22,42 @@
                     <div class="col-12">
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Collections Report</h3>
+                                <h3 class="card-title">Ledger</h3>
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="form-group col-sm-3 col-md-3 col-lg-3">
+                                    {{-- <div class="form-group col-sm-3 col-md-3 col-lg-3">
                                         <label>Customer</label>
-                                        <select name="customer_id" id="customer_id" class="form-control select2" required>
-                                            <option customer-name="All customer" value="0" selected>All Customer
-                                            </option>
-                                            @foreach ($data['customers'] as $customer)
-                                                <option customer-name="{{ $customer->name }}" value="{{ $customer->id }}">
-                                                    {{ $customer->name }}
+                                        <select name="vendor_id" id="vendor_id" class="form-control select2" required>
+                                            <option vendor-name="All Vendor" value="0" selected>All Customer</option>
+                                            @foreach ($data['vendors'] as $vendor)
+                                                <option vendor-name="{{ $vendor->name }}" value="{{ $vendor->id }}">
+                                                    {{ $vendor->name }}
                                                 </option>
                                             @endforeach
                                         </select>
-                                    </div>
+                                    </div> --}}
                                     <div class="form-group col-sm-3 col-md-3 col-lg-3">
-                                        <label>From/On Date</label>
+                                        <label>From Date</label>
                                         <input name="from_date" id="from_date" type="date" class="form-control">
                                     </div>
                                     <div class="form-group col-sm-3 col-md-3 col-lg-3">
                                         <label>To Date</label>
                                         <input name="to_date" id="to_date" type="date" class="form-control">
                                     </div>
-                                    <div class="form-group col-sm-12 col-md-3 col-lg-3">
+                                    <div class="form-group col-sm-3 col-md-3 col-lg-3">
                                         <label>&nbsp;</label>
                                         <button ame="print" id="print" type="button"
-                                            class="form-control btn btn-primary">Print</button>
+                                            class="form-control btn btn-dark p-1"><i class="fa fa-print"></i>Print</button>
                                     </div>
                                     <div class="form-group col-sm-12 col-md-12 col-lg-12" id="printable">
                                         <div id="print_header" hidden>
                                             <div class="row justify-content-center">
                                                 <div class="col-12 text-center">
-                                                    <h1>Collection Report</h1>
+                                                    <h1>Sales Report</h1>
+                                                </div>
+                                                <div class="col-12">
+                                                    <h4><span id="description"></span></h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -83,17 +85,23 @@
     <script>
         $(document).ready(function() {
             $('#print').click(function() {
-                let customer_id = $('#customer_id').val();
+                let vendor_id = $('#vendor_id').val();
                 let from_date = $('#from_date').val();
                 let to_date = $('#to_date').val();
-                let customer_name = $('#customer_id option:selected').attr('customer-name');
-                let description = `Collection report of ${customer_name}`;
-
-                if (from_date && to_date) description += ` from ${from_date} to ${to_date}`;
-                else if (from_date) description += ` on ${from_date}`;
-                $('#description').html(description + `.`);
-
-
+                let customer_name = $('#vendor_id option:selected').attr('vendor-name');
+                if (vendor_id == 0) {
+                    $('#description').html(`All Sales Report.`);
+                } else {
+                    let description = `${customer_name} Sales Report`;
+                    if (from_date) {
+                        description += ` from ${from_date}`;
+                        if (to_date) {
+                            description += ` to ${to_date}`;
+                        }
+                    }
+                    description += `.`;
+                    $('#description').html(description);
+                }
                 // Prepare for printing by expanding the table and showing hidden elements
                 let originalOverflow = $('.table-responsive').css('overflow');
                 let originalMaxHeight = $('.table-responsive').css('max-height');
@@ -119,95 +127,111 @@
 
         $(document).ready(function() {
             initialize();
-            $('#customer_id, #from_date, #to_date').on('change', function(event) {
+            $('#vendor_id, #from_date, #to_date').on('change', function(event) {
                 const data = getFormData();
-                // alert(data);
-                nsSetItem("collectionsReportSearchKeys", data);
+                nsSetItem("purchaseReportSearchKeys", data);
                 getData(data);
             });
         });
 
         function initialize() {
             const defaultData = {
-                customer_id: 0,
+                vendor_id: 0,
                 from_date: null,
                 to_date: null
             };
-            const data = nsGetItem("collectionsReportSearchKeys") || defaultData;
-            $('#customer_id').val(data.customer_id);
+            const data = nsGetItem("purchaseReportSearchKeys") || defaultData;
+            $('#vendor_id').val(data.vendor_id);
             $('#from_date').val(data.from_date);
             $('#to_date').val(data.to_date);
-            nsSetItem("collectionsReportSearchKeys", data);
-            getData(data); // Load the initial collections data
+            nsSetItem("purchaseReportSearchKeys", data);
+            getData(data);
         }
 
         async function getData(data) {
-            res = await nsAjaxPost("{{ route('reports.collections') }}", data);
-            if (data.customer_id == 0) {
-                allCustomer(res);
-            } else {
-                singleCustomer(res);
+            try {
+                let res = await nsAjaxPost("{{ route('reports.sales') }}", data);
+                if (data.vendor_id == 0) {
+                    allVendor(res);
+                } else {
+                    singleVendor(res);
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                // Optionally show an error message to the user
             }
         }
 
+
         function getFormData() {
             return {
-                customer_id: $('#customer_id').val(),
+                vendor_id: $('#vendor_id').val(),
                 from_date: $('#from_date').val(),
                 to_date: $('#to_date').val()
             }
         }
 
-        function singleCustomer(res) {
-            let total = 0;
+        function singleVendor(res) {
             let tbody = ``;
             let thead = ``;
             thead += `<tr>`;
             thead += `<th>SN</th>`;
+            thead += `<th>Invoice No</th>`;
             thead += `<th>Date</th>`;
-            thead += `<th>Amount</th>`;
+            thead += `<th>Total Sales</th>`;
+            thead += `<th>Discount</th>`;
+            thead += `<th>Receivable</th>`;
+            thead += `<th>Collection</th>`;
+            thead += `<th>Due</th>`;
             thead += `</tr>`;
             $('#thead').html(thead);
-            res.collections.forEach((val, index) => {
-                val.total_collection = parseFloat(val.total_collection);
+            res.sales.forEach((element, index) => {
+                url = '{{ route('sales.invoice', ':id') }}'.replace(":id", element.id);
                 tbody += `<tr>`;
-                tbody += `<td>${(index + 1)}</td>`;
-                tbody += `<td>${nsYYYYMMDD(val.date)}</td>`;
-                tbody += `<td class="text-right">${res.currency_symbol} ${val.total_collection.toFixed(2)}</td>`;
+                tbody += `<td>${index+1}</td>`;
+                tbody += `<td><a target="_blank" href="${url}"><b>${element.invoice_no}</b></a></td>`;
+                tbody += `<td>${element.date}</td>`;
+                tbody += `<td>${res.currency_symbol} ${element.sales_price}</td>`;
+                tbody += `<td>${res.currency_symbol} ${element.discount}</td>`;
+                tbody += `<td>${res.currency_symbol} ${element.receiveable_amount}</td>`;
+                tbody += `<td>${res.currency_symbol} ${element.receive_amount}</td>`;
+                tbody +=
+                    `<td style="text-align: center;">${res.currency_symbol} ${element.receiveable_amount - element.receive_amount}</td>`;
                 tbody += `</tr>`;
-                total += val.total_collection;
             });
-            tbody += `<tr>`;
-            tbody += `<th colspan="2" class="text-left">Total Amount: </th>`;
-            tbody += `<th class="text-right">${res.currency_symbol} ${total.toFixed(2)}</th>`;
-            tbody += `</tr>`;
             $('#tbody').html(tbody);
         }
 
-        function allCustomer(res) {
-            let total = 0;
+        function allVendor(res) {
             let tbody = ``;
             let thead = ``;
-            thead = `<tr>`;
-            thead += `<th width="5%">SN</th>`;
-            thead += `<th width="70%">Customer Name</th>`;
-            thead += `<th width="25%">Collection Amount</th>`;
+            thead += `<tr>`;
+            thead += `<th>SN</th>`;
+            thead += `<th>Invoice No</th>`;
+            thead += `<th>Customer</th>`;
+            thead += `<th>Date</th>`;
+            thead += `<th>Total Sales</th>`;
+            thead += `<th>Discount</th>`;
+            thead += `<th>Receivable</th>`;
+            thead += `<th>Collection</th>`;
+            thead += `<th>Due</th>`;
             thead += `</tr>`;
             $('#thead').html(thead);
-            res.collections.forEach((val, index) => {
-                val.total_collection_amount = parseFloat(val.total_collection_amount);
+            res.sales.forEach((element, index) => {
+                url = '{{ route('sales.invoice', ':id') }}'.replace(":id", element.id);
                 tbody += `<tr>`;
-                tbody += `<td>${(index + 1)}</td>`;
-                tbody += `<td class="text-left">${val.vendor_name}</td>`;
+                tbody += `<td>${index+1}</td>`;
+                tbody += `<td><a target="_blank" href="${url}"><b>${element.invoice_no}</b></a></td>`;
+                tbody += `<td>${element.vendor? element.vendor.name : ''}</td>`;
+                tbody += `<td>${element.date}</td>`;
+                tbody += `<td>${res.currency_symbol} ${element.sales_price}</td>`;
+                tbody += `<td>${res.currency_symbol} ${element.discount}</td>`;
+                tbody += `<td>${res.currency_symbol} ${element.receiveable_amount}</td>`;
+                tbody += `<td>${res.currency_symbol} ${element.receive_amount}</td>`;
                 tbody +=
-                    `<td class="text-right">${res.currency_symbol} ${val.total_collection_amount.toFixed(2)}</td>`;
+                    `<td style="text-align: center;">${res.currency_symbol} ${element.receiveable_amount - element.receive_amount}</td>`;
                 tbody += `</tr>`;
-                total += val.total_collection_amount;
             });
-            tbody += `<tr>`;
-            tbody += `<th colspan="2" class="text-left">Total Amount: </th>`;
-            tbody += `<th class="text-right">${res.currency_symbol} ${total.toFixed(2)}</th>`;
-            tbody += `</tr>`;
             $('#tbody').html(tbody);
         }
     </script>

@@ -25,67 +25,122 @@ use DB;
 
 class ReportController extends Controller
 {
-    public function collections(Request $request)
-    {
-        $user_ids = Collection::groupBy('created_by_id')->pluck('created_by_id');
-        if ($request->isMethod('post')) {
-            $created_by_id = $request->created_by_id;
-            $from_date = $request->from_date;
-            $to_date = $request->to_date;
-            $collections = Collection::query();
-            if ($from_date && $to_date) {
-                $collections = $collections->whereDate('collections.created_at', '>=', $from_date)->whereDate('collections.created_at', '<=', $to_date);
-            } else if ($from_date) {
-                $collections = $collections->whereDate('collections.created_at', '=', $from_date);
-            }
-            if ($created_by_id != 0) {
-                $collections = $collections->where('created_by_id', $created_by_id);
-                $data['collections'] = $collections->orderBy('order_no', 'asc')->get();
-            } else {
-                $data['collections'] = $collections->join('admins', 'admins.id', '=', 'collections.created_by_id')->groupBy('created_by_id')
-                    ->select('admins.id', 'admins.name', DB::raw('SUM(`paid_amount`) as total_collection_amount'))
-                    ->get();
-            }
-            $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
-            return response()->json($data, 200);
-        } else {
-            $data['users'] = Admin::whereIn('id', $user_ids)->where('status', 1)->orderBy('name', 'asc')->get();
-            return view('admin.reports.collections', compact('data'));
-        }
-    }
-
-    // public function purchase(Request $request)
+    // public function collections(Request $request)
     // {
-    //     $user = Auth::guard('admin')->user();
-    //     $client = Admin::find($user->client_id);
+    //     $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+
+    //     if (Auth::guard('admin')->user()->client_id == 0) {
+    //         $client_id = Auth::guard('admin')->user()->id;
+    //     } else {
+    //         $client_id = $client->id;
+    //     }
+
     //     if ($request->isMethod('post')) {
-    //         $data['currency_symbol'] = BasicInfo::where('client_id', $user->client_id == 0 ? $user->id : $client->id)->first()->currency_symbol;
-    //         $supplier_id = $request->supplier_id;
+    //         $customer_id = $request->customer_id;
     //         $from_date = $request->from_date;
     //         $to_date = $request->to_date;
-    //         $purchase = Purchase::where('client_id', $user->client_id == 0 ? $user->id : $client->id)->query();
-    //         if ($supplier_id) {
-    //             $purchase = $purchase->where('supplier_id', $supplier_id);
-    //         } else {
-    //             $purchase = $purchase->with(['supplier']);
-    //         }
+    //         $collections = Collection::where('client_id', $client_id);
     //         if ($from_date && $to_date) {
-    //             $purchase->whereBetween('date', [$from_date, $to_date]);
-    //         } elseif ($from_date) {
-    //             $purchase->where('date', '=', $from_date);
+    //             $collections = $collections->whereDate('collections.date', '>=', $from_date)->whereDate('collections.date', '<=', $to_date);
+    //         } else if ($from_date) {
+    //             $collections = $collections->whereDate('collections.date', '=', $from_date);
     //         }
-    //         $data['purchase'] = $purchase->get();
+    //         if ($customer_id != 0) {
+    //             $collections = $collections->where('vendor_id', $customer_id);
+    //             $data['collections'] = $collections->orderBy('date', 'asc')->get();
+    //         } else {
+    //             $data['collections'] = $collections->join('admins', 'admins.id', '=', 'collections.vendor_id')
+    //                 ->select('admins.id', 'admins.name', DB::raw('SUM(`total_collection`) as total_collection_amount'))
+    //                 ->get();
+    //         }
+    //         $data['currency_symbol'] = BasicInfo::where('client_id', $client_id)->first()->currency_symbol;
     //         return response()->json($data, 200);
     //     } else {
-    //         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
-    //         if (Auth::guard('admin')->user()->client_id == 0) {
-    //             $data['suppliers'] = Supplier::where('client_id', Auth::guard('admin')->user()->id)->where('status', 1)->orderBy('name', 'asc')->get();
-    //         } else {
-    //             $data['suppliers'] = Supplier::where('client_id', $client->id)->where('status', 1)->orderBy('name', 'asc')->get();
-    //         }
-    //         return view('admin.reports.purchase', compact('data'));
+    //         $data['customers'] = Vendor::
+    //             where('status', 1)
+    //             ->orderBy('name', 'asc')
+    //             ->get();
+    //         return view('admin.reports.collections', compact('data'));
     //     }
     // }
+
+    public function collections(Request $request)
+    {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+    
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+    
+        // If POST method, handle the form submission
+        if ($request->isMethod('post')) {
+            $customer_id = $request->customer_id;
+            $from_date = $request->from_date;
+            $to_date = $request->to_date;
+    
+            // Base query for collections
+            $collections = Collection::where('collections.client_id', $client_id)
+                ->leftJoin('vendors', 'vendors.id', '=', 'collections.vendor_id')
+                ->select('collections.*', 'vendors.name as vendor_name');
+    
+            // Apply date filters
+            if ($from_date && $to_date) {
+                $collections = $collections->whereDate('collections.date', '>=', $from_date)
+                    ->whereDate('collections.date', '<=', $to_date);
+            } elseif ($from_date) {
+                $collections = $collections->whereDate('collections.date', '=', $from_date);
+            }
+    
+            // Handle the case for specific customers
+            if ($customer_id != 0) {
+                // If a specific customer is selected
+                $collections = $collections->where('collections.vendor_id', $customer_id);
+                $data['collections'] = $collections->orderBy('collections.date', 'asc')->get();
+            } else {
+                // If "All Customers" is selected, handle both grouped and ungrouped collections
+                $collectionsResult = $collections->get();
+    
+                // Group collections by vendor_id and sum total collections
+                $collectionsWithVendor = $collectionsResult->whereNotNull('vendor_id')
+                    ->groupBy('vendor_id')
+                    ->map(function ($group) {
+                        return [
+                            'vendor_name' => $group->first()->vendor_name,
+                            'total_collection_amount' => $group->sum('total_collection'),
+                        ];
+                    });
+    
+                // Handle collections without vendor_id
+                $collectionsWithoutVendor = $collectionsResult->filter(function ($item) {
+                    return is_null($item->vendor_id);
+                });
+    
+                $data['collections_with_vendor'] = $collectionsWithVendor;
+                $data['collections_without_vendor'] = $collectionsWithoutVendor;
+            }
+    
+            // Add currency symbol
+            $data['currency_symbol'] = BasicInfo::where('client_id', $client_id)->first()->currency_symbol;
+            return response()->json($data, 200);
+        }
+    
+        // GET request: Load customer list and render view
+        $data['customers'] = Vendor::where('status', 1)
+            ->orderBy('name', 'asc')
+            ->get();
+    
+        // Fetch all collections for initial load (default data without filters)
+        $collections = Collection::where('collections.client_id', $client_id)
+            ->leftJoin('vendors', 'vendors.id', '=', 'collections.vendor_id')
+            ->select('collections.*', 'vendors.name as vendor_name')
+            ->orderBy('collections.date', 'asc')
+            ->get();
+    
+        $data['collections'] = $collections;
+    
+        return view('admin.reports.collections', compact('data'));
+    }
+    
+    
+    
 
     public function purchase(Request $request)
     {
@@ -241,18 +296,11 @@ class ReportController extends Controller
             // Fetch currency symbol
             $data['currency_symbol'] = BasicInfo::where('client_id', ($user->client_id == 0) ? $user->id : $client->id)->first()->currency_symbol;
 
-            // Start sales query
-            $vendor_id = $request->vendor_id;
+            // Start ledger query
             $from_date = $request->from_date;
             $to_date = $request->to_date;
 
-            $sales = Sales::with(['vendor'])
-                ->where('client_id', ($user->client_id == 0) ? $user->id : $client->id);
-
-            // Filter by vendor if provided
-            if ($vendor_id) {
-                $sales->where('vendor_id', $vendor_id);
-            }
+            $sales = Sales::where('client_id', ($user->client_id == 0) ? $user->id : $client->id);
 
             // Filter by date range
             if ($from_date && $to_date) {
@@ -266,23 +314,7 @@ class ReportController extends Controller
 
             return response()->json($data, 200);
         } else {
-            // Fetch client vendors
-            $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
-            if (Auth::guard('admin')->user()->client_id == 0) {
-                $data['vendors'] = Vendor::where('client_id', Auth::guard('admin')->user()->id)
-                    ->where('status', 1)
-                    ->orderBy('name', 'asc')
-                    ->get();
-            } else {
-                $data['vendors'] = Vendor::where('client_id', $client->id)
-                    ->where('status', 1)
-                    ->orderBy('name', 'asc')
-                    ->get();
-            }
-
-
-
-            return view('admin.reports.sales', compact('data'));
+            return view('admin.reports.ledger');
         }
     }
 
