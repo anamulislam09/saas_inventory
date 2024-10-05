@@ -10,6 +10,7 @@ class LoanInstallment extends Model
     use HasFactory;
     protected $fillable = 
     [
+        'client_id',
         'loan_id',
         'amount',
         'year_month',

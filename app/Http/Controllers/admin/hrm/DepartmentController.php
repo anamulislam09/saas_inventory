@@ -4,13 +4,18 @@ namespace App\Http\Controllers\admin\hrm;
 
 use App\Models\Department;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DepartmentController extends Controller
 {
     public function index()
     {
-        $departments = Department::orderBy('id', 'desc')->get();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+        
+        $departments = Department::where('client_id', $client_id)->orderBy('id', 'desc')->get();
         return view('admin.hrm.departments.departments.index', compact('departments'));
     }
 
@@ -27,7 +32,11 @@ class DepartmentController extends Controller
     
     public function store(Request $request)
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+        
         $data = $request->all();
+        $data['client_id'] = $client_id;
         Department::create($data);
         return redirect()->route('departments.index')->with('alert',['messageType'=>'success','message'=>'Data Inserted Successfully!']);
     }
@@ -41,8 +50,6 @@ class DepartmentController extends Controller
 
     public function destroy($id)
     {
-        // if(!Item::where('unit_id',$unit->id)->count())
-        //     return redirect()->back()->with('alert',['messageType'=>'warning','message'=>'Data Deletion Failed!']);
         Department::destroy($id);
         return redirect()->back()->with('alert',['messageType'=>'success','message'=>'Data Deleted Successfully!']);
     }

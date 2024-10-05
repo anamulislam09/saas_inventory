@@ -30,7 +30,7 @@
                                                 <tr>
                                                     <th>Office Start Time</th>
                                                     <td>
-                                                        {{ date_format(date_create($hrsettings->office_start_at),'h:i A') }}
+                                                        {{ $hrsettings->office_start_at != null ? date_format(date_create($hrsettings->office_start_at), 'h:i A') : '' }}
                                                     </td>
                                                 </tr>
                                                 <tr>

@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('leave_types', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('client_id');
             $table->string('name');
             $table->integer('leave_days');
             $table->timestamps();

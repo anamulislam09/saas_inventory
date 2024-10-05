@@ -11,6 +11,7 @@ class AttendanceProcessDetails extends Model
     use HasFactory;
     protected $fillable = 
     [
+        'client_id',
         'attendance_process_id',
         'employee_id',
         'absent_days',

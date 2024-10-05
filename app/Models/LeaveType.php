@@ -10,6 +10,7 @@ class LeaveType extends Model
     use HasFactory;
     protected $fillable = 
     [
+        'client_id',
         'name',
         'leave_days',
     ];

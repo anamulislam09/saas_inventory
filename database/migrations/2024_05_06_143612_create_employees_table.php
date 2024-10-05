@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
 
             //Basic Information
+            $table->tinyInteger('client_id');
             $table->string('name');
             $table->string('email');
             $table->string('contact');
@@ -33,7 +34,6 @@ return new class extends Migration
             $table->enum('rate_type',['Hourly','Salary']);
             $table->double('rate',20,2);
             $table->double('bonus',20,2);
-            $table->string('pay_frequency');
             $table->text('pay_frequency')->nullable();
             $table->integer('allocate_leave');
             $table->integer('remaining_leave');
@@ -64,7 +64,7 @@ return new class extends Migration
             $table->string('emerg_work_cont');
             $table->string('emerg_cont_work_alt')->nullable();
             $table->string('emerg_cont_relations')->nullable();
-            $table->tinyInterger('status')->default(1);
+            $table->tinyInteger('status')->default(1);
         
             $table->timestamps();
         });

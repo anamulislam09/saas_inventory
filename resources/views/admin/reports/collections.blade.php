@@ -116,7 +116,6 @@
             });
         });
 
-
         $(document).ready(function() {
             initialize();
             $('#customer_id, #from_date, #to_date').on('change', function(event) {
@@ -165,50 +164,76 @@
             thead += `<tr>`;
             thead += `<th>SN</th>`;
             thead += `<th>Date</th>`;
-            thead += `<th>Amount</th>`;
+            thead += `<th>Collection Amount</th>`;
             thead += `</tr>`;
             $('#thead').html(thead);
-            res.collections.forEach((val, index) => {
-                val.total_collection = parseFloat(val.total_collection);
+            if ((res.collections) && res.collections.length > 0) {
+                res.collections.forEach((val, index) => {
+                    val.total_collection = parseFloat(val.total_collection);
+                    console.log(val.total_collection);
+                    tbody += `<tr>`;
+                    tbody += `<td>${(index + 1)}</td>`;
+                    tbody += `<td>${nsYYYYMMDD(val.date)}</td>`;
+                    tbody +=
+                    `<td class="text-right">${res.currency_symbol} ${val.total_collection.toFixed(2)}</td>`;
+                    tbody += `</tr>`;
+                    total += val.total_collection;
+                });
                 tbody += `<tr>`;
-                tbody += `<td>${(index + 1)}</td>`;
-                tbody += `<td>${nsYYYYMMDD(val.date)}</td>`;
-                tbody += `<td class="text-right">${res.currency_symbol} ${val.total_collection.toFixed(2)}</td>`;
+                tbody += `<th colspan="2" class="text-left">Total Amount: </th>`;
+                tbody += `<th class="text-right">${res.currency_symbol} ${total.toFixed(2)}</th>`;
                 tbody += `</tr>`;
-                total += val.total_collection;
-            });
-            tbody += `<tr>`;
-            tbody += `<th colspan="2" class="text-left">Total Amount: </th>`;
-            tbody += `<th class="text-right">${res.currency_symbol} ${total.toFixed(2)}</th>`;
-            tbody += `</tr>`;
-            $('#tbody').html(tbody);
+                $('#tbody').html(tbody);
+            } else {
+                $('#tbody').html('<tr><td colspan="3" class="text-center">No data available</td></tr>');
+                // Update the table body
+            }
         }
 
         function allCustomer(res) {
             let total = 0;
             let tbody = ``;
             let thead = ``;
+
+            // Constructing the table head
             thead = `<tr>`;
             thead += `<th width="5%">SN</th>`;
             thead += `<th width="70%">Customer Name</th>`;
             thead += `<th width="25%">Collection Amount</th>`;
             thead += `</tr>`;
-            $('#thead').html(thead);
-            res.collections.forEach((val, index) => {
-                val.total_collection_amount = parseFloat(val.total_collection_amount);
-                tbody += `<tr>`;
-                tbody += `<td>${(index + 1)}</td>`;
-                tbody += `<td class="text-left">${val.vendor_name}</td>`;
-                tbody +=
-                    `<td class="text-right">${res.currency_symbol} ${val.total_collection_amount.toFixed(2)}</td>`;
-                tbody += `</tr>`;
-                total += val.total_collection_amount;
-            });
-            tbody += `<tr>`;
-            tbody += `<th colspan="2" class="text-left">Total Amount: </th>`;
-            tbody += `<th class="text-right">${res.currency_symbol} ${total.toFixed(2)}</th>`;
-            tbody += `</tr>`;
-            $('#tbody').html(tbody);
+            $('#thead').html(thead); // Update the table head
+
+            // Looping through the collections array
+            if (Array.isArray(res.collections) && res.collections.length > 0) {
+                res.collections.forEach((val, index) => {
+                    alert('hello');
+                    // Ensure total_collection is a valid number
+                    val.total_collection = parseFloat(val.total_collection) || 0;
+                    console.log(val.total_collection);
+
+                    // Constructing the table body row by row
+                    tbody += `<tr>`;
+                    tbody += `<td>${(index + 1)}</td>`;
+                    tbody += `<td class="text-left">${val.vendor_name ? val.vendor_name : ''}</td>`;
+                    tbody +=
+                        `<td class="text-right">${res.currency_symbol} ${val.total_collection.toFixed(2)}</td>`;
+                    tbody += `</tr>`;
+
+                    // Accumulating the total collection
+                    total += val.total_collection;
+
+                    // Adding the total row
+                    tbody += `<tr>`;
+                    tbody += `<th colspan="2" class="text-left">Total Amount: </th>`;
+                    tbody += `<th class="text-right">${res.currency_symbol} ${total.toFixed(2)}</th>`;
+                    tbody += `</tr>`;
+                    // Update the table body
+                    $('#tbody').html(tbody);
+                });
+            } else {
+                $('#tbody').html('<tr><td colspan="3" class="text-center">No data available</td></tr>');
+                // Update the table body
+            }
         }
     </script>
 @endsection

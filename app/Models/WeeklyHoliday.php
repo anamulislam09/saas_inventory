@@ -10,6 +10,7 @@ class WeeklyHoliday extends Model
     use HasFactory;
     protected $fillable = 
     [
+        'client_id',
         'saturday',
         'sunday',
         'monday',

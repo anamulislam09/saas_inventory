@@ -5,13 +5,18 @@ namespace App\Http\Controllers\admin\hrm;
 
 use App\Models\Designation;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DesignationController extends Controller
 {
     public function index()
     {
-        $designations = Designation::orderBy('id', 'desc')->get();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
+        $designations = Designation::where('client_id', $client_id)->orderBy('id', 'desc')->get();
         return view('admin.hrm.hrm.designations.index', compact('designations'));
     }
 
@@ -28,7 +33,11 @@ class DesignationController extends Controller
     
     public function store(Request $request)
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
         $data = $request->all();
+        $data['client_id'] = $client_id;
         Designation::create($data);
         return redirect()->route('designations.index')->with('alert',['messageType'=>'success','message'=>'Data Inserted Successfully!']);
     }
@@ -43,8 +52,6 @@ class DesignationController extends Controller
 
     public function destroy($id)
     {
-        // if(!Item::where('unit_id',$unit->id)->count())
-        //     return redirect()->back()->with('alert',['messageType'=>'warning','message'=>'Data Deletion Failed!']);
         Designation::destroy($id);
         return redirect()->back()->with('alert',['messageType'=>'success','message'=>'Data Deleted Successfully!']);
     }

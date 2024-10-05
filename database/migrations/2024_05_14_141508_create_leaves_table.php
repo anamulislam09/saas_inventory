@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('leaves', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('client_id');
             $table->integer('leave_taken_by_id');
             $table->integer('handover_to_id');
             $table->integer('created_by_id')->nullable();

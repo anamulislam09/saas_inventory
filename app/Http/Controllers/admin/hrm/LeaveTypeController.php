@@ -4,14 +4,18 @@ namespace App\Http\Controllers\admin\hrm;
 
 use App\Models\LeaveType;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use Illuminate\Http\Request;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 class LeaveTypeController extends Controller
 {
     public function index()
     {
-        $leaveTypes = LeaveType::orderBy('id', 'desc')->get();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
+        $leaveTypes = LeaveType::where('client_id', $client_id)->orderBy('id', 'desc')->get();
         return view('admin.hrm.leaves.leave-types.index', compact('leaveTypes'));
     }
 

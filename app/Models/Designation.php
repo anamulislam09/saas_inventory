@@ -10,6 +10,7 @@ class Designation extends Model
     use HasFactory;
     protected $fillable = 
     [
+        'client_id',
         'title',
         'description',
     ];

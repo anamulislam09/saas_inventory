@@ -9,10 +9,11 @@ use App\Models\Employee;
 use App\Models\Leave;
 use App\Models\HRSetting;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\Purchase;
 use App\Models\BasicInfo;
@@ -21,43 +22,54 @@ class AttendanceController extends Controller
 {
     public function index()
     {
-        $attendances = Attendance::with('employee')->where('date', date('Y-m-d'))->orWhere('out_at',null)->orderBy('id', 'desc')->get();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
+        $attendances = Attendance::with('employee')->where('date', date('Y-m-d'))->orWhere('out_at',null)->where('client_id', $client_id)->orderBy('id', 'desc')->get();
         return view('admin.hrm.attendances.attendances.index', compact('attendances'));
     }   
 
     public function createOrEdit($id=null)
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
         if($id){
             $data['title'] = 'Edit';
             $data['item'] = Attendance::find($id);
         }else{
             $data['title'] = 'Create';
         }
-        $data['employees'] = Employee::get();
+        $data['employees'] = Employee::where('client_id', $client_id)->get();
         return view('admin.hrm.attendances.attendances.create-or-edit',compact('data'));
     }
 
     public function createOrEditMultiple($id=null)
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
         if($id){
             $data['title'] = 'Edit';
             $data['item'] = Attendance::find($id);
         }else{
             $data['title'] = 'Create';
         }
-        $data['employees'] = Employee::get();
+        $data['employees'] = Employee::where('client_id', $client_id)->get();
         return view('admin.hrm.attendances.attendances.create-or-edit-multiple',compact('data'));
     }
     
     public function attendanceByDate(Request $request)
     {
-        $date = $request->date;
-        $HRSetting = HRSetting::first();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
 
+        $date = $request->date;
+        $HRSetting = HRSetting::where('client_id', $client_id)->first();
         
         $data['deafault_in_at'] = $HRSetting->office_start_at;
         $data['deafault_out_at'] = $HRSetting->office_end_at;
-        $data['employees'] = Employee::orderBy('name','asc')->get();
+        $data['employees'] = Employee::where('client_id', $client_id)->orderBy('name','asc')->get();
         foreach ($data['employees'] as $key => &$employee) {
             $employee->attendance = Attendance::where('employee_id', $employee->id)->where('date','like',"%$date%")->first();
         }
@@ -66,11 +78,15 @@ class AttendanceController extends Controller
     
     public function store(Request $request)
     {
-        $HRSetting = HRSetting::first();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
+        $HRSetting = HRSetting::where('client_id', $client_id)->first();
         $default_work_time_hour = $HRSetting->daily_work_hour;
         $data = $request->all();
         $data['created_by_id'] = Auth::guard('admin')->user()->id;
-        $isExist = Attendance::where(['employee_id'=> $data['employee_id'],'date'=> $data['date']])->count();
+        $data['client_id'] = $client_id;
+        $isExist = Attendance::where(['employee_id'=> $data['employee_id'],'date'=> $data['date']])->where('client_id', $client_id)->count();
         if($isExist) return redirect()->back()->with('alert',['messageType'=>'warning','message'=>'Attendance Already Inserted!']);
         if($data['out_at']){
             $total_hours = round((strtotime($data['out_at']) - strtotime($data['in_at']))/3600, 1);
@@ -83,7 +99,10 @@ class AttendanceController extends Controller
 
     public function storeOrUpdateMultiple(Request $request)
     {
-        $HRSetting = HRSetting::first();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
+        $HRSetting = HRSetting::where('client_id', $client_id)->first();
         $default_work_time_hour = $HRSetting->daily_work_hour;
         $present_emp_id = $request->present_emp_id;
         $employee_ids = $request->employee_id;
@@ -117,8 +136,11 @@ class AttendanceController extends Controller
 
     public function update(Request $request, $id)
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
         $data = $request->all();
-        $HRSetting = HRSetting::first();
+        $HRSetting = HRSetting::where('client_id', $client_id)->first();
         $default_work_time_hour = $HRSetting->daily_work_hour;
         $total_hours = round((strtotime($data['out_at']) - strtotime($data['in_at']))/3600, 1);
         $data['worked_hour'] = $total_hours > $default_work_time_hour ? $default_work_time_hour : $total_hours;
@@ -135,10 +157,13 @@ class AttendanceController extends Controller
 
     public function reportIndex(Request $request)
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
         if ($request->isMethod('post')) {
             $employee_id = $request->employee_id;
             $date = $request->date;
-            $HRSetting = HRSetting::first();
+            $HRSetting = HRSetting::where('client_id', $client_id)->first();
             $data = [
                 'default_working_hour' => $HRSetting->daily_work_hour,
                 'default_in_time' => $HRSetting->office_start_at,
@@ -147,10 +172,10 @@ class AttendanceController extends Controller
     
             if ($employee_id == 0) {
                 $data['employees'] = $this->getEmployeesAttendanceData($date, $data);
-                $data['holidayDates'] = Holiday::where('date', 'like', "%$date%")
+                $data['holidayDates'] = Holiday::where('client_id', $client_id)->where('date', 'like', "%$date%")
                     ->pluck('date')
                     ->toArray();
-                $data['weeklyHoliday'] = WeeklyHoliday::first();
+                $data['weeklyHoliday'] = WeeklyHoliday::where('client_id', $client_id)->first();
                 return response()->json($data, 200);
             } elseif ($employee_id == -1) {
                 $data = $this->employeeSummary($date, $data);
@@ -162,14 +187,17 @@ class AttendanceController extends Controller
                 return response()->json($attendances, 200);
             }
         } else {
-            $data['employees'] = Employee::get();
+            $data['employees'] = Employee::where('client_id', $client_id)->get();
             return view('admin.hrm.attendances.attendances-reports.index', compact('data'));
         }
     }
     
     private function getEmployeesAttendanceData($date, $data)
     {
-        $employees = Employee::where('status', 1)->select('id', 'name')->get();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
+        $employees = Employee::where('client_id', $client_id)->where('status', 1)->select('id', 'name')->get();
     
         foreach ($employees as &$employee) {
             $employee->presentDates = Attendance::where('employee_id', $employee->id)
@@ -204,7 +232,10 @@ class AttendanceController extends Controller
     
     private function employeeSummary($date, $data)
     {
-        $employees = Employee::where('status', 1)->select('id', 'name')->get();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+        
+        $employees = Employee::where('client_id', $client_id)->where('status', 1)->select('id', 'name')->get();
         $total_office_days = 19;
     
         foreach ($employees as &$employee) {

@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('attendance_process_details', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('client_id');
             $table->integer('attendance_process_id');
             $table->integer('employee_id');
             $table->integer('absent_days');

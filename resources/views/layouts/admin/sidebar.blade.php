@@ -160,13 +160,13 @@
                         </ul>
                     </li>
                 @endif
-                {{-- @if ($authorization->hasMenuAccess(111) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                @if ($authorization->hasMenuAccess(183) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                     <li class="nav-item {{ request()->is('admin/hrm*') ? 'menu-open' : '' }}">
                         <a href="#" class="nav-link {{ request()->is('admin/hrm*') ? 'active' : '' }}">
                             <i class="nav-icon fa-solid fa-users-line"></i>
                             <p>Human Resource<i class="right fas fa-angle-left"></i></p>
                         </a>
-                        @if ($authorization->hasMenuAccess(113) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        @if ($authorization->hasMenuAccess(184) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                             <ul class="nav nav-treeview">
                                 <li class="nav-item {{ request()->is('admin/hrm/setup*') ? 'menu-open' : '' }}">
                                     <a href="#"
@@ -204,7 +204,7 @@
                                                 </a>
                                             </li>
                                         @endif
-                                        @if ($authorization->hasMenuAccess(151) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                                        @if ($authorization->hasMenuAccess(150) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                                             <li class="nav-item">
                                                 <a href="{{ route('designations.index') }}"
                                                     class="nav-link {{ request()->is('admin/hrm/setup/designations*') ? 'active' : '' }}">
@@ -257,7 +257,7 @@
                                 </li>
                             </ul>
                         @endif
-                        @if ($authorization->hasMenuAccess(114) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        @if ($authorization->hasMenuAccess(185) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                             <ul class="nav nav-treeview">
                                 <li class="nav-item {{ request()->is('admin/hrm/attendances*') ? 'menu-open' : '' }}">
                                     <a href="#"
@@ -302,7 +302,7 @@
                                 </li>
                             </ul>
                         @endif
-                        @if ($authorization->hasMenuAccess(115) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        @if ($authorization->hasMenuAccess(186) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                             <ul class="nav nav-treeview">
                                 <li class="nav-item {{ request()->is('admin/hrm/leaves*') ? 'menu-open' : '' }}">
                                     <a href="#"
@@ -334,7 +334,7 @@
                                 </li>
                             </ul>
                         @endif
-                        @if ($authorization->hasMenuAccess(116) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        @if ($authorization->hasMenuAccess(187) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                             <ul class="nav nav-treeview">
                                 <li class="nav-item {{ request()->is('admin/hrm/loans*') ? 'menu-open' : '' }}">
                                     <a href="#"
@@ -366,7 +366,7 @@
                                 </li>
                             </ul>
                         @endif
-                        @if ($authorization->hasMenuAccess(117) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                        @if ($authorization->hasMenuAccess(188) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                             <ul class="nav nav-treeview">
                                 <li class="nav-item {{ request()->is('admin/hrm/payrolls*') ? 'menu-open' : '' }}">
                                     <a href="#"
@@ -398,7 +398,7 @@
                             </ul>
                         @endif
                     </li>
-                @endif --}}
+                @endif
                 @if (
                     $authorization->hasMenuAccess(24) ||
                         (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))

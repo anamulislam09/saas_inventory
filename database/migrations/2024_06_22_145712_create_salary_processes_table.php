@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('salary_processes', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('client_id');
             $table->integer('employee_id');
             $table->string('year');
             $table->string('month');

@@ -11,20 +11,24 @@ use App\Models\Holiday;
 use App\Models\AttendanceProcess;
 use App\Models\AttendanceProcessDetails;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 class AttendanceProcessController extends Controller
 {
     
     public function index(Request $request)
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+        
         if($request->isMethod('post')){
-            $data['attendanceProcess'] = AttendanceProcess::with('created_by')->where('date',$request->date)->first();
-            $data['employees'] = Employee::where('status',1)->select('id','name')->get();
+            $data['attendanceProcess'] = AttendanceProcess::where('client_id', $client_id)->with('created_by')->where('date',$request->date)->first();
+            $data['employees'] = Employee::where('client_id', $client_id)->where('status',1)->select('id','name')->get();
             if($data['attendanceProcess']){
                 foreach ($data['employees'] as &$employee){
                     $apd = AttendanceProcessDetails::where('attendance_process_id',$data['attendanceProcess']->id)->where('employee_id',$employee->id)->first();
@@ -42,13 +46,16 @@ class AttendanceProcessController extends Controller
     }
     public function proccess(Request $request)
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
         $workingDayDates = [];
         $holidayDayDates = [];
         $explodedDate = explode('-',$request->date);
         $year = $explodedDate[0];
         $month = $explodedDate[1];
         $user_id = Auth::guard('admin')->user()->id;
-        $hr_settings = HRSetting::first();
+        $hr_settings = HRSetting::where('client_id', $client_id)->first();
         $default_working_hours = $hr_settings->daily_work_hour;
 
         $thresHold = [
@@ -56,11 +63,11 @@ class AttendanceProcessController extends Controller
             'office_end_at'=>$hr_settings->office_end_at,
         ];
 
-        $attendanceProcess = AttendanceProcess::where('year','=', $year)->where('month','=', $month)->first();
+        $attendanceProcess = AttendanceProcess::where('client_id', $client_id)->where('year','=', $year)->where('month','=', $month)->first();
 
         $dates = $this->getAllDatesOfAMonth($request->date);
-        $holidayDates = array_column(Holiday::where('date','like', "%{$request->date}%")->select('date')->get()->toArray(),'date');
-        $weeklyHolidaysAll = WeeklyHoliday::select(['saturday','sunday','monday','tuesday','wednesday','thursday','friday'])->first()->toArray();
+        $holidayDates = array_column(Holiday::where('client_id', $client_id)->where('date','like', "%{$request->date}%")->select('date')->get()->toArray(),'date');
+        $weeklyHolidaysAll = WeeklyHoliday::where('client_id', $client_id)->select(['saturday','sunday','monday','tuesday','wednesday','thursday','friday'])->first()->toArray();
 
         $weeklyHolidays = array_keys(array_filter($weeklyHolidaysAll, function ($value) {return $value == 1;}, ARRAY_FILTER_USE_BOTH));
 
@@ -87,7 +94,7 @@ class AttendanceProcessController extends Controller
         $attendanceProcess->total_working_hours = $total_working_hours;
         $attendanceProcess->save();
 
-        $employees_id = array_column(Employee::where('status',1)->select(['id'])->get()->toArray(),'id');
+        $employees_id = array_column(Employee::where('client_id', $client_id)->where('status',1)->select(['id'])->get()->toArray(),'id');
 
         foreach ($employees_id as $employee_id){
 

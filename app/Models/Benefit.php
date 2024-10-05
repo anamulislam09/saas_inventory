@@ -10,6 +10,7 @@ class Benefit extends Model
     use HasFactory;
     protected $fillable = 
     [
+        'client_id',
         'employee_id',
         'code',
         'description',

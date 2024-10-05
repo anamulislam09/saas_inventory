@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('client_id');
             $table->integer('employee_id');
             $table->integer('created_by_id');
             $table->date('date');

@@ -25,45 +25,6 @@ use DB;
 
 class ReportController extends Controller
 {
-    // public function collections(Request $request)
-    // {
-    //     $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
-
-    //     if (Auth::guard('admin')->user()->client_id == 0) {
-    //         $client_id = Auth::guard('admin')->user()->id;
-    //     } else {
-    //         $client_id = $client->id;
-    //     }
-
-    //     if ($request->isMethod('post')) {
-    //         $customer_id = $request->customer_id;
-    //         $from_date = $request->from_date;
-    //         $to_date = $request->to_date;
-    //         $collections = Collection::where('client_id', $client_id);
-    //         if ($from_date && $to_date) {
-    //             $collections = $collections->whereDate('collections.date', '>=', $from_date)->whereDate('collections.date', '<=', $to_date);
-    //         } else if ($from_date) {
-    //             $collections = $collections->whereDate('collections.date', '=', $from_date);
-    //         }
-    //         if ($customer_id != 0) {
-    //             $collections = $collections->where('vendor_id', $customer_id);
-    //             $data['collections'] = $collections->orderBy('date', 'asc')->get();
-    //         } else {
-    //             $data['collections'] = $collections->join('admins', 'admins.id', '=', 'collections.vendor_id')
-    //                 ->select('admins.id', 'admins.name', DB::raw('SUM(`total_collection`) as total_collection_amount'))
-    //                 ->get();
-    //         }
-    //         $data['currency_symbol'] = BasicInfo::where('client_id', $client_id)->first()->currency_symbol;
-    //         return response()->json($data, 200);
-    //     } else {
-    //         $data['customers'] = Vendor::
-    //             where('status', 1)
-    //             ->orderBy('name', 'asc')
-    //             ->get();
-    //         return view('admin.reports.collections', compact('data'));
-    //     }
-    // }
-
     public function collections(Request $request)
     {
         $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
@@ -104,7 +65,8 @@ class ReportController extends Controller
                     ->map(function ($group) {
                         return [
                             'vendor_name' => $group->first()->vendor_name,
-                            'total_collection_amount' => $group->sum('total_collection'),
+                            'total_collection' => $group->sum('total_collection'),
+                            // 'total_collection_amount' => $group->sum('total_collection'),
                         ];
                     });
     

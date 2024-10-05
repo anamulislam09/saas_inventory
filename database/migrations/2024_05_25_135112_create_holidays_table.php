@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('holidays', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('client_id');
             $table->date('date');
             $table->string('occasion');
             $table->timestamps();

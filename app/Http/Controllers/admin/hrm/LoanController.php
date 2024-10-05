@@ -8,34 +8,45 @@ use App\Models\Employee;
 use App\Models\BasicInfo;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 class LoanController extends Controller
 {
     public function index()
     {
-        $data['loans'] = Loan::with('employee')->orderBy('id', 'desc')->get();
-        $data['currency_symbol'] = $data['currency_symbol'] = BasicInfo::first()->currency_symbol;
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
+        $data['loans'] = Loan::where('client_id', $client_id)->with('employee')->orderBy('id', 'desc')->get();
+        $data['currency_symbol'] = $data['currency_symbol'] = BasicInfo::where('client_id', $client_id)->first()->currency_symbol;
         return view('admin.hrm.loans.loans.index', compact('data'));
     }
 
     public function createOrEdit($id=null)
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
         if($id){
             $data['title'] = 'Edit';
             $data['item'] = Loan::find($id);
         }else{
             $data['title'] = 'Create';
         }
-        $data['employees'] = Employee::get();
+        $data['employees'] = Employee::where('client_id', $client_id)->get();
         return view('admin.hrm.loans.loans.create-or-edit',compact('data'));
     }
     
     public function store(Request $request)
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
         $data = $request->all();
+        $data['client_id'] = $client_id;
         $data['created_by_id'] = Auth::guard('admin')->user()->id;
         $data['approved_by_id'] = Auth::guard('admin')->user()->id;
         $loan = Loan::create($data);
@@ -43,6 +54,7 @@ class LoanController extends Controller
         $payment_date = $data['repayment_from'];
         for ($i=0; $i < $data['installment_period']; $i++){
             $installment['loan_id'] = $loan->id;
+            $installment['client_id'] = $client_id;
             $installment['amount'] = $data['installment'];
             $installment['year_month'] =  Carbon::parse($payment_date)->format('Y-m');
             $installment['payment_date'] = $payment_date;

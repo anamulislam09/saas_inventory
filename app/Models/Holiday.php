@@ -10,6 +10,7 @@ class Holiday extends Model
     use HasFactory;
     protected $fillable = 
     [
+        'client_id',
         'date',
         'occasion'
     ];

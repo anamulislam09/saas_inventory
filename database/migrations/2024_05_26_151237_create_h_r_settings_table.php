@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('h_r_settings', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('client_id');
             $table->time('office_start_at')->default('10:00:00');
             $table->time('office_end_at')->default('18:00:00');
             $table->integer('daily_work_hour')->default(8);

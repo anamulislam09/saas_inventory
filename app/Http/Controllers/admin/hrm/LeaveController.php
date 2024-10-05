@@ -5,36 +5,46 @@ namespace App\Http\Controllers\admin\hrm;
 use App\Models\Leave;
 use App\Models\Employee;
 use App\Models\LeaveType;
-
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use Illuminate\Http\Request;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 class LeaveController extends Controller
 {
     public function index()
     {
-        $leaves = Leave::orderBy('id', 'desc')->get();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
+        $leaves = Leave::where('client_id', $client_id)->orderBy('id', 'desc')->get();
         return view('admin.hrm.leaves.leaves.index', compact('leaves'));
     }
 
     public function createOrEdit($id=null)
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
         if($id){
             $data['title'] = 'Edit';
             $data['item'] = Leave::find($id);
         }else{
             $data['title'] = 'Create';
         }
-        $data['employees'] = Employee::get();
-        $data['leaveTypes'] = LeaveType::get();
+        $data['employees'] = Employee::where('client_id', $client_id)->get();
+        $data['leaveTypes'] = LeaveType::where('client_id', $client_id)->get();
         return view('admin.hrm.leaves.leaves.create-or-edit',compact('data'));
     }
     
     public function store(Request $request)
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
         $data = $request->all();
         $data['created_by_id'] = Auth::guard('admin')->user()->id;
         $data['approved_by_id'] = Auth::guard('admin')->user()->id;
+        $data['client_id'] = $client_id;
         if(isset($data['image'])){
             $fileName = 'leave-app-'. time().'.'. $data['image']->getClientOriginalExtension();
             $data['image']->move(public_path('uploads/leave-application'), $fileName);
@@ -79,6 +89,9 @@ class LeaveController extends Controller
     
     public function reportIndex(Request $request)
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
         if($request->isMethod('post')){
             $employee_id = $request->employee_id;
             $date = $request->date;
@@ -89,17 +102,23 @@ class LeaveController extends Controller
             }
             return response()->json($data, 200);
         }else{
-            $data['employees'] = Employee::get();
+            $data['employees'] = Employee::where('client_id', $client_id)->get();
             return view('admin.hrm.leaves.reports.index', compact('data'));
         }
     }
     public function singleEmployee($employee_id, $date)
     {
-        return Leave::with(['duty_handover_to','leave_type'])->where('leave_taken_by_id', $employee_id)->where('approved_start_date','like',"%$date%")->orderBy('id','asc')->get();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
+        return Leave::with(['duty_handover_to','leave_type'])->where('leave_taken_by_id', $employee_id)->where('approved_start_date','like',"%$date%")->where('client_id', $client_id)->orderBy('id','asc')->get();
     }
     public function allEmployees($date)
     {
-        return Leave::with(['leave_taken_by','duty_handover_to','leave_type'])->where('approved_start_date','like',"%$date%")->orderBy('id','asc')->get();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
+        return Leave::with(['leave_taken_by','duty_handover_to','leave_type'])->where('approved_start_date','like',"%$date%")->where('client_id', $client_id)->orderBy('id','asc')->get();
     }
 
 }

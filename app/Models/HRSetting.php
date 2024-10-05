@@ -10,6 +10,7 @@ class HRSetting extends Model
     use HasFactory;
     protected $fillable = 
     [
+        'client_id',
         'office_start_at',
         'office_end_at',
         'daily_work_hour',

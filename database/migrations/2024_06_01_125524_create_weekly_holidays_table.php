@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('weekly_holidays', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('client_id');
             $table->tinyInteger('saturday')->default(0);
             $table->tinyInteger('sunday')->default(0);
             $table->tinyInteger('monday')->default(0);

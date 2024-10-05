@@ -478,7 +478,6 @@
             });
 
             $('#btn_submit').on('click',function(e){
-
                 let name = $('#name').val();
                 let contact = $('#contact').val();
                 let email = $('#email').val();
@@ -508,10 +507,7 @@
                 else if(!(emerg_cont && emerg_home_cont && emerg_work_cont)){return activeRequiredTab(5);}
 
                 $('#form').submit();
-
             });
-
-
         });
 
         function activeRequiredTab(new_tab){

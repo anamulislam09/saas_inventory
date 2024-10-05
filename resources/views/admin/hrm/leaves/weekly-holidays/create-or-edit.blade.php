@@ -27,6 +27,7 @@
                             <form action="{{ route('weekly-holidays.update',$data['item']->id) }}" method="POST" enctype="multipart/form-data">
                                 @csrf()
                                 @method('put')
+                                <input type="hidden" name="client_id" value="{{$data['item']->client_id}}">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-12" id="benefit_div">

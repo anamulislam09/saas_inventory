@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('attendance_processes', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('client_id');
             $table->string('date');
             $table->integer('year');
             $table->tinyInteger('month');

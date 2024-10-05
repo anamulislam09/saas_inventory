@@ -11,6 +11,7 @@ class Loan extends Model
     use HasFactory;
     protected $fillable = 
     [
+        'client_id',
         'employee_id',
         'approved_by_id',
         'created_by_id',

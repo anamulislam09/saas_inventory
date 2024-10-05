@@ -10,6 +10,7 @@ class Leave extends Model
     use HasFactory;
     protected $fillable = 
     [
+        'client_id',
         'leave_taken_by_id',
         'handover_to_id',
         'created_by_id',

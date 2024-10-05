@@ -8,23 +8,26 @@ use App\Models\SalaryProcessTemp;
 use App\Models\Employee;
 use App\Models\AttendanceProcess;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\HRSetting;
 use Illuminate\Http\Request;
-use Auth;
-
+use Illuminate\Support\Facades\Auth;
 
 class SalaryProcessController extends Controller
 {
     
     public function index(Request $request)
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
         if($request->isMethod('post')){
             SalaryProcessTemp::truncate();
             $hasBonus = $request->bonus;
             $date = explode('-', $request->date);
             $year = $date[0];
             $month = $date[1];
-            $employees = Employee::where('status',1)->select('id','name','rate','bonus')->get();
+            $employees = Employee::where('client_id', $client_id)->where('status',1)->select('id','name','rate','bonus')->get();
 
             foreach ($employees as &$employee){
                 $salaryProcessTemp = new SalaryProcessTemp;
@@ -33,10 +36,11 @@ class SalaryProcessController extends Controller
                 $salaryProcessTemp->year = $year;
                 $salaryProcessTemp->month = $month;
                 $salaryProcessTemp->basic_salary = $employee->rate;
+                $salaryProcessTemp->client_id = $employee->client_id;
                 $salaryProcessTemp->created_by_id = Auth::guard('admin')->user()->id;
                 $salaryProcessTemp->save();
             }
-            $salaryProcessTemp = SalaryProcessTemp::with('employee')->get();
+            $salaryProcessTemp = SalaryProcessTemp::where('client_id', $client_id)->with('employee')->get();
             return response()->json($salaryProcessTemp, 200);
         }else{
             return view('admin.hrm.payrolls.salary-processes.index');
@@ -45,7 +49,10 @@ class SalaryProcessController extends Controller
 
     public function proccess()
     {
-        $salaryProcessTemp = SalaryProcessTemp::get();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
+        $salaryProcessTemp = SalaryProcessTemp::where('client_id', $client_id)->get();
         foreach ($salaryProcessTemp as &$salaryProcessTemp) {
             $attendanceProcess = AttendanceProcess::join('attendance_process_details', 'attendance_process_details.attendance_process_id','=','attendance_processes.id')
                                     ->where(['year'=> $salaryProcessTemp->year, 'month'=> $salaryProcessTemp->month])
@@ -92,12 +99,18 @@ class SalaryProcessController extends Controller
 
     public function isAttendanceProcessed(Request $request)
     {
-        $attendanceProcess = AttendanceProcess::where('date',$request->date)->exists();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
+        $attendanceProcess = AttendanceProcess::where('client_id', $client_id)->where('date',$request->date)->exists();
         return response()->json($attendanceProcess, 200);
     }
     public function isLoanProcessed(Request $request)
     {
-        $li = LoanInstallment::where(['payment_status'=>0 ,'year_month'=> $request->date])->exists();
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
+        $li = LoanInstallment::where('client_id', $client_id)->where(['payment_status'=>0 ,'year_month'=> $request->date])->exists();
         return response()->json((!$li), 200);
     }
 

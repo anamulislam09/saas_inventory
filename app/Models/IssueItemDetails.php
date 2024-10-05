@@ -10,6 +10,7 @@ class IssueItemDetails extends Model
     use HasFactory;
     protected $fillable = 
     [
+        'client_id',
         'issue_id',
         'item_id',
         'quantity',

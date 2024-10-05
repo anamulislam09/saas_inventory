@@ -27,6 +27,7 @@
                             <form action="{{ route('hrsettings.update', $hrsettings->id)}}" method="POST" enctype="multipart/form-data">
                               @csrf
                               @method('put')
+                              <input type="hidden" name="client_id" value="{{ $hrsettings->client_id }}">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group col-sm-6 col-md-6 col-lg-6">

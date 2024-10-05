@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('loan_installments', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('client_id');
             $table->integer('loan_id');
             $table->double('amount',20,2);
             $table->string('year_month');
