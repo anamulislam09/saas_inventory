@@ -32,7 +32,11 @@ class LeaveTypeController extends Controller
     
     public function store(Request $request)
     {
+        $client = Admin::where('id', Auth::guard('admin')->user()->client_id)->first();
+        $client_id = Auth::guard('admin')->user()->client_id == 0 ? Auth::guard('admin')->user()->id : $client->id;
+
         $data = $request->all();
+        $data['client_id'] = $client_id;
         LeaveType::create($data);
         return redirect()->route('leave-types.index')->with('alert',['messageType'=>'success','message'=>'Data Inserted Successfully!']);
     }
@@ -46,7 +50,6 @@ class LeaveTypeController extends Controller
 
     public function destroy($id)
     {
-        // LeaveType::destroy($id);
         return redirect()->back()->with('alert',['messageType'=>'success','message'=>'Data Deleted Successfully!']);
     }
 

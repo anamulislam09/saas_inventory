@@ -134,7 +134,7 @@
                             </div>
                         </div>
                     @endif
-                    @if($authorization->hasMenuAccess(8) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                    @if($authorization->hasMenuAccess(189) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <div class="col-lg-3 col-6">
                             <div class="small-box " style="background: #E83E8C">
                                 <div class="inner">
@@ -149,7 +149,7 @@
                             </div>
                         </div>
                     @endif
-                    @if($authorization->hasMenuAccess(8) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                    @if($authorization->hasMenuAccess(190) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <div class="col-lg-3 col-6">
                             <div class="small-box" style="background: #b36288">
                                 <div class="inner">
@@ -164,7 +164,7 @@
                             </div>
                         </div>
                     @endif
-                    @if($authorization->hasMenuAccess(8) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                    @if($authorization->hasMenuAccess(191) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <div class="col-lg-3 col-6">
                             <div class="small-box " style="background: #00C6FF">
                                 <div class="inner">
@@ -179,7 +179,7 @@
                             </div>
                         </div>
                     @endif
-                    @if($authorization->hasMenuAccess(8) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                    @if($authorization->hasMenuAccess(192) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <div class="col-lg-3 col-6">
                             <div class="small-box " style="background: #FF0000">
                                 <div class="inner">
@@ -194,7 +194,7 @@
                             </div>
                         </div>
                     @endif
-                    @if($authorization->hasMenuAccess(8) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                    @if($authorization->hasMenuAccess(193) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <div class="col-lg-3 col-6">
                             <div class="small-box " style="background: #707fef">
                                 <div class="inner">
@@ -209,7 +209,7 @@
                             </div>
                         </div>
                     @endif
-                    @if($authorization->hasMenuAccess(9) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
+                    @if($authorization->hasMenuAccess(194) || (Auth::guard('admin')->user()->type == 1 && Auth::guard('admin')->user()->is_client == 1))
                         <div class="col-lg-3 col-6">
                             <div class="small-box" style="background: #FB5200">
                                 <div class="inner">

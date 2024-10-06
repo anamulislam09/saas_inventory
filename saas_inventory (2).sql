@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 30, 2024 at 02:26 PM
+-- Generation Time: Oct 06, 2024 at 07:29 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.1.25
 
@@ -68,6 +68,7 @@ INSERT INTO `admins` (`id`, `name`, `client_id`, `type`, `mobile`, `email`, `pas
 
 CREATE TABLE `attendances` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` tinyint(4) NOT NULL,
   `employee_id` int(11) NOT NULL,
   `created_by_id` int(11) NOT NULL,
   `date` date NOT NULL,
@@ -76,6 +77,7 @@ CREATE TABLE `attendances` (
   `worked_hour` double(10,2) DEFAULT NULL,
   `over_time_hour` double(10,2) DEFAULT NULL,
   `note` text DEFAULT NULL,
+  `status` tinyint(4) NOT NULL COMMENT '0=Absent,1=Present,2=Late,3=Leave',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -88,6 +90,7 @@ CREATE TABLE `attendances` (
 
 CREATE TABLE `attendance_processes` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` tinyint(4) DEFAULT NULL,
   `date` varchar(255) NOT NULL,
   `year` int(11) NOT NULL,
   `month` tinyint(4) NOT NULL,
@@ -99,6 +102,13 @@ CREATE TABLE `attendance_processes` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `attendance_processes`
+--
+
+INSERT INTO `attendance_processes` (`id`, `client_id`, `date`, `year`, `month`, `total_working_days`, `total_working_hours`, `created_by_id`, `updated_by_id`, `created_at`, `updated_at`) VALUES
+(1, NULL, '2024-10', 2024, 10, 22, 176.00, 5, 0, '2024-10-06 05:22:58', '2024-10-06 05:22:58');
+
 -- --------------------------------------------------------
 
 --
@@ -107,6 +117,7 @@ CREATE TABLE `attendance_processes` (
 
 CREATE TABLE `attendance_process_details` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` tinyint(4) DEFAULT NULL,
   `attendance_process_id` int(11) NOT NULL,
   `employee_id` int(11) NOT NULL,
   `absent_days` int(11) NOT NULL,
@@ -121,6 +132,13 @@ CREATE TABLE `attendance_process_details` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `attendance_process_details`
+--
+
+INSERT INTO `attendance_process_details` (`id`, `client_id`, `attendance_process_id`, `employee_id`, `absent_days`, `late_to_absent_days`, `net_absent_days`, `present_days`, `leave_days`, `net_present_days`, `regular_hours_worked`, `overtime_hours`, `total_hours_worked`, `created_at`, `updated_at`) VALUES
+(1, NULL, 1, 1, 22, 0, 22, 0, 0, 0, 0.00, 0.00, 0.00, '2024-10-06 05:22:58', '2024-10-06 05:22:58');
 
 -- --------------------------------------------------------
 
@@ -179,6 +197,13 @@ CREATE TABLE `benefits` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `benefits`
+--
+
+INSERT INTO `benefits` (`id`, `employee_id`, `code`, `description`, `accrual_date`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, NULL, NULL, NULL, 1, '2024-10-05 12:13:58', '2024-10-05 12:13:58');
 
 -- --------------------------------------------------------
 
@@ -259,10 +284,10 @@ CREATE TABLE `collections` (
 --
 
 INSERT INTO `collections` (`id`, `client_id`, `vendor_id`, `collection_method_id`, `sales_id`, `date`, `amount`, `discount`, `vat`, `total_collection_amount`, `total_collection`, `note`, `status`, `created_by_id`, `updated_by_id`, `created_at`, `updated_at`) VALUES
-(1, 4, NULL, 1, 1, '2024-09-07', 0.00, NULL, NULL, 0.00, 300000.00, 'Sales to Customer', 1, 4, NULL, '2024-09-07 08:42:18', '2024-09-07 08:42:18'),
+(1, 4, 6, 1, 1, '2024-09-07', 0.00, NULL, NULL, 0.00, 300000.00, 'Sales to Customer', 1, 4, NULL, '2024-09-07 08:42:18', '2024-09-07 08:42:18'),
 (2, 4, 6, 1, 2, '2024-09-07', 0.00, NULL, NULL, 0.00, 593750.00, 'Sales', 1, 4, NULL, '2024-09-07 09:27:25', '2024-09-07 09:27:25'),
-(3, 4, NULL, 3, 1, '2024-09-07', 26500.00, NULL, NULL, 0.00, 0.00, NULL, 1, 4, NULL, '2024-09-07 12:55:14', '2024-09-07 12:55:14'),
-(4, 4, NULL, 3, 1, '2024-09-07', 26500.00, NULL, NULL, 0.00, 0.00, NULL, 1, 4, NULL, '2024-09-07 12:58:04', '2024-09-07 12:58:04'),
+(3, 4, NULL, 3, 1, '2024-09-07', 26500.00, NULL, NULL, 0.00, 10.00, NULL, 1, 4, NULL, '2024-09-07 12:55:14', '2024-09-07 12:55:14'),
+(4, 4, NULL, 3, 1, '2024-09-07', 26500.00, NULL, NULL, 0.00, 10.00, NULL, 1, 4, NULL, '2024-09-07 12:58:04', '2024-09-07 12:58:04'),
 (5, 4, 7, 1, 3, '2024-09-29', 0.00, NULL, NULL, 0.00, 57000.00, 'Sales to Jamal', 1, 4, NULL, '2024-09-29 12:12:13', '2024-09-29 12:12:13');
 
 -- --------------------------------------------------------
@@ -803,11 +828,19 @@ INSERT INTO `currency_symbols` (`id`, `country`, `currency`, `code`, `symbol`) V
 
 CREATE TABLE `departments` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` tinyint(4) NOT NULL,
   `title` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `departments`
+--
+
+INSERT INTO `departments` (`id`, `client_id`, `title`, `created_at`, `updated_at`) VALUES
+(1, 4, 'Purchase Department', '2024-10-05 11:12:38', '2024-10-05 11:12:38'),
+(2, 4, 'Sales Department', '2024-10-05 11:12:59', '2024-10-05 11:12:59');
 
 -- --------------------------------------------------------
 
@@ -817,11 +850,19 @@ CREATE TABLE `departments` (
 
 CREATE TABLE `designations` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` tinyint(4) NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `designations`
+--
+
+INSERT INTO `designations` (`id`, `client_id`, `title`, `description`, `created_at`, `updated_at`) VALUES
+(1, 4, 'Head Of Sales', 'tghfghfggh', '2024-10-05 11:27:23', '2024-10-05 11:27:23');
 
 -- --------------------------------------------------------
 
@@ -831,11 +872,19 @@ CREATE TABLE `designations` (
 
 CREATE TABLE `divisions` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` tinyint(4) NOT NULL,
   `title` varchar(255) NOT NULL,
   `department_id` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `divisions`
+--
+
+INSERT INTO `divisions` (`id`, `client_id`, `title`, `department_id`, `created_at`, `updated_at`) VALUES
+(1, 4, 'etgret', 2, '2024-10-05 11:20:26', '2024-10-05 11:20:26');
 
 -- --------------------------------------------------------
 
@@ -845,6 +894,7 @@ CREATE TABLE `divisions` (
 
 CREATE TABLE `employees` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` tinyint(4) NOT NULL,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `contact` varchar(255) NOT NULL,
@@ -863,8 +913,8 @@ CREATE TABLE `employees` (
   `rehire_date` date DEFAULT NULL,
   `rate_type` enum('Hourly','Salary') NOT NULL,
   `rate` double(20,2) NOT NULL,
-  `bonus` double(20,2) NOT NULL DEFAULT 0.00,
-  `pay_frequency` varchar(255) NOT NULL,
+  `bonus` double(20,2) NOT NULL,
+  `pay_frequency` text DEFAULT NULL,
   `pay_frequency_desc` text DEFAULT NULL,
   `allocate_leave` int(11) NOT NULL,
   `remaining_leave` int(11) NOT NULL,
@@ -893,6 +943,13 @@ CREATE TABLE `employees` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `employees`
+--
+
+INSERT INTO `employees` (`id`, `client_id`, `name`, `email`, `contact`, `country_id`, `state`, `city`, `zip`, `division_id`, `designation_id`, `duty_type`, `hire_date`, `original_hire_date`, `termination_date`, `termination_reason`, `termination_voluntary`, `rehire_date`, `rate_type`, `rate`, `bonus`, `pay_frequency`, `pay_frequency_desc`, `allocate_leave`, `remaining_leave`, `date_of_birth`, `gender`, `marital_status`, `ethnic_group`, `eeo_class`, `ssn`, `work_in_state`, `live_in_state`, `image`, `home_email`, `home_phone`, `cell_phone`, `business_email`, `business_phone`, `emerg_cont`, `emerg_cont_alt`, `emerg_home_cont`, `emerg_cont_home_alt`, `emerg_work_cont`, `emerg_cont_work_alt`, `emerg_cont_relations`, `status`, `created_at`, `updated_at`) VALUES
+(1, 4, 'Jamal', 'jamal@gmail.com', '012345', '18', 'Dhaka', 'Faridpur', '7860', 1, 1, 'Full Time', '2024-10-05', '2024-10-01', NULL, NULL, 'Yes', NULL, 'Salary', 30000.00, 500.00, 'Monthly', 'sdfssd', 5, 5, '1997-02-17', 'Male', 'Single', 'Bengali', NULL, NULL, 'Yes', 'Yes', 'emp-1728130438.png', NULL, '032147', '032145', NULL, NULL, '487596', NULL, '65478', NULL, '365478', NULL, NULL, 1, '2024-10-05 12:13:58', '2024-10-05 12:13:58');
 
 -- --------------------------------------------------------
 
@@ -1036,11 +1093,19 @@ CREATE TABLE `failed_jobs` (
 
 CREATE TABLE `holidays` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` tinyint(4) NOT NULL,
   `date` date NOT NULL,
   `occasion` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `holidays`
+--
+
+INSERT INTO `holidays` (`id`, `client_id`, `date`, `occasion`, `created_at`, `updated_at`) VALUES
+(1, 4, '2024-10-13', 'Durga Puja', '2024-10-05 06:38:12', '2024-10-05 06:38:12');
 
 -- --------------------------------------------------------
 
@@ -1050,6 +1115,7 @@ CREATE TABLE `holidays` (
 
 CREATE TABLE `h_r_settings` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` tinyint(4) NOT NULL,
   `office_start_at` time NOT NULL DEFAULT '10:00:00',
   `office_end_at` time NOT NULL DEFAULT '18:00:00',
   `daily_work_hour` int(11) NOT NULL DEFAULT 8,
@@ -1058,6 +1124,14 @@ CREATE TABLE `h_r_settings` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `h_r_settings`
+--
+
+INSERT INTO `h_r_settings` (`id`, `client_id`, `office_start_at`, `office_end_at`, `daily_work_hour`, `overtime_rate`, `equivalent_absences`, `created_at`, `updated_at`) VALUES
+(1, 0, '10:00:00', '18:00:00', 8, 1.000, 3, NULL, NULL),
+(2, 4, '10:00:00', '18:00:00', 8, 1.000, 3, '2024-10-05 06:07:51', '2024-10-05 06:07:51');
 
 -- --------------------------------------------------------
 
@@ -1130,6 +1204,7 @@ CREATE TABLE `items` (
 
 CREATE TABLE `leaves` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` tinyint(4) NOT NULL,
   `leave_taken_by_id` int(11) NOT NULL,
   `handover_to_id` int(11) NOT NULL,
   `created_by_id` int(11) DEFAULT NULL,
@@ -1155,11 +1230,19 @@ CREATE TABLE `leaves` (
 
 CREATE TABLE `leave_types` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` tinyint(4) NOT NULL,
   `name` varchar(255) NOT NULL,
   `leave_days` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `leave_types`
+--
+
+INSERT INTO `leave_types` (`id`, `client_id`, `name`, `leave_days`, `created_at`, `updated_at`) VALUES
+(1, 0, 'Casual Leave', 15, '2024-10-02 12:18:27', '2024-10-02 12:18:27');
 
 -- --------------------------------------------------------
 
@@ -1169,6 +1252,7 @@ CREATE TABLE `leave_types` (
 
 CREATE TABLE `loans` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` tinyint(4) NOT NULL,
   `employee_id` int(11) NOT NULL,
   `approved_by_id` int(11) DEFAULT NULL,
   `created_by_id` int(11) DEFAULT NULL,
@@ -1197,6 +1281,7 @@ CREATE TABLE `loans` (
 
 CREATE TABLE `loan_installments` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` tinyint(4) NOT NULL,
   `loan_id` int(11) NOT NULL,
   `amount` double(20,2) NOT NULL,
   `year_month` varchar(255) NOT NULL,
@@ -1227,14 +1312,14 @@ CREATE TABLE `menus` (
 
 INSERT INTO `menus` (`id`, `parent_id`, `menu_name`, `route`, `created_at`, `updated_at`) VALUES
 (1, 159, 'Manager Dashboard', 'manager-dashboard', '2024-07-03 14:21:36', '2024-07-14 12:05:37'),
-(2, 1, 'Category', NULL, '2024-07-03 14:45:49', '2024-07-03 14:45:49'),
-(3, 1, 'SubCategory', NULL, '2024-07-03 15:17:08', '2024-07-03 15:17:08'),
-(4, 1, 'Products', NULL, '2024-07-03 15:17:19', '2024-07-03 15:17:19'),
-(6, 1, 'Customers', NULL, '2024-07-03 15:17:55', '2024-07-03 15:17:55'),
-(7, 1, 'Suppliers', NULL, '2024-07-03 15:18:09', '2024-07-03 15:18:09'),
-(8, 1, 'Purchase', NULL, '2024-07-03 15:18:18', '2024-07-03 15:18:18'),
-(9, 1, 'Purchase Return', NULL, '2024-07-03 15:18:34', '2024-07-03 15:18:34'),
-(10, 1, 'Total Collections', NULL, '2024-07-03 15:18:49', '2024-07-03 15:18:49'),
+(2, 159, 'Category', NULL, '2024-07-03 14:45:49', '2024-07-03 14:45:49'),
+(3, 159, 'SubCategory', NULL, '2024-07-03 15:17:08', '2024-07-03 15:17:08'),
+(4, 159, 'Products', NULL, '2024-07-03 15:17:19', '2024-07-03 15:17:19'),
+(6, 159, 'Customers', NULL, '2024-07-03 15:17:55', '2024-07-03 15:17:55'),
+(7, 159, 'Suppliers', NULL, '2024-07-03 15:18:09', '2024-07-03 15:18:09'),
+(8, 159, 'Purchase', NULL, '2024-07-03 15:18:18', '2024-07-03 15:18:18'),
+(9, 159, 'Purchase Return', NULL, '2024-07-03 15:18:34', '2024-07-03 15:18:34'),
+(10, 159, 'Total Collections', NULL, '2024-07-03 15:18:49', '2024-07-03 15:18:49'),
 (11, 160, 'Basic Info', 'basic-infos.index', '2024-07-03 15:20:25', '2024-07-14 07:54:25'),
 (14, 160, 'Roles', 'roles.index', '2024-07-04 06:20:12', '2024-07-14 08:15:15'),
 (15, 160, 'Admins', 'admins.index', '2024-07-04 06:23:03', '2024-07-14 08:14:25'),
@@ -1304,47 +1389,47 @@ INSERT INTO `menus` (`id`, `parent_id`, `menu_name`, `route`, `created_at`, `upd
 (108, 107, 'Customer Ledgers', 'reports.supplier-ledgers', '2024-07-04 12:56:13', '2024-07-04 12:57:02'),
 (109, 107, 'Stock Reports', 'reports.stocks', '2024-07-04 12:57:49', '2024-07-04 12:57:49'),
 (110, 107, 'Collections Report', 'reports.collections', '2024-07-04 12:58:38', '2024-07-04 12:58:38'),
-(118, 117, 'Salary', 'salaries.index', '2024-07-04 13:02:45', '2024-07-04 13:04:57'),
-(119, 117, 'Salary Process', 'salary-processes.index', '2024-07-04 13:05:28', '2024-07-04 13:05:28'),
-(120, 116, 'Loan Process', 'loan-processes.index', '2024-07-04 13:06:34', '2024-07-04 13:06:34'),
-(121, 116, 'Loan', 'loans.index', '2024-07-04 13:08:31', '2024-07-04 13:08:31'),
+(118, 188, 'Salary', 'salaries.index', '2024-07-04 13:02:45', '2024-07-04 13:04:57'),
+(119, 188, 'Salary Process', 'salary-processes.index', '2024-07-04 13:05:28', '2024-07-04 13:05:28'),
+(120, 187, 'Loan Process', 'loan-processes.index', '2024-07-04 13:06:34', '2024-07-04 13:06:34'),
+(121, 187, 'Loan', 'loans.index', '2024-07-04 13:08:31', '2024-07-04 13:08:31'),
 (122, 121, 'Add', 'loans.create', '2024-07-04 13:08:44', '2024-07-04 13:08:44'),
 (123, 121, 'Edit', 'loans.edit', '2024-07-04 13:18:41', '2024-07-04 13:18:41'),
 (124, 121, 'Delete', 'loans.destroy', '2024-07-04 13:18:56', '2024-07-04 13:18:56'),
-(125, 113, 'Weekly Holiday', 'weekly-holidays.index', '2024-07-04 13:20:04', '2024-07-14 12:48:31'),
-(126, 113, 'Holiday', 'holidays.index', '2024-07-04 13:20:48', '2024-07-14 12:49:01'),
-(127, 113, 'Leave Type', 'leave-types.index', '2024-07-04 13:23:12', '2024-07-14 12:49:31'),
-(128, 115, 'Leave Report', 'leaves.reports', '2024-07-04 13:23:57', '2024-07-04 13:23:57'),
+(125, 184, 'Weekly Holiday', 'weekly-holidays.index', '2024-07-04 13:20:04', '2024-07-14 12:48:31'),
+(126, 184, 'Holiday', 'holidays.index', '2024-07-04 13:20:48', '2024-07-14 12:49:01'),
+(127, 184, 'Leave Type', 'leave-types.index', '2024-07-04 13:23:12', '2024-07-14 12:49:31'),
+(128, 186, 'Leave Report', 'leaves.reports', '2024-07-04 13:23:57', '2024-07-04 13:23:57'),
 (129, 127, 'Add', 'leave-types.create', '2024-07-04 13:25:54', '2024-07-04 13:25:54'),
 (130, 127, 'Edit', 'leave-types.edit', '2024-07-04 13:26:08', '2024-07-04 13:26:08'),
 (131, 127, 'Delete', 'leave-types.destroy', '2024-07-04 13:26:25', '2024-07-04 13:26:25'),
-(132, 115, 'Leave', 'leaves.index', '2024-07-04 13:28:05', '2024-07-04 13:28:05'),
+(132, 186, 'Leave', 'leaves.index', '2024-07-04 13:28:05', '2024-07-04 13:28:05'),
 (133, 132, 'Add', 'leaves.create', '2024-07-04 13:28:39', '2024-07-04 13:28:39'),
 (134, 132, 'Edit', 'leaves.edit', '2024-07-04 13:28:55', '2024-07-04 13:28:55'),
 (135, 132, 'Delete', 'leaves.delete', '2024-07-04 13:29:19', '2024-07-04 13:29:19'),
 (136, 126, 'Add', 'holidays.create', '2024-07-04 13:30:14', '2024-07-04 13:30:14'),
 (137, 126, 'Delete', 'holidays.destroy', '2024-07-04 13:30:51', '2024-07-04 13:30:51'),
-(138, 114, 'Attendance', 'attendances.index', '2024-07-04 13:32:10', '2024-07-04 13:32:10'),
-(139, 114, 'Attendance Process', 'attendance-processes.index', '2024-07-04 13:33:07', '2024-07-04 13:33:07'),
-(140, 114, 'Attendance Report', 'attendances-reports.index', '2024-07-04 13:34:16', '2024-07-04 13:34:16'),
-(141, 113, 'Departments', 'departments.index', '2024-07-04 13:35:30', '2024-07-04 13:35:30'),
-(142, 113, 'Divisions', 'divisions.index', '2024-07-04 13:36:09', '2024-07-04 13:36:09'),
+(138, 185, 'Attendance', 'attendances.index', '2024-07-04 13:32:10', '2024-07-04 13:32:10'),
+(139, 185, 'Attendance Process', 'attendance-processes.index', '2024-07-04 13:33:07', '2024-07-04 13:33:07'),
+(140, 185, 'Attendance Report', 'attendances-reports.index', '2024-07-04 13:34:16', '2024-07-04 13:34:16'),
+(141, 184, 'Departments', 'departments.index', '2024-07-04 13:35:30', '2024-07-04 13:35:30'),
+(142, 184, 'Divisions', 'divisions.index', '2024-07-04 13:36:09', '2024-07-04 13:36:09'),
 (143, 142, 'Add', 'divisions.create', '2024-07-04 13:36:39', '2024-07-04 13:36:39'),
 (144, 142, 'Edit', 'divisions.edit', '2024-07-04 13:36:51', '2024-07-04 13:36:51'),
 (145, 142, 'Delete', 'divisions.destroy', '2024-07-04 13:37:04', '2024-07-04 13:37:04'),
 (146, 141, 'Add', 'departments.create', '2024-07-04 13:37:35', '2024-07-04 13:37:35'),
 (147, 141, 'Edit', 'departments.edit', '2024-07-04 13:38:05', '2024-07-04 13:38:05'),
 (148, 141, 'Delete', 'departments.delete', '2024-07-04 13:42:58', '2024-07-04 13:42:58'),
-(149, 113, 'Settings', 'hrsettings.index', '2024-07-04 14:12:56', '2024-07-14 12:46:02'),
-(150, 111, 'Designation', 'designations.index', '2024-07-04 14:13:36', '2024-07-04 14:13:36'),
+(149, 184, 'Settings', 'hrsettings.index', '2024-07-04 14:12:56', '2024-07-14 12:46:02'),
+(150, 184, 'Designation', 'designations.index', '2024-07-04 14:13:36', '2024-07-04 14:13:36'),
 (151, 113, 'Designation', 'designations.index', '2024-07-04 14:14:51', '2024-07-14 12:47:16'),
-(152, 113, 'Employee', 'employees.index', '2024-07-04 14:16:06', '2024-07-14 12:47:45'),
+(152, 184, 'Employee', 'employees.index', '2024-07-04 14:16:06', '2024-07-14 12:47:45'),
 (153, 152, 'Add', 'employees.create', '2024-07-04 14:16:32', '2024-07-04 14:16:32'),
 (154, 152, 'Edit', 'employees.edit', '2024-07-04 14:16:46', '2024-07-04 14:16:56'),
 (155, 152, 'Delete', 'employees.destroy', '2024-07-04 14:17:54', '2024-07-04 14:17:54'),
-(156, 151, 'Add', 'designations.create', '2024-07-04 14:18:47', '2024-07-04 14:18:47'),
-(157, 151, 'Edit', 'designations.edit', '2024-07-04 14:19:02', '2024-07-04 14:19:02'),
-(158, 151, 'Delete', 'designations.destroy', '2024-07-04 14:19:24', '2024-07-04 14:19:24'),
+(156, 150, 'Add', 'designations.create', '2024-07-04 14:18:47', '2024-07-04 14:18:47'),
+(157, 150, 'Edit', 'designations.edit', '2024-07-04 14:19:02', '2024-07-04 14:19:02'),
+(158, 150, 'Delete', 'designations.destroy', '2024-07-04 14:19:24', '2024-07-04 14:19:24'),
 (159, 0, 'Dashboard', NULL, '2024-07-14 07:39:40', '2024-07-14 07:39:40'),
 (160, 0, 'Basic Setup', NULL, '2024-07-14 07:53:59', '2024-07-14 07:53:59'),
 (162, 0, 'Setup', NULL, '2024-07-14 10:23:52', '2024-07-14 10:23:52'),
@@ -1361,7 +1446,19 @@ INSERT INTO `menus` (`id`, `parent_id`, `menu_name`, `route`, `created_at`, `upd
 (179, 162, 'Customers', 'customers.index', '2024-07-25 09:17:03', '2024-07-25 09:17:03'),
 (180, 179, 'Add', 'customers.create', '2024-07-25 09:17:54', '2024-07-25 09:17:54'),
 (181, 179, 'Edit', 'customers.edit', '2024-07-25 09:18:13', '2024-07-25 09:18:13'),
-(182, 179, 'Delete', 'customers.destroy', '2024-07-25 09:18:38', '2024-07-25 09:18:38');
+(182, 179, 'Delete', 'customers.destroy', '2024-07-25 09:18:38', '2024-07-25 09:18:38'),
+(183, 0, 'Human Resource', NULL, NULL, NULL),
+(184, 183, 'Setup', NULL, NULL, NULL),
+(185, 183, 'Attendance', NULL, NULL, NULL),
+(186, 183, 'Leave', NULL, NULL, NULL),
+(187, 183, 'Loan', NULL, NULL, NULL),
+(188, 183, 'Payrolls', NULL, NULL, NULL),
+(189, 159, 'Sales', NULL, NULL, NULL),
+(190, 159, 'Sales Return', NULL, NULL, NULL),
+(191, 159, 'Today Sales', NULL, NULL, NULL),
+(192, 159, 'Today Purchase', NULL, NULL, NULL),
+(193, 159, 'Expense', NULL, NULL, NULL),
+(194, 159, 'Monthly Collection', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1399,25 +1496,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (106, '2024_04_22_164354_create_category_types_table', 43),
 (112, '2024_04_28_130402_create_issue_items_table', 45),
 (113, '2024_04_28_130413_create_issue_item_details_table', 45),
-(116, '2024_05_06_120259_create_designations_table', 47),
-(118, '2024_05_06_145650_create_departments_table', 48),
-(119, '2024_05_06_151632_create_divisions_table', 49),
-(124, '2024_05_06_143612_create_employees_table', 50),
 (126, '2024_05_06_171323_create_benefits_table', 51),
-(128, '2024_05_13_141259_create_attendances_table', 52),
-(131, '2024_05_14_150331_create_leave_types_table', 54),
-(132, '2024_05_14_141508_create_leaves_table', 55),
-(134, '2024_05_25_135112_create_holidays_table', 56),
-(136, '2024_05_26_151237_create_h_r_settings_table', 57),
 (137, '2024_02_25_120043_create_expense_heads_table', 58),
 (138, '2024_02_25_122743_create_expenses_table', 58),
-(142, '2024_05_28_183705_create_loans_table', 59),
-(144, '2024_06_01_125524_create_weekly_holidays_table', 60),
-(155, '2024_06_10_180908_create_attendance_processes_table', 61),
-(156, '2024_06_10_183027_create_attendance_process_details_table', 61),
-(157, '2024_06_13_172339_create_loan_installments_table', 62),
-(158, '2024_06_22_145712_create_salary_processes_table', 63),
-(159, '2024_06_22_145722_create_salary_process_temps_table', 63),
 (161, '2024_06_25_122016_create_expense_categories_table', 64),
 (162, '2024_02_25_123102_create_expense_details_table', 65),
 (163, '2024_01_03_115653_create_orders_table', 66),
@@ -1444,7 +1525,23 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (211, '2024_03_31_125724_create_collections_table', 80),
 (214, '2024_09_02_150458_create_sales_returns_table', 81),
 (215, '2024_09_02_150509_create_sales_return_details_table', 81),
-(216, '2024_09_04_160630_create_packages_table', 82);
+(216, '2024_09_04_160630_create_packages_table', 82),
+(219, '2024_05_06_120259_create_designations_table', 83),
+(220, '2024_05_06_143612_create_employees_table', 83),
+(221, '2024_05_06_145650_create_departments_table', 83),
+(222, '2024_05_06_151632_create_divisions_table', 83),
+(223, '2024_05_13_141259_create_attendances_table', 83),
+(224, '2024_05_14_141508_create_leaves_table', 83),
+(225, '2024_05_14_150331_create_leave_types_table', 83),
+(226, '2024_05_25_135112_create_holidays_table', 83),
+(227, '2024_05_26_151237_create_h_r_settings_table', 83),
+(228, '2024_05_28_183705_create_loans_table', 83),
+(229, '2024_06_01_125524_create_weekly_holidays_table', 83),
+(230, '2024_06_10_180908_create_attendance_processes_table', 83),
+(231, '2024_06_10_183027_create_attendance_process_details_table', 83),
+(232, '2024_06_13_172339_create_loan_installments_table', 83),
+(233, '2024_06_22_145712_create_salary_processes_table', 83),
+(234, '2024_06_22_145722_create_salary_process_temps_table', 83);
 
 -- --------------------------------------------------------
 
@@ -1669,49 +1766,125 @@ INSERT INTO `privileges` (`id`, `role_id`, `menu_id`, `created_at`, `updated_at`
 (120, 3, 62, '2024-07-06 12:37:34', '2024-07-06 12:37:34'),
 (121, 3, 63, '2024-07-06 12:37:34', '2024-07-06 12:37:34'),
 (122, 3, 64, '2024-07-06 12:37:34', '2024-07-06 12:37:34'),
-(3407, 5, 24, '2024-09-29 07:18:22', '2024-09-29 07:18:22'),
-(3408, 5, 159, '2024-09-29 07:18:22', '2024-09-29 07:18:22'),
-(3409, 5, 1, '2024-09-29 07:18:22', '2024-09-29 07:18:22'),
-(3410, 5, 2, '2024-09-29 07:18:22', '2024-09-29 07:18:22'),
-(3411, 5, 3, '2024-09-29 07:18:22', '2024-09-29 07:18:22'),
-(3412, 5, 4, '2024-09-29 07:18:22', '2024-09-29 07:18:22'),
-(3413, 5, 6, '2024-09-29 07:18:22', '2024-09-29 07:18:22'),
-(3414, 5, 7, '2024-09-29 07:18:22', '2024-09-29 07:18:22'),
-(3415, 5, 8, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3416, 5, 9, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3417, 5, 10, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3418, 5, 160, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3419, 5, 11, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3420, 5, 14, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3421, 5, 16, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3422, 5, 17, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3423, 5, 15, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3424, 5, 18, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3425, 5, 19, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3426, 5, 20, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3427, 5, 22, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3428, 5, 23, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3429, 5, 37, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3430, 5, 38, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3431, 5, 39, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3432, 5, 40, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3433, 5, 95, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3434, 5, 96, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3435, 5, 97, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3436, 5, 98, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3437, 5, 162, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3438, 5, 99, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3439, 5, 100, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3440, 5, 101, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3441, 5, 102, '2024-09-29 07:18:23', '2024-09-29 07:18:23'),
-(3442, 5, 103, '2024-09-29 07:18:24', '2024-09-29 07:18:24'),
-(3443, 5, 104, '2024-09-29 07:18:24', '2024-09-29 07:18:24'),
-(3444, 5, 105, '2024-09-29 07:18:24', '2024-09-29 07:18:24'),
-(3445, 5, 106, '2024-09-29 07:18:24', '2024-09-29 07:18:24'),
-(3446, 5, 179, '2024-09-29 07:18:24', '2024-09-29 07:18:24'),
-(3447, 5, 180, '2024-09-29 07:18:24', '2024-09-29 07:18:24'),
-(3448, 5, 181, '2024-09-29 07:18:24', '2024-09-29 07:18:24'),
-(3449, 5, 182, '2024-09-29 07:18:24', '2024-09-29 07:18:24');
+(7249, 5, 24, '2024-10-06 05:26:58', '2024-10-06 05:26:58'),
+(7250, 5, 25, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7251, 5, 26, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7252, 5, 27, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7253, 5, 28, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7254, 5, 29, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7255, 5, 30, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7256, 5, 31, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7257, 5, 32, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7258, 5, 33, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7259, 5, 34, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7260, 5, 35, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7261, 5, 36, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7262, 5, 41, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7263, 5, 42, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7264, 5, 43, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7265, 5, 45, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7266, 5, 46, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7267, 5, 47, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7268, 5, 49, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7269, 5, 50, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7270, 5, 51, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7271, 5, 52, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7272, 5, 77, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7273, 5, 78, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7274, 5, 92, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7275, 5, 93, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7276, 5, 94, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7277, 5, 79, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7278, 5, 85, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7279, 5, 86, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7280, 5, 91, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7281, 5, 80, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7282, 5, 82, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7283, 5, 83, '2024-10-06 05:26:59', '2024-10-06 05:26:59'),
+(7284, 5, 84, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7285, 5, 81, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7286, 5, 107, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7287, 5, 108, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7288, 5, 109, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7289, 5, 110, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7290, 5, 176, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7291, 5, 177, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7292, 5, 159, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7293, 5, 1, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7294, 5, 2, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7295, 5, 3, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7296, 5, 4, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7297, 5, 6, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7298, 5, 7, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7299, 5, 8, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7300, 5, 9, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7301, 5, 10, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7302, 5, 189, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7303, 5, 190, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7304, 5, 191, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7305, 5, 192, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7306, 5, 193, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7307, 5, 194, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7308, 5, 160, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7309, 5, 37, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7310, 5, 38, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7311, 5, 39, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7312, 5, 40, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7313, 5, 162, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7314, 5, 103, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7315, 5, 104, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7316, 5, 105, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7317, 5, 106, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7318, 5, 179, '2024-10-06 05:27:00', '2024-10-06 05:27:00'),
+(7319, 5, 180, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7320, 5, 181, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7321, 5, 182, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7322, 5, 183, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7323, 5, 184, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7324, 5, 125, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7325, 5, 126, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7326, 5, 136, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7327, 5, 137, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7328, 5, 127, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7329, 5, 129, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7330, 5, 130, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7331, 5, 131, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7332, 5, 141, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7333, 5, 146, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7334, 5, 147, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7335, 5, 148, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7336, 5, 142, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7337, 5, 143, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7338, 5, 144, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7339, 5, 145, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7340, 5, 149, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7341, 5, 150, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7342, 5, 156, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7343, 5, 157, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7344, 5, 158, '2024-10-06 05:27:01', '2024-10-06 05:27:01'),
+(7345, 5, 152, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7346, 5, 153, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7347, 5, 154, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7348, 5, 155, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7349, 5, 185, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7350, 5, 138, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7351, 5, 139, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7352, 5, 140, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7353, 5, 186, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7354, 5, 128, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7355, 5, 132, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7356, 5, 133, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7357, 5, 134, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7358, 5, 135, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7359, 5, 187, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7360, 5, 120, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7361, 5, 121, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7362, 5, 122, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7363, 5, 123, '2024-10-06 05:27:02', '2024-10-06 05:27:02'),
+(7364, 5, 124, '2024-10-06 05:27:03', '2024-10-06 05:27:03'),
+(7365, 5, 188, '2024-10-06 05:27:03', '2024-10-06 05:27:03'),
+(7366, 5, 118, '2024-10-06 05:27:03', '2024-10-06 05:27:03'),
+(7367, 5, 119, '2024-10-06 05:27:03', '2024-10-06 05:27:03');
 
 -- --------------------------------------------------------
 
@@ -1999,6 +2172,7 @@ INSERT INTO `roles` (`id`, `is_superadmin`, `role`, `created_by`, `created_at`, 
 
 CREATE TABLE `salary_processes` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` tinyint(4) NOT NULL,
   `employee_id` int(11) NOT NULL,
   `year` varchar(255) NOT NULL,
   `month` varchar(255) NOT NULL,
@@ -2024,6 +2198,7 @@ CREATE TABLE `salary_processes` (
 
 CREATE TABLE `salary_process_temps` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` tinyint(4) NOT NULL,
   `employee_id` int(11) NOT NULL,
   `year` varchar(255) NOT NULL,
   `month` varchar(255) NOT NULL,
@@ -2450,6 +2625,7 @@ INSERT INTO `vendor_ledgers` (`id`, `client_id`, `vendor_id`, `purchase_id`, `sa
 
 CREATE TABLE `weekly_holidays` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` tinyint(4) NOT NULL,
   `saturday` tinyint(4) NOT NULL DEFAULT 0,
   `sunday` tinyint(4) NOT NULL DEFAULT 0,
   `monday` tinyint(4) NOT NULL DEFAULT 0,
@@ -2460,6 +2636,14 @@ CREATE TABLE `weekly_holidays` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `weekly_holidays`
+--
+
+INSERT INTO `weekly_holidays` (`id`, `client_id`, `saturday`, `sunday`, `monday`, `tuesday`, `wednesday`, `thursday`, `friday`, `created_at`, `updated_at`) VALUES
+(1, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL),
+(2, 4, 1, 0, 0, 0, 0, 0, 1, '2024-10-05 06:27:24', '2024-10-05 06:27:35');
 
 --
 -- Indexes for dumped tables
@@ -2903,13 +3087,13 @@ ALTER TABLE `attendances`
 -- AUTO_INCREMENT for table `attendance_processes`
 --
 ALTER TABLE `attendance_processes`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `attendance_process_details`
 --
 ALTER TABLE `attendance_process_details`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `basic_infos`
@@ -2921,7 +3105,7 @@ ALTER TABLE `basic_infos`
 -- AUTO_INCREMENT for table `benefits`
 --
 ALTER TABLE `benefits`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -2951,25 +3135,25 @@ ALTER TABLE `countries`
 -- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `designations`
 --
 ALTER TABLE `designations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `divisions`
 --
 ALTER TABLE `divisions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `employees`
 --
 ALTER TABLE `employees`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `expenses`
@@ -3005,13 +3189,13 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `holidays`
 --
 ALTER TABLE `holidays`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `h_r_settings`
 --
 ALTER TABLE `h_r_settings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `issue_items`
@@ -3041,7 +3225,7 @@ ALTER TABLE `leaves`
 -- AUTO_INCREMENT for table `leave_types`
 --
 ALTER TABLE `leave_types`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `loans`
@@ -3059,13 +3243,13 @@ ALTER TABLE `loan_installments`
 -- AUTO_INCREMENT for table `menus`
 --
 ALTER TABLE `menus`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=183;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=195;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=217;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=235;
 
 --
 -- AUTO_INCREMENT for table `orders`
@@ -3119,7 +3303,7 @@ ALTER TABLE `pp_details`
 -- AUTO_INCREMENT for table `privileges`
 --
 ALTER TABLE `privileges`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3450;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7368;
 
 --
 -- AUTO_INCREMENT for table `production_plans`
@@ -3281,7 +3465,7 @@ ALTER TABLE `vendor_ledgers`
 -- AUTO_INCREMENT for table `weekly_holidays`
 --
 ALTER TABLE `weekly_holidays`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
