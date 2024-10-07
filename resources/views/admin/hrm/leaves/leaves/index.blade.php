@@ -52,11 +52,14 @@
                                             </thead>
                                             <tbody>
                                             @foreach ($leaves as $leave)
+                                            @php
+                                                 $leaveTypesName = App\Models\LeaveType::where('id', $leave->leave_type_id)->value('name');
+                                            @endphp
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ isset($leave->leave_taken_by) ? $leave->leave_taken_by->name : null }}</td>
                                                     <td>{{ isset($leave->duty_handover_to) ? $leave->duty_handover_to->name : null }}</td>
-                                                    <td>{{ isset($leave->leaveType) ? $leave->leaveType->name : null }}</td>
+                                                    <td>{{ isset($leave->leave_type_id) ? $leaveTypesName : null }}</td>
                                                     <td>{{ $leave->application_start_date }}</td>
                                                     <td>{{ $leave->application_end_date }}</td>
                                                     <td>{{ $leave->application_days }} Days</td>
